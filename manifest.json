@@ -1,7 +1,8 @@
 {
   "name": "East Asian Language Master",
   "short_name": "LangLearn",
-  "start_url": "./",
+  "start_url": "/lang-learn/",
+  "scope": "/lang-learn/",
   "display": "standalone",
   "theme_color": "#1D9E75",
   "background_color": "#ffffff",
