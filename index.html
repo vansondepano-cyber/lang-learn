@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>East Asian Language Master Handbook</title>
+    <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.development.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.development.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/babel-standalone@6.26.0/babel.min.js"></script>
+    <!-- Tabler Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tabler-icons@1.119.0/iconfont/tabler-icons.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            --color-background-primary: #ffffff;
+            --color-background-secondary: #f7f7f8;
+            --color-text-primary: #1a1a1e;
+            --color-text-secondary: #52525b;
+            --color-text-tertiary: #a1a1aa;
+            --color-border-tertiary: #e4e4e7;
+            --border-radius-md: 8px;
+            --border-radius-lg: 12px;
+            background: #fafafa;
+            padding: 16px;
+        }
+        @media (prefers-color-scheme: dark) {
+            body {
+                --color-background-primary: #1a1a1e;
+                --color-background-secondary: #2c2c30;
+                --color-text-primary: #f4f4f5;
+                --color-text-secondary: #a1a1aa;
+                --color-text-tertiary: #71717a;
+                --color-border-tertiary: #3f3f46;
+                background: #121216;
+            }
+        }
+        .resource-link {
+            text-decoration: none;
+            transition: opacity 0.15s;
+        }
+        .resource-link:hover {
+            text-decoration: underline;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    
+    <script type="text/babel">
+        const { useState } = React;
+
+        const COLORS = {
+          korean: { bg: "#E1F5EE", text: "#0F6E56", border: "#1D9E75", accent: "#085041" },
+          japanese: { bg: "#EEEDFE", text: "#3C3489", border: "#534AB7", accent: "#26215C" },
+          chinese: { bg: "#FAECE7", text: "#993C1D", border: "#D85A30", accent: "#4A1B0C" },
+          neutral: { bg: "#F1EFE8", text: "#5F5E5A", border: "#888780", accent: "#2C2C2A" },
+        };
+
+        // Resource URLs
+        const RESOURCE_URLS = {
+          // Korean
+          "Talk To Me In Korean": "https://talktomeinkorean.com",
+          "두루책방 (Durukitab)": "https://durumiai.com/durukitab",
+          "Anki": "https://apps.ankiweb.net",
+          "Naver Dictionary": "https://dict.naver.com",
+          "HelloTalk": "https://www.hellotalk.com",
+          "italki": "https://www.italki.com",
+          "Mirinae": "https://mirinae.io",
+          // Japanese
+          "Tae Kim's Guide": "https://guidetojapanese.org",
+          "Cure Dolly (YouTube)": "https://www.youtube.com/@CureDolly",
+          "WaniKani": "https://www.wanikani.com",
+          "Tadoku Graded Readers": "https://tadoku.org/japanese/en/free-books-2",
+          "Satori Reader": "https://www.satorireader.com",
+          "Nihongo con Teppei": "https://nihongoconteppei.com",
+          "Anki + Core 2k/6k Deck": "https://ankiweb.net/shared/info/240418633",
+          // Chinese
+          "Chinese Grammar Wiki": "https://resources.allsetlearning.com/chinese/grammar",
+          "Du Chinese": "https://www.duchinese.net",
+          "Pleco": "https://www.pleco.com",
+          "Skritter": "https://skritter.com",
+          "Chairman's Bao": "https://www.thechairmansbao.com",
+          "ChinesePod": "https://chinesepod.com",
+          "Anki + HSK Decks": "https://ankiweb.net/shared/decks/hsk"
+        };
+
+        const langMeta = [
+          { id: "korean", label: "Year 1 · Korean", emoji: "🇰🇷", tagline: "Build the SOV foundation", color: COLORS.korean, topik: "TOPIK I → Early II", hours: "~540 hrs", scripts: "Hangul (1 month)", grammar: "High — particles, honorifics, conjugations", tones: "Tense/lax consonants, vowel distinctions" },
+          { id: "japanese", label: "Year 2 · Japanese", emoji: "🇯🇵", tagline: "Repurpose your Korean brain", color: COLORS.japanese, topik: "JLPT N5 → N3", hours: "~540 hrs", scripts: "Hiragana + Katakana (1 mo) + Kanji (ongoing)", grammar: "High — particles, Te-form, Keigo", tones: "Mora timing, pitch accent" },
+          { id: "chinese", label: "Year 3 · Chinese", emoji: "🇨🇳", tagline: "Grammar vacation, tonal mountain", color: COLORS.chinese, topik: "HSK 1 → HSK 4/5", hours: "~540 hrs", scripts: "Pinyin (1 mo) + Hanzi (ongoing)", grammar: "Low — no conjugations, no particles!", tones: "Four tones + tone sandhi" },
+        ];
+
+        const coreSection = {
+          title: "The Science Behind This System",
+          principles: [
+            { name: "Comprehensible Input", icon: "ti-book", what: "Absorb language just above your current level (i+1).", how: "Graded readers, learner podcasts, content scaled month by month.", why: "The basal ganglia extracts grammatical rules implicitly — no conscious effort needed." },
+            { name: "Spaced Repetition", icon: "ti-refresh", what: "Review at expanding intervals, just before you forget.", how: "Daily Anki with automated scheduling — 15 minutes, non-negotiable.", why: "Retrieval at the moment of near-forgetting is the single most powerful memory event." },
+            { name: "Active Recall", icon: "ti-brain", what: "Pull information from memory without cues.", how: "Answer flashcards from memory; workbook exercises with the book closed.", why: "Every successful recall physically strengthens the neural pathway. Re-reading does not." },
+            { name: "Deliberate Practice", icon: "ti-target", what: "Isolate and drill specific weaknesses.", how: "Targeted speaking drills, focused pronunciation shadowing, timed conjugation sprints.", why: "Repetition with intense focus builds a faster, more efficient information superhighway." },
+            { name: "Primed Listening", icon: "ti-headphones", what: "Give your brain a search task before passive exposure.", how: "Pre-listen for one feature (e.g. all 2nd tones), then loop the same audio in the background.", why: "Without priming, background audio is noise. Priming tells your brain: 'This is relevant, filter it in.'" },
+            { name: "Low-Stakes Output", icon: "ti-microphone", what: "Speak and write from Day 1 without fear.", how: "The Gibberish Game, ungraded journals, voice messages to partners.", why: "Anxiety blocks language acquisition. Low stakes keep the door open." },
+            { name: "Emotional Encoding", icon: "ti-heart", what: "Tag every word with a personal, absurd, or sensory memory.", how: "One second of feeling before answering an Anki card = 23% better retention.", why: "Emotionally tagged memories are neurologically stronger and more retrievable." },
+            { name: "Sleep Consolidation", icon: "ti-moon", what: "Review before sleep; recall on waking.", how: "5 min pre-sleep review of hardest new words → sleep → 5 min morning recall.", why: "The hippocampus replays the day's learning at 10–20× speed during sleep." },
+            { name: "Habit Formation", icon: "ti-calendar", what: "Systems beat motivation every time.", how: "A Minimum Viable Plan for bad days. An Accountability Triad for accountability.", why: "Automates the decision to study, conserving mental energy for actual learning." },
+          ],
+        };
+
+        const weeklySchedule = [
+          { day: "Mon", focus: "New Input", desc: "New vocabulary + new grammar lesson. Set the week's theme." },
+          { day: "Tue", focus: "Input Deepening", desc: "Active listening with transcript. Intensive reading. Journal drafting." },
+          { day: "Wed", focus: "Output Practice", desc: "Journal correction. Scripted speaking drills. Voice messages." },
+          { day: "Thu", focus: "Input Variation", desc: "Different media: podcast, webtoon chapter, vlog." },
+          { day: "Fri", focus: "Free Output", desc: "Free writing. Free speaking. Review the week's gaps." },
+          { day: "Sat", focus: "Speaking Day", desc: "45–60 min iTalki conversation OR 30 min maintenance of prior language (Year 2–3)." },
+          { day: "Sun", focus: "Review & Immersion", desc: "Review failed Anki cards. Watch a drama/movie with target language subs. Weekly reflection." },
+        ];
+
+        const dailyMatrix = [
+          { slot: "Block 1", mode: "High-Focus", high: "15 min Anki (new cards) + 15 min Grammar / Tones / Kanji writing", low: "10 min Gentle Anki (review only — no new material)" },
+          { slot: "Block 2", mode: "Comprehensible Input", high: "20 min Active Listening with transcript + shadowing. Prime for one specific feature.", low: "20 min Extensive Reading — webtoon, manga, or graded reader. No dictionary. Enjoy." },
+          { slot: "Block 3", mode: "Diffuse Mode", high: "10 min Drama clip, music, or cooking video. Let the brain connect dots.", low: "15 min Re-listen to a familiar podcast while walking." },
+          { slot: "Block 4", mode: "Low-Stakes Output", high: "10 min Journal entry deliberately using today's grammar point.", low: "5 min Voice message to a partner — one new thing you learned today." },
+        ];
+
+        const milestones = [
+          { month: 1, ko: "Read Hangul fluently", ja: "Read Hiragana & Katakana", zh: "Master Pinyin & all 4 tones", celebrate: "Order food at a Korean/Japanese/Chinese restaurant using the language." },
+          { month: 3, ko: "5-min conversation", ja: "5-min conversation", zh: "5-min conversation", celebrate: "Cook a full meal from a target-language recipe video." },
+          { month: 6, ko: "Read a full webtoon chapter", ja: "Read a full NHK Easy article", zh: "Read a full Chinese Breeze book", celebrate: "Watch a movie without English subtitles." },
+          { month: 9, ko: "30-min conversation", ja: "30-min conversation", zh: "30-min conversation", celebrate: "Attend a language exchange meetup or online event." },
+          { month: 12, ko: "60-min conversation", ja: "60-min conversation", zh: "60-min conversation", celebrate: "Plan a real or imaginary trip to the country — all in the language." },
+        ];
+
+        const troubleshooter = [
+          { symptom: "I know it in Anki, but can't recognize it in real speech.", diagnosis: "Phonological Decoding Gap — visual memory exists, auditory memory is weak.", fix: "Phonology-only Anki: put the audio on the front, text on the back. Identify the word by sound alone before seeing it." },
+          { symptom: "I freeze when I try to speak, even though I know the grammar.", diagnosis: "Proceduralization Failure — grammar is a fact you know, not a motor skill you have.", fix: "Single-Pattern Speed Drills: create 20 variations of one pattern and speak them as fast as possible until the pattern flows automatically." },
+          { symptom: "I keep confusing two similar-sounding words.", diagnosis: "Interference Error — overlapping neural networks competing for retrieval.", fix: "Context Explosion: create one vivid, emotionally distinct mental image for each word. Distinct feelings pull memories apart." },
+          { symptom: "My reading is painfully slow — I can decode but I don't read.", diagnosis: "Subvocalization Bottleneck — you're mentally pronouncing every syllable.", fix: "Forced Speed Reading: use your finger to push your eyes faster than you can say the words, on a text you already know. Break the habit." },
+          { symptom: "Tones/particles/pitch are fine in practice, collapse in conversation.", diagnosis: "Cognitive Overload — simultaneous demands overwhelm the least-automated skill.", fix: "Single-Focus Conversation: choose ONE feature to monitor per conversation session. Forgive all other errors. Rotate the focus each day." },
+          { symptom: "I've studied for months and feel like I've completely plateaued.", diagnosis: "Intermediate Plateau — gains are real but harder to see. This is perception, not progress.", fix: "Retrospective Assessment: go back to content that was hard 3 months ago. Your shock at how easy it now is will recalibrate everything." },
+        ];
+
+        const yearData = {
+          korean: {
+            vocab: [300, 600, 1000, 1300, 1600, 2000, 2500, 3000, 3500, 4000, 4500, 5000],
+            grammar: [
+              { phase: "Months 1–3", level: "TOPIK I Lv.1", points: ["이다 / 아니다 (to be / not be)", "Topic 은/는 vs Subject 이/가", "Questions, Negatives (안 / 지 않다)", "Past Tense (았/었다) + Future (겠/ㄹ 것이다)", "고 싶다 (want to)", "Location Particles 에/에서, Direction 으로"] },
+              { phase: "Months 4–6", level: "TOPIK I Lv.2", points: ["Connectors: 그리고, 그래서, 지만", "그래서 vs 그러니까 (causal distinction)", "Comparisons: 보다 (more than)", "Cause & Effect: 아/어서 vs 때문에"] },
+              { phase: "Months 7–12", level: "Early TOPIK II", points: ["면서 (simultaneous actions)", "는데/은데 (background/contrast — most versatile connector)", "거나 (or — linking verbs)", "것 같다 (seems like / likely)", "다고 하다 (reported speech)", "Formal writing endings: ㄴ/는다"] },
+            ],
+            resources: [
+              { name: "Talk To Me In Korean", type: "Core Course", free: true, best: "Structured grammar & beginner-friendly audio", note: "Premium content locked, but free audio is excellent." },
+              { name: "두루책방 (Durukitab)", type: "Graded Readers", free: true, best: "Extensive reading Months 3–8", note: "6 free levels of illustrated e-books. Best free reading resource." },
+              { name: "Anki", type: "SRS", free: true, best: "Vocabulary & grammar memorization", note: "Gold standard. iOS app is a paid purchase (~$25 one-time)." },
+              { name: "Naver Dictionary", type: "Dictionary", free: true, best: "Everything — audio, examples, Hanja", note: "No meaningful alternative. The free standard is perfect." },
+              { name: "HelloTalk", type: "Language Exchange", free: true, best: "Daily writing & speaking with natives", note: "Massive community. Be proactive about finding serious partners." },
+              { name: "italki", type: "Tutoring", free: false, best: "Focused, deliberate speaking practice", note: "$5–30/hr. Even 1 session/week has a massive impact." },
+              { name: "Mirinae", type: "Grammar Analyzer", free: true, best: "Deconstructing complex sentences", note: "Paste a sentence; it explains every grammar point. Free daily quota." },
+            ],
+            culture: [
+              { period: "Months 1–3", topic: "Speech Levels", detail: "Learn polite informal (-요) as your default safe mode. Formal polite (-습니다/ㅂ니다) for presentations and service encounters. Using the wrong level is a social error, not just a grammatical one." },
+              { period: "Months 4–6", topic: "Hierarchy in Action", detail: "Age and status are the invisible grammar of Korean society. Learn 선배/후배, the sibling terms (오빠/언니/형/누나), and that 친구 means only someone your exact age." },
+              { period: "Months 7–9", topic: "Group Concepts", detail: "눈치 (reading the room), 정 (deep-seated affection over time), 체면 (face/social appearance). These are essential for understanding drama dialogue and workplace dynamics." },
+              { period: "Months 10–12", topic: "Indirect Communication", detail: "좀 그렇다 ('it's a bit so-so') can mean a hard no. Learn to read hedging language. Direct 'no' can be seen as rude." },
+            ],
+          },
+          japanese: {
+            vocab: [300, 600, 1000, 1300, 1700, 2200, 2700, 3200, 3700, 4200, 4700, 5500],
+            kanji: [50, 100, 200, 350, 500, 650, 800, 950, 1100, 1250, 1400, 1500],
+            grammar: [
+              { phase: "Months 1–3", level: "JLPT N5", points: ["です/だ (to be)", "は (topic) vs が (subject) — your Korean 은/는 and 이/가 carry over!", "を (object), に/で (location), か (questions)", "Past tense (でした/ました, -た form)", "Desire: -たい (like Korean -고 싶다)", "Te-form — the single most important milestone, unlocks dozens of structures"] },
+              { phase: "Months 4–6", level: "JLPT N4", points: ["Requests (-てください), Permission (-てもいいですか)", "Prohibition (-てはいけません)", "Comparisons: より (more than), ほど (not as much as)", "Conditionals: なら, たら"] },
+              { phase: "Months 7–12", level: "JLPT N3", points: ["Potential form (-られる/れる)", "Passive (-られる) and Causative (-させる)", "Keigo — Sonkeigo, Kenjougo, Teineigo", "Advanced connectors for sophisticated expression", "Korean honorific system intuition makes Keigo logical"] },
+            ],
+            resources: [
+              { name: "Tae Kim's Guide", type: "Grammar", free: true, best: "Complete, no-nonsense grammar foundation", note: "Teaches plain form first — more natural acquisition order." },
+              { name: "Cure Dolly (YouTube)", type: "Grammar", free: true, best: "Deep structural understanding", note: "Explains why Japanese works the way it does. Unconventional presentation." },
+              { name: "WaniKani", type: "Kanji SRS", free: false, best: "Systematic Kanji acquisition", note: "$9/mo. Radicals-first approach. Solves the Kanji problem. Worth every penny." },
+              { name: "Tadoku Graded Readers", type: "Reading", free: true, best: "Extensive reading from Month 2", note: "Completely free, multiple levels, no account needed. Best free reading resource." },
+              { name: "Satori Reader", type: "Reading Platform", free: false, best: "Intermediate reading + listening bridge", note: "$9/mo. Human-narrated stories with grammar explanations. Best from Month 5+." },
+              { name: "Nihongo con Teppei", type: "Podcast", free: true, best: "Beginner listening from Month 3", note: "Native speaker talks naturally about everyday topics. Beginner-adapted version available." },
+              { name: "Anki + Core 2k/6k Deck", type: "SRS", free: true, best: "Vocabulary sentences with native audio", note: "The Core 2k/6k deck is legendary. Download it immediately." },
+            ],
+            culture: [
+              { period: "Months 1–3", topic: "Surface Politeness", detail: "です/ます is your default safe mode. Never plain form with strangers. すみません is a multi-purpose social lubricant: excuse me, sorry, and thank you all in one." },
+              { period: "Months 4–6", topic: "Honne vs Tatemae", detail: "本音 (true feelings) vs 建前 (socially expected position). 'それはちょっと...' is often a hard no. Learn to read the air (空気を読む)." },
+              { period: "Months 7–9", topic: "Group Harmony (和)", detail: "Behaviors that preserve harmony are prioritized over individual expression. The sempai-kohai (先輩-後輩) relationship has linguistic markers you must learn." },
+              { period: "Months 10–12", topic: "Professional Keigo", detail: "Three types: Sonkeigo (raise others), Kenjougo (lower yourself), Teineigo (polite です/ます). Business card exchange requires both hands and genuine respect." },
+            ],
+          },
+          chinese: {
+            vocab: [300, 600, 1000, 1400, 1800, 2200, 2700, 3200, 3700, 4200, 4700, 5500],
+            hanzi: [100, 250, 450, 650, 850, 1000, 1250, 1500, 1750, 2000, 2250, 2500],
+            grammar: [
+              { phase: "Months 1–3", level: "HSK 1–2", points: ["是 (shì - to be), 有 (yǒu - to have), 在 (zài - to be at)", "Questions with 吗 (ma). Negatives: 不 vs 没", "了 (le) — aspect marker for completion (NOT a past tense marker!)", "Measure words (量词) — learn each as a chunk: 一本书, not just 书"] },
+              { phase: "Months 4–6", level: "HSK 3", points: ["比 (bǐ) comparisons: A 比 B Adjective", "Result complements: 看完 (finish reading), 听懂 (understand by listening)", "Directional complements: 进来 (come in), 出去 (go out)", "Your SOV Korean/Japanese brain will find 把 sentences intuitive!"] },
+              { phase: "Months 7–12", level: "HSK 4–5", points: ["把 (bǎ) construction — emphasizes what happened to the object", "被 (bèi) passive voice", "Complex connectors for formal writing", "Topic-comment structures — Chinese is topic-prominent, just like Korean with 은/는"] },
+            ],
+            resources: [
+              { name: "Chinese Grammar Wiki", type: "Grammar", free: true, best: "The definitive grammar reference", note: "Every point organized by HSK level. The single best free Chinese grammar resource." },
+              { name: "Du Chinese", type: "Graded Reading App", free: true, best: "The best graded reading app", note: "Beautiful interface. Human narration. Pop-up dictionary. Pinyin toggle." },
+              { name: "Pleco", type: "Dictionary", free: true, best: "Everything — OCR, flashcards, documents", note: "Best-in-class. Free version is already world-class." },
+              { name: "Skritter", type: "Writing Practice", free: false, best: "Learning to write Hanzi", note: "$14.99/mo. Real-time stroke order feedback. Transformative if handwriting matters to you." },
+              { name: "Chairman's Bao", type: "Graded News", free: true, best: "Real-world news at your level", note: "Updated daily. HSK-graded. Audio and grammar notes. Best from Month 7+." },
+              { name: "ChinesePod", type: "Podcast/Course", free: true, best: "Structured audio from Newbie level", note: "Massive library. Engaging hosts. Premium unlocks most content." },
+              { name: "Anki + HSK Decks", type: "SRS", free: true, best: "Vocabulary memorization", note: "HSK vocabulary decks are widely available and well-made." },
+            ],
+            culture: [
+              { period: "Months 1–3", topic: "面子 (Miànzi) — Face", detail: "Causing someone to lose face (丢脸) is a serious social error. Giving face (给面子) is a gift. 吃了吗 ('Have you eaten?') is a casual greeting, not a literal question." },
+              { period: "Months 4–6", topic: "Family & Hierarchy", detail: "Chinese has distinct words for maternal vs paternal grandparents, aunts, and uncles. Terms like 阿姨 (auntie) and 叔叔 (uncle) extend to non-relatives as a sign of warmth and respect." },
+              { period: "Months 7–9", topic: "关系 (Guānxi)", detail: "The network of relationships, obligations, and social capital. Business is built on guanxi before contracts. Gift-giving and hospitality are central." },
+              { period: "Months 10–12", topic: "Indirect Harmony", detail: "'Maybe', 'it's not convenient', 'I'll think about it' are often polite refusals. Public criticism is avoided. Maintaining harmony (和谐) is a core value." },
+            ],
+          },
+        };
+
+        function VocabChart({ data, label, color, extraData, extraLabel }) {
+          const max = Math.max(...data, ...(extraData || []));
+          return (
+            <div style={{ marginTop: 16 }}>
+              <div style={{ display: "flex", gap: 16, marginBottom: 8, flexWrap: "wrap" }}>
+                <span style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 12, color: "var(--color-text-secondary)" }}>
+                  <span style={{ width: 10, height: 10, borderRadius: 2, background: color.border }}></span>{label}
+                </span>
+                {extraData && <span style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 12, color: "var(--color-text-secondary)" }}>
+                  <span style={{ width: 10, height: 10, borderRadius: 2, border: `2px dashed ${color.border}`, background: "transparent" }}></span>{extraLabel}
+                </span>}
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(12, 1fr)", gap: 4, alignItems: "end", height: 80 }}>
+                {data.map((v, i) => (
+                  <div key={i} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2 }}>
+                    <div style={{ width: "100%", background: color.border, borderRadius: 2, height: `${Math.round((v / max) * 64)}px`, minHeight: 4 }}></div>
+                    {extraData && <div style={{ width: "100%", border: `1.5px dashed ${color.border}`, borderRadius: 2, height: `${Math.round((extraData[i] / max) * 64)}px`, minHeight: 4 }}></div>}
+                  </div>
+                ))}
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(12, 1fr)", gap: 4, marginTop: 4 }}>
+                {data.map((_, i) => (
+                  <div key={i} style={{ textAlign: "center", fontSize: 10, color: "var(--color-text-tertiary)" }}>M{i + 1}</div>
+                ))}
+              </div>
+            </div>
+          );
+        }
+
+        function SpeakingMilestones({ lang }) {
+          const rows = [
+            { month: 1, target: "30-second self-introduction", tip: "Proceduralize identity: name, country, job." },
+            { month: 2, target: "1-minute monologue", tip: "Chain simple sentences. Describe your family or what you ate yesterday." },
+            { month: 3, target: "5-minute conversation", tip: "Practice turn-taking. Ask your partner 2 follow-up questions." },
+            { month: 6, target: "15-minute conversation", tip: "Tell a simple story. Use temporal connectors." },
+            { month: 9, target: "30-minute conversation", tip: "Express and defend a simple opinion. Compare two movies or cities." },
+            { month: 12, target: "60-minute conversation", tip: "A natural, flowing chat on life goals, current events, or a hobby." },
+          ];
+          const color = COLORS[lang];
+          return (
+            <div>
+              {rows.map((r, i) => (
+                <div key={i} style={{ display: "flex", gap: 12, marginBottom: 12, alignItems: "flex-start" }}>
+                  <div style={{ minWidth: 44, height: 44, borderRadius: "50%", background: color.bg, border: `1.5px solid ${color.border}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 500, color: color.text }}>M{r.month}</div>
+                  <div>
+                    <div style={{ fontWeight: 500, fontSize: 14, color: "var(--color-text-primary)", marginBottom: 2 }}>{r.target}</div>
+                    <div style={{ fontSize: 13, color: "var(--color-text-secondary)" }}>{r.tip}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          );
+        }
+
+        function WritingMilestones({ lang }) {
+          const rowsByLang = {
+            korean: [
+              { month: 1, target: "Single sentences on HelloTalk", focus: "Subject-Object-Verb order. 'I like cats.' 'Coffee is delicious.'" },
+              { month: 2, target: "Daily journal: 3–5 sentences", focus: "Weather, what you ate, what you did. Present/past tense." },
+              { month: 3, target: "100-word entries", focus: "Add future plans (-고 싶다) and reasons (-아/어서)." },
+              { month: 6, target: "250-word entries", focus: "Book or movie review. Use -지만 (but) and -때문에 (because)." },
+              { month: 9, target: "500-word entries", focus: "Structured argument with three reasons. 'Firstly... Secondly... Finally...'" },
+              { month: 12, target: "Short essays & formal letters", focus: "Cover letter or travel recommendation. Formal endings." },
+            ],
+            japanese: [
+              { month: 1, target: "Single sentences on HelloTalk", focus: "Write in Kana + basic Kanji. 'I like cats.' 'Sushi is delicious.'" },
+              { month: 2, target: "Daily journal: 3–5 sentences", focus: "Use です/ます form." },
+              { month: 3, target: "100-word entries", focus: "Add reasons (-から), desires (-たい), and past tense (-た)." },
+              { month: 6, target: "250-word entries", focus: "Book or movie review. Use Te-form connections and -たり." },
+              { month: 9, target: "500-word entries", focus: "Structured argument with three reasons." },
+              { month: 12, target: "Short essays, formal emails", focus: "Cover letter or travel recommendation. Appropriate Keigo." },
+            ],
+            chinese: [
+              { month: 1, target: "Single sentences on HelloTalk", focus: "'我喜欢猫。' '咖啡很好喝。' Pinyin input → character selection." },
+              { month: 2, target: "Daily journal: 3–5 sentences", focus: "Use 了 correctly. Present tense default." },
+              { month: 3, target: "100-word entries", focus: "Add reasons (因为), desires (想/要), and time expressions." },
+              { month: 6, target: "250-word entries", focus: "Book or movie review. Use 比 for comparisons and 把 for object manipulation." },
+              { month: 9, target: "500-word entries", focus: "Structured argument: '我的观点是... 有三个原因。'" },
+              { month: 12, target: "Short essays, formal letters", focus: "Cover letter or travel recommendation. Formal connectors: 因此, 然而." },
+            ],
+          };
+          const rows = rowsByLang[lang];
+          const color = COLORS[lang];
+          return (
+            <div>
+              {rows.map((r, i) => (
+                <div key={i} style={{ borderLeft: `3px solid ${color.border}`, paddingLeft: 12, marginBottom: 12 }}>
+                  <div style={{ fontSize: 11, color: color.text, fontWeight: 500, marginBottom: 2 }}>Month {r.month}</div>
+                  <div style={{ fontWeight: 500, fontSize: 14, color: "var(--color-text-primary)", marginBottom: 2 }}>{r.target}</div>
+                  <div style={{ fontSize: 13, color: "var(--color-text-secondary)" }}>{r.focus}</div>
+                </div>
+              ))}
+            </div>
+          );
+        }
+
+        const SECTIONS = ["Overview", "Daily System", "Milestones", "Grammar", "Vocabulary", "Speaking", "Writing", "Culture", "Resources", "Troubleshooter"];
+
+        function App() {
+          const [activeYear, setActiveYear] = useState("korean");
+          const [activeSection, setActiveSection] = useState("Overview");
+          const [energyMode, setEnergyMode] = useState("high");
+          const [openPrinciple, setOpenPrinciple] = useState(null);
+          const [openTrouble, setOpenTrouble] = useState(null);
+
+          const lang = activeYear;
+          const color = COLORS[lang];
+          const meta = langMeta.find(m => m.id === lang);
+          const data = yearData[lang];
+
+          return (
+            <div style={{ fontFamily: "var(--font-sans)", maxWidth: 680, margin: "0 auto", padding: "1rem 0" }}>
+              <h2 className="sr-only" style={{ position: "absolute", width: 1, height: 1, overflow: "hidden" }}>Three-Year East Asian Language Master Handbook — interactive guide for Korean, Japanese, and Chinese</h2>
+
+              <div style={{ marginBottom: 24 }}>
+                <div style={{ fontSize: 13, color: "var(--color-text-secondary)", marginBottom: 4 }}>Three-Year East Asian Language Mastery System</div>
+                <div style={{ fontSize: 22, fontWeight: 500, color: "var(--color-text-primary)", marginBottom: 8 }}>Your Complete Training Manual</div>
+                <div style={{ fontSize: 14, color: "var(--color-text-secondary)", lineHeight: 1.6 }}>Korean → Japanese → Chinese. From complete beginner to trilingual independent user. 1–2 hrs/day. 36 months. Humanly possible.</div>
+              </div>
+
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8, marginBottom: 20 }}>
+                {langMeta.map(m => (
+                  <button key={m.id} onClick={() => setActiveYear(m.id)} style={{ padding: "10px 8px", borderRadius: "var(--border-radius-lg)", border: `2px solid ${activeYear === m.id ? m.color.border : "var(--color-border-tertiary)"}`, background: activeYear === m.id ? m.color.bg : "var(--color-background-primary)", cursor: "pointer", textAlign: "left", transition: "all 0.15s" }}>
+                    <div style={{ fontSize: 18, marginBottom: 4 }}>{m.emoji}</div>
+                    <div style={{ fontSize: 12, fontWeight: 500, color: activeYear === m.id ? m.color.text : "var(--color-text-primary)" }}>{m.label}</div>
+                    <div style={{ fontSize: 11, color: "var(--color-text-secondary)", marginTop: 2 }}>{m.tagline}</div>
+                  </button>
+                ))}
+              </div>
+
+              <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 20 }}>
+                {SECTIONS.map(s => (
+                  <button key={s} onClick={() => setActiveSection(s)} style={{ padding: "5px 12px", borderRadius: 20, border: `1px solid ${activeSection === s ? color.border : "var(--color-border-tertiary)"}`, background: activeSection === s ? color.bg : "var(--color-background-primary)", fontSize: 12, fontWeight: activeSection === s ? 500 : 400, color: activeSection === s ? color.text : "var(--color-text-secondary)", cursor: "pointer" }}>
+                    {s}
+                  </button>
+                ))}
+              </div>
+
+              {activeSection === "Overview" && (
+                <div>
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 10, marginBottom: 20 }}>
+                    {[
+                      { label: "Certification Target", value: meta.topik },
+                      { label: "Est. Total Time", value: meta.hours },
+                      { label: "Writing System", value: meta.scripts },
+                      { label: "Grammar Load", value: meta.grammar },
+                    ].map((c, i) => (
+                      <div key={i} style={{ background: "var(--color-background-secondary)", borderRadius: "var(--border-radius-md)", padding: "12px 14px" }}>
+                        <div style={{ fontSize: 11, color: "var(--color-text-secondary)", marginBottom: 4 }}>{c.label}</div>
+                        <div style={{ fontSize: 13, fontWeight: 500, color: "var(--color-text-primary)" }}>{c.value}</div>
+                      </div>
+                    ))}
+                  </div>
+                  <div style={{ marginBottom: 16, fontSize: 15, fontWeight: 500 }}>Core Learning Principles</div>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                    {coreSection.principles.map((p, i) => (
+                      <div key={i} style={{ border: "0.5px solid var(--color-border-tertiary)", borderRadius: "var(--border-radius-md)", overflow: "hidden" }}>
+                        <button onClick={() => setOpenPrinciple(openPrinciple === i ? null : i)} style={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 14px", background: "var(--color-background-primary)", border: "none", cursor: "pointer", textAlign: "left" }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                            <i className={`ti ${p.icon}`} aria-hidden="true" style={{ fontSize: 16, color: color.border }}></i>
+                            <span style={{ fontSize: 14, fontWeight: 500, color: "var(--color-text-primary)" }}>{p.name}</span>
+                          </div>
+                          <i className={`ti ${openPrinciple === i ? "ti-chevron-up" : "ti-chevron-down"}`} aria-hidden="true" style={{ fontSize: 14, color: "var(--color-text-secondary)" }}></i>
+                        </button>
+                        {openPrinciple === i && (
+                          <div style={{ padding: "0 14px 12px", borderTop: "0.5px solid var(--color-border-tertiary)" }}>
+                            <div style={{ fontSize: 13, color: "var(--color-text-secondary)", marginTop: 10, marginBottom: 6 }}><strong style={{ color: "var(--color-text-primary)" }}>What it is:</strong> {p.what}</div>
+                            <div style={{ fontSize: 13, color: "var(--color-text-secondary)", marginBottom: 6 }}><strong style={{ color: "var(--color-text-primary)" }}>How you'll do it:</strong> {p.how}</div>
+                            <div style={{ fontSize: 13, color: "var(--color-text-secondary)", background: color.bg, padding: "8px 10px", borderRadius: "var(--border-radius-md)", borderLeft: `3px solid ${color.border}` }}><strong style={{ color: color.text }}>Why it works:</strong> {p.why}</div>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {activeSection === "Daily System" && (
+                <div>
+                  <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
+                    {["high", "low"].map(e => (
+                      <button key={e} onClick={() => setEnergyMode(e)} style={{ padding: "6px 16px", borderRadius: 20, border: `1px solid ${energyMode === e ? color.border : "var(--color-border-tertiary)"}`, background: energyMode === e ? color.bg : "var(--color-background-primary)", fontSize: 13, color: energyMode === e ? color.text : "var(--color-text-secondary)", cursor: "pointer", fontWeight: energyMode === e ? 500 : 400 }}>
+                        {e === "high" ? "⚡ High-energy day" : "🌙 Low-energy day"}
+                      </button>
+                    ))}
+                  </div>
+                  <div style={{ fontSize: 12, color: "var(--color-text-secondary)", marginBottom: 12 }}>
+                    {energyMode === "high" ? "Full ~90-minute schedule. Fresh brain, new material, push forward." : "~50-minute schedule. Tired brain. No new cards. Maintain, don't strain."}
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 20 }}>
+                    {dailyMatrix.map((b, i) => (
+                      <div key={i} style={{ border: "0.5px solid var(--color-border-tertiary)", borderRadius: "var(--border-radius-md)", padding: "12px 14px", background: "var(--color-background-primary)" }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                          <span style={{ fontSize: 12, fontWeight: 500, background: color.bg, color: color.text, padding: "2px 8px", borderRadius: 20 }}>{b.slot}</span>
+                          <span style={{ fontSize: 11, color: "var(--color-text-tertiary)" }}>{b.mode}</span>
+                        </div>
+                        <div style={{ fontSize: 13, color: "var(--color-text-primary)" }}>{energyMode === "high" ? b.high : b.low}</div>
+                      </div>
+                    ))}
+                  </div>
+                  <div style={{ marginBottom: 12, fontSize: 15, fontWeight: 500 }}>Weekly Rhythm</div>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                    {weeklySchedule.map((d, i) => (
+                      <div key={i} style={{ display: "flex", gap: 10, alignItems: "flex-start", padding: "8px 0", borderBottom: "0.5px solid var(--color-border-tertiary)" }}>
+                        <div style={{ minWidth: 32, height: 32, borderRadius: "50%", background: color.bg, border: `1.5px solid ${color.border}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, fontWeight: 500, color: color.text }}>{d.day}</div>
+                        <div>
+                          <div style={{ fontWeight: 500, fontSize: 13, color: "var(--color-text-primary)" }}>{d.focus}</div>
+                          <div style={{ fontSize: 12, color: "var(--color-text-secondary)", marginTop: 2 }}>{d.desc}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <div style={{ marginTop: 20, padding: "12px 14px", background: color.bg, borderRadius: "var(--border-radius-md)", borderLeft: `3px solid ${color.border}` }}>
+                    <div style={{ fontWeight: 500, fontSize: 13, color: color.text, marginBottom: 4 }}>The Non-Negotiable 20-Minute Minimum</div>
+                    <div style={{ fontSize: 13, color: "var(--color-text-secondary)", lineHeight: 1.6 }}>
+                      10 min Anki review · 5 min primed listening · 5 min read aloud<br />
+                      <strong style={{ color: "var(--color-text-primary)" }}>Never skip entirely.</strong> A 20-minute day saves 45 minutes of re-learning. A zero day breaks the chain — and often leads to a zero week.
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {activeSection === "Milestones" && (
+                <div>
+                  <div style={{ fontSize: 14, color: "var(--color-text-secondary)", marginBottom: 16, lineHeight: 1.6 }}>Celebration is not optional — your brain needs dopamine rewards tied to effort. Mark every milestone. These aren't checkboxes; they're proof.</div>
+                  {milestones.map((m, i) => (
+                    <div key={i} style={{ marginBottom: 16, border: "0.5px solid var(--color-border-tertiary)", borderRadius: "var(--border-radius-lg)", overflow: "hidden" }}>
+                      <div style={{ background: color.bg, padding: "8px 14px", display: "flex", alignItems: "center", gap: 8 }}>
+                        <span style={{ fontSize: 18, fontWeight: 500, color: color.text }}>Month {m.month}</span>
+                      </div>
+                      <div style={{ padding: "12px 14px" }}>
+                        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8, marginBottom: 10 }}>
+                          {[["🇰🇷 Korean", m.ko], ["🇯🇵 Japanese", m.ja], ["🇨🇳 Chinese", m.zh]].map(([label, val], j) => (
+                            <div key={j} style={{ background: "var(--color-background-secondary)", borderRadius: "var(--border-radius-md)", padding: "8px 10px" }}>
+                              <div style={{ fontSize: 11, color: "var(--color-text-secondary)", marginBottom: 4 }}>{label}</div>
+                              <div style={{ fontSize: 12, fontWeight: 500, color: "var(--color-text-primary)" }}>{val}</div>
+                            </div>
+                          ))}
+                        </div>
+                        <div style={{ fontSize: 13, color: "var(--color-text-secondary)", background: "var(--color-background-secondary)", padding: "8px 10px", borderRadius: "var(--border-radius-md)", display: "flex", gap: 8, alignItems: "flex-start" }}>
+                          <span style={{ fontSize: 16 }}>🎉</span>
+                          <span><strong style={{ color: "var(--color-text-primary)" }}>Celebrate:</strong> {m.celebrate}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {activeSection === "Grammar" && (
+                <div>
+                  {data.grammar.map((g, i) => (
+                    <div key={i} style={{ marginBottom: 16, border: "0.5px solid var(--color-border-tertiary)", borderRadius: "var(--border-radius-lg)", overflow: "hidden" }}>
+                      <div style={{ background: color.bg, padding: "10px 14px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                        <span style={{ fontWeight: 500, fontSize: 14, color: color.text }}>{g.phase}</span>
+                        <span style={{ fontSize: 11, padding: "2px 8px", background: color.border, color: "white", borderRadius: 20 }}>{g.level}</span>
+                      </div>
+                      <div style={{ padding: "12px 14px" }}>
+                        {g.points.map((p, j) => (
+                          <div key={j} style={{ display: "flex", gap: 8, marginBottom: 8, alignItems: "flex-start" }}>
+                            <span style={{ minWidth: 6, height: 6, borderRadius: "50%", background: color.border, marginTop: 6 }}></span>
+                            <span style={{ fontSize: 13, color: "var(--color-text-primary)", lineHeight: 1.5 }}>{p}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                  {lang === "japanese" && (
+                    <div style={{ padding: "14px", background: COLORS.japanese.bg, borderRadius: "var(--border-radius-lg)", borderLeft: `3px solid ${COLORS.japanese.border}` }}>
+                      <div style={{ fontWeight: 500, fontSize: 14, color: COLORS.japanese.text, marginBottom: 8 }}>Your Korean-Japanese Grammar Transfer Advantage</div>
+                      <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                        {[["은/는", "は", "Topic particle"], ["이/가", "が", "Subject particle"], ["을/를", "を", "Object particle"], ["-고 싶다", "-たい", "Want to"], ["-ㅂ니다", "です/ます", "Polite speech level"]].map(([ko, ja, fn], i) => (
+                          <div key={i} style={{ display: "grid", gridTemplateColumns: "1fr 1fr 2fr", gap: 8, fontSize: 13, padding: "4px 0", borderBottom: "0.5px solid var(--color-border-tertiary)" }}>
+                            <span style={{ color: COLORS.korean.text, fontWeight: 500 }}>{ko}</span>
+                            <span style={{ color: COLORS.japanese.text, fontWeight: 500 }}>{ja}</span>
+                            <span style={{ color: "var(--color-text-secondary)" }}>{fn}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {lang === "chinese" && (
+                    <div style={{ padding: "14px", background: COLORS.chinese.bg, borderRadius: "var(--border-radius-lg)", borderLeft: `3px solid ${COLORS.chinese.border}` }}>
+                      <div style={{ fontWeight: 500, fontSize: 14, color: COLORS.chinese.text, marginBottom: 8 }}>The SOV → SVO Pivot</div>
+                      <div style={{ fontSize: 13, color: "var(--color-text-secondary)", lineHeight: 1.6 }}>After two years of Korean particles and Japanese Te-form, Chinese grammar will feel almost suspiciously simple. No conjugations. No tenses. No particles. No honorifics. The information that was encoded in grammar is now encoded in word order and context. You must unlearn the habit of looking for endings that aren't there.</div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {activeSection === "Vocabulary" && (
+                <div>
+                  <div style={{ marginBottom: 20 }}>
+                    <div style={{ fontWeight: 500, fontSize: 15, marginBottom: 4 }}>Cumulative word targets</div>
+                    <div style={{ fontSize: 13, color: "var(--color-text-secondary)", marginBottom: 12 }}>Frequency-based learning. The most common 1,000 words handle 80% of everyday conversations.</div>
+                    <VocabChart data={data.vocab} label="Words" color={color} />
+                    {lang === "japanese" && <VocabChart data={data.kanji} label="Kanji" extraData={data.vocab} extraLabel="Words" color={color} />}
+                    {lang === "chinese" && <VocabChart data={data.hanzi} label="Hanzi" extraData={data.vocab} extraLabel="Words" color={color} />}
+                  </div>
+                  <div style={{ fontSize: 15, fontWeight: 500, marginBottom: 12 }}>Monthly breakdown</div>
+                  <div style={{ border: "0.5px solid var(--color-border-tertiary)", borderRadius: "var(--border-radius-md)", overflow: "hidden" }}>
+                    {data.vocab.map((v, i) => {
+                      const prev = i === 0 ? 0 : data.vocab[i - 1];
+                      const newWords = v - prev;
+                      return (
+                        <div key={i} style={{ display: "grid", gridTemplateColumns: "48px 1fr 80px", gap: 8, padding: "8px 12px", borderBottom: i < 11 ? "0.5px solid var(--color-border-tertiary)" : "none", background: i % 2 === 0 ? "var(--color-background-primary)" : "var(--color-background-secondary)" }}>
+                          <span style={{ fontSize: 12, color: color.text, fontWeight: 500 }}>M{i + 1}</span>
+                          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                            <div style={{ height: 6, borderRadius: 3, background: color.border, width: `${Math.round((v / 5500) * 200)}px`, maxWidth: "100%" }}></div>
+                          </div>
+                          <span style={{ fontSize: 12, color: "var(--color-text-secondary)", textAlign: "right" }}>{v.toLocaleString()} (+{newWords})</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {activeSection === "Speaking" && (
+                <div>
+                  <div style={{ marginBottom: 16, padding: "12px 14px", background: color.bg, borderRadius: "var(--border-radius-md)", borderLeft: `3px solid ${color.border}` }}>
+                    <div style={{ fontWeight: 500, fontSize: 13, color: color.text, marginBottom: 4 }}>The Gibberish Game — Week 1, Month 1</div>
+                    <div style={{ fontSize: 13, color: "var(--color-text-secondary)", lineHeight: 1.6 }}>Set a timer for 90 seconds. Speak the target language non-stop — made-up sounds, imitations, random syllables. No English allowed. The goal is not correctness. The goal is to build psychological comfort with unfamiliar sounds and inoculate yourself against the fear of sounding stupid. Play once a week for the first month.</div>
+                  </div>
+                  <div style={{ fontWeight: 500, fontSize: 15, marginBottom: 12 }}>Speaking milestones</div>
+                  <SpeakingMilestones lang={lang} />
+                  <div style={{ marginTop: 20, border: "0.5px solid var(--color-border-tertiary)", borderRadius: "var(--border-radius-md)", padding: "12px 14px" }}>
+                    <div style={{ fontWeight: 500, fontSize: 14, marginBottom: 8 }}>Primed listening — the 3-step cycle</div>
+                    {[["Active (100% focus)", "Listen while reading the transcript. Identify one specific feature, e.g. 'find 5 sentences using this grammar pattern.'"], ["Post-active priming", "Immediately after, mentally review what you found. Tell yourself: 'This is what X sounds like in natural speech.'"], ["Background looping", "Later, put the exact same audio on loop while commuting. Your brain, now primed, will subconsciously flag every instance of the target feature. Unprimed background noise is just noise."]].map(([t, d], i) => (
+                      <div key={i} style={{ display: "flex", gap: 10, marginBottom: 10, alignItems: "flex-start" }}>
+                        <div style={{ minWidth: 24, height: 24, borderRadius: "50%", background: color.border, color: "white", fontSize: 12, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 500 }}>{i + 1}</div>
+                        <div>
+                          <div style={{ fontWeight: 500, fontSize: 13, color: "var(--color-text-primary)", marginBottom: 2 }}>{t}</div>
+                          <div style={{ fontSize: 12, color: "var(--color-text-secondary)" }}>{d}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {activeSection === "Writing" && (
+                <div>
+                  <WritingMilestones lang={lang} />
+                  <div style={{ marginTop: 20, border: "0.5px solid var(--color-border-tertiary)", borderRadius: "var(--border-radius-md)", padding: "12px 14px" }}>
+                    <div style={{ fontWeight: 500, fontSize: 14, marginBottom: 8 }}>The Gap Journal</div>
+                    <div style={{ fontSize: 13, color: "var(--color-text-secondary)", marginBottom: 12 }}>After every conversation or writing session, record your output failures. These are the highest-value Anki cards you'll ever make.</div>
+                    {[["What I wanted to say", "I would have gone if it hadn't rained."], ["What I actually said", "It rained. So I didn't go."], ["The gap", "Counterfactual conditional form — add to Anki this Sunday."]].map(([label, example], i) => (
+                      <div key={i} style={{ marginBottom: 8 }}>
+                        <div style={{ fontSize: 11, color: "var(--color-text-secondary)", marginBottom: 2 }}>{label}</div>
+                        <div style={{ fontSize: 13, color: "var(--color-text-primary)", background: "var(--color-background-secondary)", padding: "6px 10px", borderRadius: "var(--border-radius-md)" }}>{example}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {activeSection === "Culture" && (
+                <div>
+                  <div style={{ fontSize: 14, color: "var(--color-text-secondary)", marginBottom: 16, lineHeight: 1.6 }}>Language is encoded culture. Knowing what to say is half the battle. Knowing when, to whom, and how is the other half.</div>
+                  {data.culture.map((c, i) => (
+                    <div key={i} style={{ marginBottom: 14, padding: "12px 14px", border: "0.5px solid var(--color-border-tertiary)", borderRadius: "var(--border-radius-lg)" }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                        <span style={{ fontWeight: 500, fontSize: 14, color: "var(--color-text-primary)" }}>{c.topic}</span>
+                        <span style={{ fontSize: 11, padding: "2px 8px", background: color.bg, color: color.text, borderRadius: 20 }}>{c.period}</span>
+                      </div>
+                      <div style={{ fontSize: 13, color: "var(--color-text-secondary)", lineHeight: 1.6 }}>{c.detail}</div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {activeSection === "Resources" && (
+                <div>
+                  <div style={{ fontSize: 14, color: "var(--color-text-secondary)", marginBottom: 16 }}>Reaching TOPIK I Lv.2 / JLPT N3 / HSK 4 is completely possible on free resources. Here's what actually matters.</div>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                    {data.resources.map((r, i) => {
+                      const url = RESOURCE_URLS[r.name];
+                      return (
+                        <div key={i} style={{ border: "0.5px solid var(--color-border-tertiary)", borderRadius: "var(--border-radius-md)", padding: "12px 14px", display: "grid", gridTemplateColumns: "1fr auto", gap: 8, background: "var(--color-background-primary)" }}>
+                          <div>
+                            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4, flexWrap: "wrap" }}>
+                              {url ? (
+                                <a href={url} target="_blank" rel="noopener noreferrer" className="resource-link" style={{ fontWeight: 500, fontSize: 14, color: color.text, textDecoration: "none" }}>
+                                  {r.name}
+                                  <span style={{ marginLeft: 4, fontSize: 11, opacity: 0.7 }}>↗</span>
+                                </a>
+                              ) : (
+                                <span style={{ fontWeight: 500, fontSize: 14, color: "var(--color-text-primary)" }}>{r.name}</span>
+                              )}
+                              <span style={{ fontSize: 10, padding: "1px 6px", borderRadius: 20, background: r.free ? COLORS.korean.bg : COLORS.chinese.bg, color: r.free ? COLORS.korean.text : COLORS.chinese.text }}>{r.free ? "Free" : "Paid"}</span>
+                            </div>
+                            <div style={{ fontSize: 11, color: "var(--color-text-tertiary)", marginBottom: 4 }}>{r.type}</div>
+                            <div style={{ fontSize: 13, color: "var(--color-text-secondary)" }}>{r.best}</div>
+                            <div style={{ fontSize: 12, color: "var(--color-text-tertiary)", marginTop: 4, fontStyle: "italic" }}>{r.note}</div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {activeSection === "Troubleshooter" && (
+                <div>
+                  <div style={{ fontSize: 14, color: "var(--color-text-secondary)", marginBottom: 16, lineHeight: 1.6 }}>When you hit a wall, diagnose before you grind harder. Every plateau has a specific cause and a specific cure.</div>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                    {troubleshooter.map((t, i) => (
+                      <div key={i} style={{ border: "0.5px solid var(--color-border-tertiary)", borderRadius: "var(--border-radius-md)", overflow: "hidden" }}>
+                        <button onClick={() => setOpenTrouble(openTrouble === i ? null : i)} style={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "flex-start", padding: "12px 14px", background: "var(--color-background-primary)", border: "none", cursor: "pointer", textAlign: "left", gap: 8 }}>
+                          <div>
+                            <div style={{ fontSize: 13, fontWeight: 500, color: "var(--color-text-primary)", marginBottom: 2 }}>"{t.symptom}"</div>
+                          </div>
+                          <i className={`ti ${openTrouble === i ? "ti-chevron-up" : "ti-chevron-down"}`} aria-hidden="true" style={{ fontSize: 14, color: "var(--color-text-secondary)", flexShrink: 0, marginTop: 2 }}></i>
+                        </button>
+                        {openTrouble === i && (
+                          <div style={{ padding: "0 14px 12px", borderTop: "0.5px solid var(--color-border-tertiary)" }}>
+                            <div style={{ marginTop: 10, fontSize: 13, color: "var(--color-text-secondary)", marginBottom: 8 }}>
+                              <strong style={{ color: "var(--color-text-primary)" }}>Diagnosis:</strong> {t.diagnosis}
+                            </div>
+                            <div style={{ fontSize: 13, background: color.bg, padding: "10px 12px", borderRadius: "var(--border-radius-md)", borderLeft: `3px solid ${color.border}`, color: "var(--color-text-secondary)" }}>
+                              <strong style={{ color: color.text }}>Prescription:</strong> {t.fix}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div style={{ marginTop: 32, padding: "16px 14px", borderTop: "0.5px solid var(--color-border-tertiary)", textAlign: "center" }}>
+                <div style={{ fontSize: 14, color: "var(--color-text-secondary)", marginBottom: 8 }}>The only remaining variable is consistent, intelligent effort.</div>
+                <div style={{ fontSize: 16, fontWeight: 500, color: "var(--color-text-primary)" }}>시작하세요 · 始めましょう · 开始吧</div>
+                <div style={{ fontSize: 12, color: "var(--color-text-tertiary)", marginTop: 4 }}>Start now.</div>
+              </div>
+            </div>
+          );
+        }
+
+        ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+    </script>
+</body>
+</html>
