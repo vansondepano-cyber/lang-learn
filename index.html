@@ -1,679 +1,1763 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>East Asian Language Master Handbook</title>
-    <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.development.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.development.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/babel-standalone@6.26.0/babel.min.js"></script>
-    <!-- Tabler Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tabler-icons@1.119.0/iconfont/tabler-icons.min.css">
-    <link rel="icon" type="image/png" href="lang_logo.png">
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#1D9E75">
-    
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-            --color-background-primary: #ffffff;
-            --color-background-secondary: #f7f7f8;
-            --color-text-primary: #1a1a1e;
-            --color-text-secondary: #52525b;
-            --color-text-tertiary: #a1a1aa;
-            --color-border-tertiary: #e4e4e7;
-            --border-radius-md: 8px;
-            --border-radius-lg: 12px;
-            background: #fafafa;
-            padding: 16px;
-        }
-        @media (prefers-color-scheme: dark) {
-            body {
-                --color-background-primary: #1a1a1e;
-                --color-background-secondary: #2c2c30;
-                --color-text-primary: #f4f4f5;
-                --color-text-secondary: #a1a1aa;
-                --color-text-tertiary: #71717a;
-                --color-border-tertiary: #3f3f46;
-                background: #121216;
-            }
-        }
-        .resource-link {
-            text-decoration: none;
-            transition: opacity 0.15s;
-        }
-        .resource-link:hover {
-            text-decoration: underline;
-            opacity: 0.8;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>East Asian Language Companion</title>
+<script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.development.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.development.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/babel-standalone@6.26.0/babel.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tabler-icons@1.119.0/iconfont/tabler-icons.min.css">
+<meta name="theme-color" content="#1D9E75">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { -webkit-text-size-adjust:100%; }
+  body {
+    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --bg:#ffffff; --bg2:#f7f7f8; --fg:#1a1a1e; --fg2:#52525b; --fg3:#a1a1aa;
+    --bd:#e4e4e7; --r:8px; --rl:14px;
+    background:#fafafa;
+  }
+  @media (prefers-color-scheme: dark) {
+    body { --bg:#1a1a1e; --bg2:#2c2c30; --fg:#f4f4f5; --fg2:#a1a1aa; --fg3:#71717a; --bd:#3f3f46; background:#121216; }
+  }
+  button, input { font-family: inherit; }
+  .app { display:block; min-height:100vh; padding-bottom:72px; }
+  .side { display:none; }
+  .bottom { display:flex; position:fixed; bottom:0; left:0; right:0; z-index:20; background:var(--bg); border-top:0.5px solid var(--bd); padding:6px 4px calc(6px + env(safe-area-inset-bottom)); }
+  .main { padding:16px; }
+  .inner { max-width:680px; margin:0 auto; }
+  @media (min-width:768px) {
+    .app { display:flex; padding-bottom:0; }
+    .side { display:flex; flex-direction:column; width:216px; flex-shrink:0; border-right:0.5px solid var(--bd); padding:24px 12px; gap:4px; position:sticky; top:0; height:100vh; overflow-y:auto; }
+    .bottom { display:none; }
+    .main { flex:1; padding:28px 32px; min-width:0; }
+    .inner { max-width:760px; margin:0; }
+  }
+  @media (min-width:1100px) { .main { padding:36px 48px; } .inner { max-width:840px; margin:0 auto; } }
+  .nav { display:flex; align-items:center; gap:10px; border:none; background:none; cursor:pointer; border-radius:var(--r); text-align:left; width:100%; }
+  .nav.s { padding:9px 12px; font-size:14px; color:var(--fg2); }
+  .nav.s.on { background:var(--bg2); color:var(--fg); font-weight:500; }
+  .nav.b { flex-direction:column; flex:1; padding:6px 0 4px; font-size:10px; gap:2px; color:var(--fg3); align-items:center; justify-content:center; }
+  .nav.b.on { color:var(--nav-active,#1D9E75); }
+  .nav.b i { font-size:19px; }
+  .cb { width:19px; height:19px; border-radius:5px; flex-shrink:0; cursor:pointer; border:1.5px solid var(--bd); display:flex; align-items:center; justify-content:center; background:var(--bg); }
+  .cb.done { border-color:transparent; }
+  .card { border:0.5px solid var(--bd); border-radius:var(--r); padding:10px 12px; background:var(--bg); }
+  .lnk { text-decoration:none; transition:opacity .15s; }
+  .lnk:hover { text-decoration:underline; opacity:.85; }
+  .btn { border:0.5px solid var(--bd); border-radius:var(--r); padding:8px 14px; background:var(--bg); cursor:pointer; font-size:13px; color:var(--fg); }
+  .pill { font-size:10px; padding:2px 8px; border-radius:20px; font-weight:500; }
+  .sr { position:absolute; width:1px; height:1px; overflow:hidden; }
+  input[type=text], input[type=time] { border:0.5px solid var(--bd); border-radius:var(--r); padding:8px 10px; font-size:13px; background:var(--bg); color:var(--fg); }
+  .grid-cards { display:grid; grid-template-columns:repeat(auto-fit, minmax(150px,1fr)); gap:8px; }
+  .lang-badge { width:30px; height:30px; border-radius:9px; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:600; flex-shrink:0; }
+  .res-item { display:block; border:0.5px solid var(--bd); border-radius:var(--r); padding:10px 12px; background:var(--bg); text-decoration:none; color:inherit; transition:border-color .15s, background .15s; }
+  .res-item:hover { border-color:var(--nav-active, #1D9E75); }
+  .res-cat-title { font-size:11px; text-transform:uppercase; letter-spacing:0.5px; color:var(--fg3); font-weight:600; margin:22px 0 8px; }
+  .res-cat-title:first-of-type { margin-top:0; }
+  .chip { border:1px solid var(--bd); border-radius:20px; padding:5px 12px; font-size:12px; background:var(--bg); color:var(--fg2); cursor:pointer; }
+  .chip.on { background:var(--nav-active, #1D9E75); border-color:var(--nav-active, #1D9E75); color:#fff; }
+  .res-chip { display:inline-flex; align-items:center; gap:4px; padding:4px 10px; border-radius:20px; background:var(--bg2); color:var(--fg); font-size:11px; font-weight:500; text-decoration:none; border:0.5px solid var(--bd); transition:border-color .15s; }
+  .res-chip:hover { border-color:var(--nav-active, #1D9E75); }
+  .res-chip i { font-size:10px; opacity:0.7; }
+</style>
 </head>
 <body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect, useMemo } = React;
 
-<script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./service-worker.js')
-      .then(() => console.log('Service Worker registered'))
-      .catch(err => console.log('SW registration failed:', err));
-  });
+/* ============================================================
+   THEME + FLAT ICON IDENTITY
+   ============================================================ */
+const C = {
+  korean:   { bg:"#E1F5EE", text:"#0F6E56", border:"#1D9E75", accent:"#085041" },
+  japanese: { bg:"#EEEDFE", text:"#3C3489", border:"#534AB7", accent:"#26215C" },
+  chinese:  { bg:"#FAECE7", text:"#993C1D", border:"#D85A30", accent:"#4A1B0C" },
+};
+
+const META = [
+  { id:"korean",   label:"Korean",   glyph:"한", tagline:"SOV foundation",                 color:C.korean   },
+  { id:"japanese", label:"Japanese", glyph:"日", tagline:"Repurpose the SOV brain",         color:C.japanese },
+  { id:"chinese",  label:"Chinese",  glyph:"中", tagline:"Grammar vacation, tonal mountain", color:C.chinese  },
+];
+
+/* ============================================================
+   FULL REFERENCE LIBRARY — external learning materials
+   ============================================================ */
+const RESOURCES = {
+  korean: [
+    { category:"Structured courses", items:[
+      { name:"Talk To Me In Korean", url:"https://talktomeinkorean.com", desc:"The gold standard free curriculum — 10 levels of grammar with audio, plus Iyagi and podcasts.", free:true },
+      { name:"How To Study Korean", url:"https://www.howtostudykorean.com", desc:"Extremely thorough written grammar course with exercises. Verbose but complete.", free:true },
+      { name:"King Sejong Institute (세종학당)", url:"https://www.kingsejonginstitute.org", desc:"Korean government's official free course and textbook program, online and offline.", free:true },
+      { name:"Korean From Zero", url:"https://www.koreanfromzero.com", desc:"Free beginner textbook series with audio, also downloadable as PDF.", free:true },
+      { name:"Go Billy Korean (YouTube)", url:"https://www.youtube.com/@GoBillyKorean", desc:"Reddit's most-recommended free beginner course — 100+ structured video lessons.", free:true },
+      { name:"Coursera — Learn Korean", url:"https://www.coursera.org/learn/learn-korean", desc:"University-level video course from Yonsei. Free to audit, certificate costs.", free:true },
+      { name:"LingoDeer", url:"https://www.lingodeer.com", desc:"Structured app course with unusually good grammar explanations for East Asian languages.", free:false },
+      { name:"Duolingo Korean", url:"https://www.duolingo.com/course/ko/en", desc:"Casual entry point. Good for habit-building, weak on grammar depth.", free:true },
+    ]},
+    { category:"Community & Reddit", items:[
+      { name:"r/Korean", url:"https://www.reddit.com/r/Korean/", desc:"The main subreddit — grammar questions answered seriously, wiki with resource lists.", free:true },
+      { name:"r/BeginnerKorean", url:"https://www.reddit.com/r/BeginnerKorean/", desc:"Gentler than r/Korean. No question is too basic — the place to start if you're at zero.", free:true },
+      { name:"r/WriteStreakKorean", url:"https://www.reddit.com/r/WriteStreakKorean/", desc:"Daily writing streak with native-speaker corrections. The single best output habit.", free:true },
+      { name:"r/Hanguk", url:"https://www.reddit.com/r/Hanguk/", desc:"Korean-language subreddit — read real posts once you can handle native input.", free:true },
+      { name:"r/korea", url:"https://www.reddit.com/r/korea/", desc:"News and daily life in Korea. Comment sections are a gold mine of modern slang.", free:true },
+    ]},
+    { category:"Grammar reference", items:[
+      { name:"Korean Wiki Project", url:"https://koreanwikiproject.com", desc:"Community-maintained grammar and vocabulary reference.", free:true },
+      { name:"Mirinae", url:"https://mirinae.io", desc:"Paste any Korean sentence and get it broken down morpheme by morpheme.", free:true },
+      { name:"국립국어원 Korean Grammar", url:"https://www.korean.go.kr", desc:"The National Institute of Korean Language's official reference.", free:true },
+      { name:"Korean Grammar in Use (book series)", url:"https://www.darakwon.co.kr", desc:"The most-recommended grammar textbook series — Beginner, Intermediate, Advanced.", free:false },
+      { name:"Verbix Korean Conjugation", url:"https://www.verbix.com/languages/korean", desc:"Free interactive verb conjugation tool — see any verb fully conjugated.", free:true },
+    ]},
+    { category:"Dictionaries & tools", items:[
+      { name:"Naver Dictionary", url:"https://dict.naver.com", desc:"The essential Korean dictionary — audio, hanja, example sentences, slang.", free:true },
+      { name:"Daum Dictionary", url:"https://dic.daum.net", desc:"Good alternative with strong hanja and idiom coverage.", free:true },
+      { name:"Papago", url:"https://papago.naver.com", desc:"Naver's translator. Better than Google for Korean nuance.", free:true },
+      { name:"Standard Korean Dictionary (표준국어대사전)", url:"https://stdict.korean.go.kr", desc:"Monolingual dictionary from the National Institute of Korean Language.", free:true },
+      { name:"Wiktionary — Korean", url:"https://en.wiktionary.org/wiki/Category:Korean_lemmas", desc:"Surprisingly deep etymology and conjugation tables.", free:true },
+    ]},
+    { category:"Vocabulary & SRS", items:[
+      { name:"Anki", url:"https://apps.ankiweb.net", desc:"The backbone of serious self-study — spaced repetition flashcards on desktop and mobile.", free:true },
+      { name:"AnkiWeb — Korean decks", url:"https://ankiweb.net/shared/decks/korean", desc:"Shared community decks, including TTMIK-aligned vocabulary sets.", free:true },
+      { name:"Migaku", url:"https://migaku.com", desc:"Reddit-favourite SRS that mines vocabulary from YouTube, Netflix, and web pages.", free:false },
+      { name:"Memrise", url:"https://www.memrise.com", desc:"Pre-made courses with native-speaker video clips.", free:true },
+      { name:"Quizlet", url:"https://quizlet.com", desc:"Lightweight flashcard sets, widely used in university courses.", free:true },
+      { name:"Clozemaster", url:"https://www.clozemaster.com", desc:"Fill-in-the-blank practice using real sentences, from beginner to advanced.", free:true },
+      { name:"Lingory", url:"https://lingory.com", desc:"Beginner-focused app with structured lessons — Reddit-recommended for early vocab.", free:false },
+    ]},
+    { category:"Reading", items:[
+      { name:"두루책방 (Durukitab)", url:"https://durumiai.com/durukitab", desc:"Free leveled children's stories in Korean — the single best free graded reader.", free:true },
+      { name:"Naver Webtoon", url:"https://comic.naver.com", desc:"Free native webtoons. Visual context makes it approachable earlier than prose.", free:true },
+      { name:"Sejong Korean Textbook (PDF)", url:"https://nuri.iksi.or.kr/front/cms/contents/layout2/learningsejong2022/contentsList.do", desc:"Official King Sejong Institute textbook — free PDF download with audio.", free:true },
+      { name:"Hello Jadoo (YouTube)", url:"https://www.youtube.com/@HelloJadoo", desc:"Cute Korean cartoon with both Korean and English subtitles. Good for early listening-reading.", free:true },
+      { name:"Naver Series", url:"https://series.naver.com", desc:"Naver's ebook platform — web novels, essays, and light reading.", free:false },
+      { name:"Ridibooks", url:"https://ridibooks.com", desc:"Korea's largest ebook store. Good for finding native novels once you're ready.", free:false },
+      { name:"Beelinguapp", url:"https://beelinguapp.com", desc:"Parallel-text reading with audio — good bridge between graded and native.", free:true },
+    ]},
+    { category:"Listening", items:[
+      { name:"TTMIK Iyagi", url:"https://talktomeinkorean.com/iyagi", desc:"Natural two-person conversations with full transcripts. Beginner and Intermediate series.", free:true },
+      { name:"TTMIK Podcast", url:"https://talktomeinkorean.com/podcast", desc:"Hundreds of episodes on grammar, culture, and everyday Korean.", free:true },
+      { name:"KoreanClass101", url:"https://www.koreanclass101.com", desc:"Large audio-lesson library by level, plus PDFs.", free:true },
+      { name:"Learn Korean with GO! Billy", url:"https://www.youtube.com/@GoBillyKorean", desc:"Long-running YouTube grammar explainer series.", free:true },
+      { name:"Arirang TV", url:"https://www.arirang.com", desc:"Korean English-language broadcaster — good native listening with subs.", free:true },
+      { name:"SpongeMind", url:"https://www.spongemind.com", desc:"Bilingual podcast about language learning and Korean culture.", free:true },
+    ]},
+    { category:"Speaking & tutoring", items:[
+      { name:"italki", url:"https://www.italki.com", desc:"Book 1-on-1 tutors by the hour. The highest-leverage spend for speaking.", free:false },
+      { name:"Preply", url:"https://preply.com", desc:"Reddit-recommended tutoring marketplace — weekly lessons with homework.", free:false },
+      { name:"HelloTalk", url:"https://www.hellotalk.com", desc:"Language exchange — text, voice, and corrections with native speakers.", free:true },
+      { name:"Tandem", url:"https://tandem.net", desc:"Exchange app with a strong Korean user base.", free:true },
+      { name:"Cafetalk", url:"https://cafetalk.com", desc:"Japanese-run tutoring marketplace, also serves Korean.", free:false },
+      { name:"ConversationExchange", url:"https://conversationexchange.com", desc:"Old-school but free — find a physical or Skype exchange partner.", free:true },
+    ]},
+    { category:"Writing & feedback", items:[
+      { name:"LangCorrect", url:"https://langcorrect.com", desc:"Post a journal entry, get it corrected by native speakers, correct theirs in return.", free:true },
+      { name:"HiNative", url:"https://hinative.com", desc:"Ask native speakers short questions about usage and nuance.", free:true },
+      { name:"r/WriteStreakKorean", url:"https://www.reddit.com/r/WriteStreakKorean/", desc:"Daily writing streak community with native correctors.", free:true },
+      { name:"Journaly", url:"https://journaly.com", desc:"Multilingual journaling platform with inline corrections.", free:true },
+      { name:"italki Notebook", url:"https://www.italki.com/notebooks", desc:"Free written entries corrected by the italki community.", free:true },
+    ]},
+    { category:"News & native media", items:[
+      { name:"Naver News", url:"https://news.naver.com", desc:"Korea's news aggregator — everything in one place.", free:true },
+      { name:"Daum News", url:"https://news.daum.net", desc:"Alternative aggregator with a slightly different editorial mix.", free:true },
+      { name:"KBS News", url:"https://news.kbs.co.kr", desc:"Public broadcaster, clear anchors, good for listening practice.", free:true },
+      { name:"Chosun Ilbo", url:"https://www.chosun.com", desc:"Major conservative daily.", free:true },
+      { name:"JoongAng Ilbo", url:"https://www.joongang.co.kr", desc:"Major centrist daily.", free:true },
+    ]},
+    { category:"Exams", items:[
+      { name:"TOPIK official (NIIED)", url:"https://www.topik.go.kr", desc:"The test itself — registration, schedule, and official materials.", free:true },
+      { name:"TOPIK past papers", url:"https://www.topik.go.kr/usr/cmm/subLocation.do?menuSeq=2110401", desc:"Free downloadable past exams from the official site.", free:true },
+      { name:"TOPIK Guide", url:"https://www.topikguide.com", desc:"English-language guide to the exam format, levels, and strategy.", free:true },
+    ]},
+  ],
+  japanese: [
+    { category:"Structured courses", items:[
+      { name:"Tae Kim's Guide to Learning Japanese", url:"https://guidetojapanese.org/learn/", desc:"Free, complete, no-nonsense grammar foundation. Still the best free starting point.", free:true },
+      { name:"Imabi", url:"https://imabi.org/", desc:"Extensive grammar guide, designed to be read front to back like a textbook. Deeper than Tae Kim.", free:true },
+      { name:"Japanese From Zero", url:"https://www.japanesefromzero.com", desc:"Gentle video + textbook course, with free YouTube lessons for the whole beginner arc.", free:true },
+      { name:"NHK Easy Japanese", url:"https://www.nhk.or.jp/lesson/en/", desc:"Free 48-lesson audio course from NHK with dialogues and PDFs.", free:true },
+      { name:"Erin's Challenge", url:"https://www.erin.jpf.go.jp/en/", desc:"Japan Foundation's free audio-visual course with skits and exercises.", free:true },
+      { name:"Genki (textbook series)", url:"https://genki.japantimes.co.jp", desc:"The standard university textbook — free PDFs are widely available online (search for Genki I & II).", free:true },
+      { name:"Minna no Nihongo", url:"https://www.3anet.co.jp/np/en/", desc:"The other major classroom series — all-Japanese, used widely in Japan. Free PDFs online.", free:true },
+      { name:"Marugoto (Japan Foundation)", url:"https://www.marugoto.org/en/", desc:"JF's communicative course with free audio and downloadable materials.", free:true },
+      { name:"LingoDeer", url:"https://www.lingodeer.com", desc:"App course with the best grammar notes of any Japanese app.", free:false },
+    ]},
+    { category:"Community & Reddit", items:[
+      { name:"r/LearnJapanese", url:"https://www.reddit.com/r/LearnJapanese/", desc:"The main subreddit — huge wiki with starter's guide, grammar, and resource lists.", free:true },
+      { name:"r/Japaneselanguage", url:"https://www.reddit.com/r/Japaneselanguage/", desc:"Broader community — resource recommendations and discussion, less strict than r/LearnJapanese.", free:true },
+      { name:"r/LetsStudyJapanese", url:"https://www.reddit.com/r/LetsStudyJapanese/", desc:"Smaller, study-focused community. Good for accountability and textbook discussion.", free:true },
+    ]},
+    { category:"Grammar reference", items:[
+      { name:"Tae Kim's Guide — Grammar Index", url:"https://guidetojapanese.org/learn/grammar", desc:"Complete grammar walkthrough, searchable by structure.", free:true },
+      { name:"Cure Dolly (YouTube)", url:"https://www.youtube.com/@CureDolly", desc:"Deep structural explanations — reframes Japanese grammar away from English analogies.", free:true },
+      { name:"Bunpro", url:"https://bunpro.jp", desc:"SRS for grammar points with example sentences. JLPT-tagged.", free:true },
+      { name:"Marumori", url:"https://marumori.io", desc:"Grammar + vocab SRS on a single site. Reddit-recommended all-in-one.", free:true },
+      { name:"Maggie Sensei", url:"https://maggiesensei.com", desc:"Friendly, example-heavy explanations of tricky points.", free:true },
+      { name:"Wasabi", url:"https://www.wasabi-jpn.com", desc:"Structured grammar and reading resources from a Japanese teacher.", free:true },
+      { name:"JGram", url:"http://www.jgram.org", desc:"Community grammar dictionary, useful for looking up a specific pattern.", free:true },
+    ]},
+    { category:"Dictionaries & tools", items:[
+      { name:"Jisho.org", url:"https://jisho.org", desc:"The default online Japanese dictionary — kanji, radicals, example sentences.", free:true },
+      { name:"Takoboto", url:"https://takoboto.jp", desc:"Fast dictionary with kanji stroke order and pitch accent indications.", free:true },
+      { name:"Weblio", url:"https://ejje.weblio.jp", desc:"Monolingual and bilingual dictionary with huge example corpora.", free:true },
+      { name:"Yomitan", url:"https://yomitan.wiki", desc:"Browser pop-up dictionary — hover any Japanese word on any site. Essential once reading.", free:true },
+      { name:"Shirabe Jisho", url:"https://apps.apple.com/app/shirabe-jisho/id1005203380", desc:"Popular iOS dictionary app — offline, fast, with kanji study features.", free:true },
+      { name:"Wiktionary — Japanese", url:"https://en.wiktionary.org/wiki/Category:Japanese_lemmas", desc:"Deep etymology and pitch-accent data.", free:true },
+    ]},
+    { category:"Vocabulary & SRS", items:[
+      { name:"WaniKani", url:"https://www.wanikani.com", desc:"The most popular kanji SRS. Paid after level 3, but very effective.", free:false },
+      { name:"Anki", url:"https://apps.ankiweb.net", desc:"Free spaced repetition — pairs with any deck, any level.", free:true },
+      { name:"Core 2k/6k Optimized Deck", url:"https://ankiweb.net/shared/info/1880390099", desc:"The classic vocabulary deck — sentences with native audio.", free:true },
+      { name:"jpdb.io", url:"https://jpdb.io", desc:"Reddit's current favourite — learn vocab and kanji from native media you actually want to consume.", free:true },
+      { name:"Renshuu", url:"https://www.renshuu.org", desc:"Free all-in-one SRS for vocab, kanji, and grammar with gamified drills.", free:true },
+      { name:"Kanji Koohii", url:"https://kanji.koohii.com", desc:"RTK-style kanji SRS — learn kanji through memorable stories.", free:true },
+      { name:"Kanji Damage", url:"http://www.kanjidamage.com", desc:"Rude, memorable kanji mnemonics with a full ordering.", free:true },
+      { name:"Kitsun", url:"https://kitsun.io", desc:"Modern SRS platform with a strong community deck library.", free:false },
+    ]},
+    { category:"Reading", items:[
+      { name:"Tadoku Graded Readers", url:"https://tadoku.org/japanese/en/free-books-2/", desc:"Hundreds of free illustrated graded readers, leveled. The best free reading resource.", free:true },
+      { name:"Tadoku Free PDFs (Reddit)", url:"https://www.reddit.com/r/LearnJapanese/comments/19bitqy/2024_updated_free_tadoku_graded_reader_pdfs_2681/", desc:"Community-compiled PDFs of the full Tadoku reader set — 2,681 pages.", free:true },
+      { name:"NHK Easy News", url:"https://www3.nhk.or.jp/news/easy/", desc:"Real news rewritten for learners, with furigana and audio.", free:true },
+      { name:"Aozora Bunko", url:"https://www.aozora.gr.jp", desc:"Public-domain Japanese literature — free, but native-level. Massive archive.", free:true },
+      { name:"hanabira.org", url:"https://hanabira.org", desc:"Free open-source Japanese reader — works with YouTube subtitles too.", free:true },
+      { name:"Satori Reader", url:"https://www.satorireader.com", desc:"Curated stories with per-word notes, audio, and SRS integration. Worth the subscription.", free:false },
+      { name:"Watanoc", url:"https://watanoc.com", desc:"Free easy-news articles aimed at JLPT N5–N4 readers.", free:true },
+      { name:"YomuJP", url:"https://yomujp.com", desc:"Free short essays organized by JLPT level with audio.", free:true },
+    ]},
+    { category:"Listening", items:[
+      { name:"Nihongo con Teppei", url:"https://nihongoconteppei.com", desc:"The classic beginner podcast — short, natural, entirely in Japanese.", free:true },
+      { name:"JapanesePod101", url:"https://www.japanesepod101.com", desc:"Massive lesson library by level, from absolute beginner to advanced.", free:true },
+      { name:"Comprehensible Japanese", url:"https://cijapanese.com", desc:"Comprehensible-input videos graded by difficulty.", free:true },
+      { name:"Onomappu", url:"https://www.youtube.com/@onomappu", desc:"Friendly, subtitled Japanese listening practice on everyday topics.", free:true },
+      { name:"NHK Radio News", url:"https://www.nhk.or.jp/radionews/", desc:"Short daily news bulletins — good once you're at N3+.", free:true },
+      { name:"Learn Japanese with Noriko", url:"https://www.youtube.com/@JapanesewithNoriko", desc:"Slow, clear, natural Japanese with subtitles.", free:true },
+    ]},
+    { category:"Speaking & tutoring", items:[
+      { name:"italki", url:"https://www.italki.com", desc:"1-on-1 tutors at every price point — the standard choice.", free:false },
+      { name:"Cafetalk", url:"https://cafetalk.com", desc:"Japan-based tutoring marketplace, often cheaper for community tutors.", free:false },
+      { name:"HelloTalk", url:"https://www.hellotalk.com", desc:"Free exchange with native speakers — text, voice, calls.", free:true },
+      { name:"Tandem", url:"https://tandem.net", desc:"Exchange app with strong Japanese participation.", free:true },
+      { name:"ConversationExchange", url:"https://conversationexchange.com", desc:"Free Skype/in-person exchange partner listings.", free:true },
+    ]},
+    { category:"Writing & feedback", items:[
+      { name:"LangCorrect", url:"https://langcorrect.com", desc:"Write a journal entry, get corrected by natives, correct theirs.", free:true },
+      { name:"HiNative", url:"https://hinative.com", desc:"Short questions answered by native speakers.", free:true },
+      { name:"r/WriteStreakJP", url:"https://www.reddit.com/r/WriteStreakJP/", desc:"Daily writing streak with native correctors.", free:true },
+      { name:"Journaly", url:"https://journaly.com", desc:"Multilingual journaling with inline corrections.", free:true },
+      { name:"HelloTalk Moments", url:"https://www.hellotalk.com", desc:"Post short updates and get corrections in the feed.", free:true },
+    ]},
+    { category:"News & native media", items:[
+      { name:"NHK News", url:"https://www3.nhk.or.jp/news/", desc:"Public broadcaster — clear, standard Japanese.", free:true },
+      { name:"Asahi Shimbun", url:"https://www.asahi.com", desc:"Major left-leaning daily.", free:true },
+      { name:"Yomiuri Shimbun", url:"https://www.yomiuri.co.jp", desc:"Major right-leaning daily.", free:true },
+      { name:"Mainichi Shimbun", url:"https://mainichi.jp", desc:"Centrist daily with strong feature writing.", free:true },
+      { name:"Abema TV", url:"https://abema.tv", desc:"Free streaming with a lot of Japanese-only content.", free:true },
+      { name:"Netflix Japan", url:"https://www.netflix.com", desc:"Huge JP catalog — pair with Language Reactor for dual subtitles.", free:false },
+    ]},
+    { category:"Exams", items:[
+      { name:"JLPT Official Site", url:"https://www.jlpt.jp/e/", desc:"Registration, format, and level descriptions.", free:true },
+      { name:"JLPT Official Practice Workbooks", url:"https://www.jlpt.jp/e/samples/", desc:"Free sample questions for each level.", free:true },
+      { name:"JLPT Sensei", url:"https://jlptsensei.com", desc:"Level-by-level vocabulary, grammar, and kanji lists with study plans.", free:true },
+      { name:"J-Test", url:"https://j-test.jp", desc:"Alternative exam, more frequent sittings and a finer level breakdown.", free:false },
+    ]},
+  ],
+  chinese: [
+    { category:"Structured courses", items:[
+      { name:"Chinese Grammar Wiki", url:"https://resources.allsetlearning.com/chinese/grammar/", desc:"The definitive free grammar reference, organized by HSK level and by structure.", free:true },
+      { name:"HelloChinese", url:"https://www.hellochinese.cc", desc:"The best beginner app for Mandarin — speech recognition and handwriting built in.", free:true },
+      { name:"ChinesePod", url:"https://chinesepod.com", desc:"Long-running podcast and lesson library, from Newbie to Advanced.", free:true },
+      { name:"Say Nihao (YouTube)", url:"https://www.youtube.com/@SayNihao", desc:"Full in-depth textbook series for all HSK levels — free. Reddit's top recommendation.", free:true },
+      { name:"Peking University HSK (Coursera)", url:"https://www.coursera.org/learn/hsk-1", desc:"Free to audit — goes all the way up to HSK 6. Official PKU course.", free:true },
+      { name:"Little Fox Chinese", url:"https://www.littlefox.com/en/chinese", desc:"Videos for kids but great for adults — free, high-quality, leveled. Also on YouTube.", free:true },
+      { name:"Ninchanese", url:"https://ninchanese.com", desc:"Gamified course with a strong SRS backbone.", free:true },
+      { name:"Yoyo Chinese", url:"https://yoyochinese.com", desc:"Video course with excellent pronunciation and tone explanations.", free:false },
+      { name:"Pimsleur Mandarin", url:"https://www.pimsleur.com/learn-chinese", desc:"Audio-first method — strong for tones and speaking, light on characters.", free:false },
+      { name:"HSK Standard Course (textbook)", url:"https://www.blcup.com", desc:"The official HSK textbook series — free PDFs widely available on Internet Archive.", free:true },
+    ]},
+    { category:"Community & Reddit", items:[
+      { name:"r/ChineseLanguage", url:"https://www.reddit.com/r/ChineseLanguage/", desc:"The main subreddit — ~150K members. Resource flair, beginner guides, and active Q&A.", free:true },
+      { name:"r/ChineseLanguage Resource Flair", url:"https://www.reddit.com/r/ChineseLanguage/search/?q=flair%3Aresources", desc:"Direct link to all resource-tagged posts in the sub — a constantly updated library.", free:true },
+      { name:"r/ALGhub", url:"https://www.reddit.com/r/ALGhub/", desc:"Automatic Language Growth community — comprehensible input focus. Wiki has Mandarin aural resources.", free:true },
+      { name:"Comprehensible Input Wiki — Chinese", url:"https://comprehensibleinputwiki.org/wiki/Chinese", desc:"Community-maintained list of comprehensible input channels and resources for Mandarin.", free:true },
+    ]},
+    { category:"Grammar reference", items:[
+      { name:"Chinese Grammar Wiki", url:"https://resources.allsetlearning.com/chinese/grammar/", desc:"Thousands of grammar points, each with examples and a level tag.", free:true },
+      { name:"AllSet Learning", url:"https://www.allsetlearning.com", desc:"The company behind the Grammar Wiki — also sells grammar-focused books.", free:true },
+      { name:"Hacking Chinese", url:"https://www.hackingchinese.com", desc:"Olle Linge's long-running blog on methodology, tones, and characters.", free:true },
+      { name:"Chinese Boost — Grammar", url:"https://www.chineseboost.com/grammar/", desc:"Clear, concise explanations of common patterns.", free:true },
+    ]},
+    { category:"Dictionaries & tools", items:[
+      { name:"Pleco", url:"https://www.pleco.com", desc:"The essential Chinese dictionary app — OCR, handwriting, flashcards, documents.", free:true },
+      { name:"MDBG", url:"https://www.mdbg.net", desc:"Fast web dictionary with stroke order and example sentences.", free:true },
+      { name:"YellowBridge", url:"https://www.yellowbridge.com", desc:"Character etymology, stroke order, and a good idiom dictionary.", free:true },
+      { name:"HanziCraft", url:"https://hanzicraft.com", desc:"Deep character decomposition — radicals, components, and mnemonics.", free:true },
+      { name:"Line Dictionary", url:"https://dict.naver.com/linedict", desc:"Naver's Chinese dictionary — clean, fast, good example sentences.", free:true },
+      { name:"Wiktionary — Chinese", url:"https://en.wiktionary.org/wiki/Category:Mandarin_lemmas", desc:"Excellent for etymology and historical phonology.", free:true },
+    ]},
+    { category:"Vocabulary & SRS", items:[
+      { name:"Anki", url:"https://apps.ankiweb.net", desc:"Free spaced repetition — the standard tool for character and vocab retention.", free:true },
+      { name:"AnkiWeb — HSK decks", url:"https://ankiweb.net/shared/decks/hsk", desc:"Community decks organized by HSK level.", free:true },
+      { name:"Skritter", url:"https://skritter.com", desc:"Real-time stroke-order feedback with SRS. The best handwriting tool.", free:false },
+      { name:"TofuLearn", url:"https://tofulearn.com", desc:"Free character-learning SRS — Reddit-recommended, web-only but effective.", free:true },
+      { name:"Clozemaster", url:"https://www.clozemaster.com", desc:"Contextual fill-in-the-blank practice across HSK levels.", free:true },
+      { name:"Memrise", url:"https://www.memrise.com", desc:"Pre-made Mandarin courses with native-speaker video.", free:true },
+      { name:"HanziCraft", url:"https://hanzicraft.com", desc:"Component-based character study — learn characters as assemblies, not strokes.", free:true },
+    ]},
+    { category:"Reading", items:[
+      { name:"Du Chinese", url:"https://www.duchinese.net", desc:"Graded reading with human narration and pop-up dictionary. The best free-to-try reader.", free:true },
+      { name:"The Chairman's Bao", url:"https://www.thechairmansbao.com", desc:"Real news rewritten by HSK level, with audio and vocab lists.", free:true },
+      { name:"Hidden Dragon", url:"https://hidden-dragon.app", desc:"210+ free interactive stories across HSK levels with vocabulary highlighting.", free:true },
+      { name:"Immersi", url:"https://www.immersi.app", desc:"Reddit-recommended graded reading app with HSK-aligned content.", free:true },
+      { name:"Mandarin Companion", url:"https://mandarincompanion.com", desc:"Graded novels — the Chinese equivalent of a page-turner for learners.", free:false },
+      { name:"Readibu", url:"https://www.readibu.com", desc:"Reader app that turns any Chinese web page or novel into a study text.", free:true },
+      { name:"HSK Textbooks on Internet Archive", url:"https://archive.org/search?query=HSK+textbook", desc:"Free PDFs of HSK textbooks and workbooks — grammar points, exercises, audio.", free:true },
+      { name:"ChinaTextbook (GitHub)", url:"https://github.com/TapXWorld/ChinaTextbook", desc:"Open archive of official Chinese school and university textbooks — 41 GB of PDFs.", free:true },
+      { name:"Maayot", url:"https://www.maayot.com", desc:"Daily graded newsletter with reading, listening, and writing exercises.", free:false },
+      { name:"慢速中文 Slow Chinese", url:"https://www.slow-chinese.com", desc:"Podcast/reading hybrid of essays read slowly in Mandarin.", free:true },
+    ]},
+    { category:"Listening", items:[
+      { name:"ChinesePod", url:"https://chinesepod.com", desc:"Hundreds of dialogue-based lessons from Newbie upward.", free:true },
+      { name:"ChinesePod101", url:"https://www.chinesepod101.com", desc:"Large audio-lesson library with PDFs and leveling.", free:true },
+      { name:"Mandarin Corner", url:"https://www.youtube.com/@MandarinCorner", desc:"Street interviews and real conversation, subtitled in Chinese and English.", free:true },
+      { name:"LTL Mandarin School Podcast", url:"https://ltl-school.com/podcast/", desc:"Conversational episodes with transcripts, aimed at learners.", free:true },
+      { name:"故事FM (Story FM)", url:"https://storyfm.cn", desc:"Native first-person storytelling podcast — advanced but rewarding.", free:true },
+      { name:"Slow Chinese Podcast", url:"https://www.slow-chinese.com", desc:"Short essays read slowly, with transcripts.", free:true },
+    ]},
+    { category:"Speaking & tutoring", items:[
+      { name:"italki", url:"https://www.italki.com", desc:"1-on-1 tutors, including many native Mandarin speakers at low rates.", free:false },
+      { name:"HelloTalk", url:"https://www.hellotalk.com", desc:"Free exchange with native speakers — text, voice, and corrections.", free:true },
+      { name:"Tandem", url:"https://tandem.net", desc:"Exchange app with a very large Chinese user base.", free:true },
+      { name:"Preply", url:"https://preply.com", desc:"Tutoring marketplace, useful for structured long-term lessons.", free:false },
+      { name:"ConversationExchange", url:"https://conversationexchange.com", desc:"Free partner listings for Skype or in-person practice.", free:true },
+    ]},
+    { category:"Writing & feedback", items:[
+      { name:"LangCorrect", url:"https://langcorrect.com", desc:"Write, get corrected, correct others in return.", free:true },
+      { name:"HiNative", url:"https://hinative.com", desc:"Ask native speakers about word choice and nuance.", free:true },
+      { name:"r/WriteStreakCN", url:"https://www.reddit.com/r/WriteStreakCN/", desc:"Daily writing streak with native correctors.", free:true },
+      { name:"Journaly", url:"https://journaly.com", desc:"Multilingual journaling with inline corrections.", free:true },
+      { name:"Skritter", url:"https://skritter.com", desc:"Handwriting practice with stroke-order feedback.", free:false },
+    ]},
+    { category:"News & native media", items:[
+      { name:"BBC 中文", url:"https://www.bbc.com/zhongwen/simp", desc:"BBC news in simplified Chinese — clean, standard register.", free:true },
+      { name:"人民网", url:"http://www.people.com.cn", desc:"People's Daily online — official register, useful for formal vocabulary.", free:true },
+      { name:"新华网", url:"http://www.xinhuanet.com", desc:"Xinhua news agency.", free:true },
+      { name:"纽约时报中文网", url:"https://cn.nytimes.com", desc:"NYT's Chinese edition — well-translated international reporting.", free:true },
+      { name:"澎湃新闻", url:"https://www.thepaper.cn", desc:"Popular independent current-affairs outlet.", free:true },
+      { name:"Bilibili", url:"https://www.bilibili.com", desc:"China's YouTube — huge range of native content, much with subtitles.", free:true },
+    ]},
+    { category:"Exams", items:[
+      { name:"HSK Official (Chinese Testing)", url:"https://www.chinesetest.cn", desc:"Registration, format, level descriptions, and score lookup.", free:true },
+      { name:"HSK Past Papers", url:"https://www.chinesetest.cn/godownload.do", desc:"Free downloadable past exams, including listening audio.", free:true },
+      { name:"HSK Academy", url:"https://www.hsk.academy", desc:"Free vocabulary lists and practice organized by HSK level.", free:true },
+    ]},
+  ],
+};
+
+const SHARED_RESOURCES = [
+  { name:"Anki", url:"https://apps.ankiweb.net", desc:"Spaced repetition — the backbone of serious self-study. Works for all three languages." },
+  { name:"Language Reactor", url:"https://www.languagereactor.com", desc:"Dual subtitles and hover dictionary on Netflix and YouTube." },
+  { name:"LingQ", url:"https://www.lingq.com", desc:"Read and listen with instant lookups and known-word tracking." },
+  { name:"Clozemaster", url:"https://www.clozemaster.com", desc:"Fill-in-the-blank practice using real sentences. All three languages." },
+  { name:"Forvo", url:"https://forvo.com", desc:"Native-speaker pronunciations for any word." },
+  { name:"Migaku", url:"https://migaku.com", desc:"Browser extension for mining vocabulary from streaming video." },
+  { name:"Readlang", url:"https://readlang.com", desc:"Web reader with click-to-translate and flashcard export." },
+  { name:"HelloTalk", url:"https://www.hellotalk.com", desc:"Language exchange with native speakers — text, voice, corrections." },
+  { name:"italki", url:"https://www.italki.com", desc:"Book 1-on-1 tutors by the hour in any of the three languages." },
+  { name:"Tandem", url:"https://tandem.net", desc:"Exchange app — the main alternative to HelloTalk." },
+  { name:"LangCorrect", url:"https://langcorrect.com", desc:"Get your writing corrected by native speakers, correct theirs in return." },
+  { name:"HiNative", url:"https://hinative.com", desc:"Ask native speakers short questions about usage and nuance." },
+  { name:"Journaly", url:"https://journaly.com", desc:"Multilingual journaling with inline corrections." },
+  { name:"Speechling", url:"https://speechling.com", desc:"Pronunciation coaching and shadowing drills." },
+  { name:"r/languagelearning", url:"https://www.reddit.com/r/languagelearning/", desc:"Reddit's main language-learning hub — general methodology and cross-language discussion." },
+  { name:"r/languagelearning Wiki", url:"https://www.reddit.com/r/languagelearning/wiki/index/", desc:"Community-maintained wiki with resource lists for every language, including all three here." },
+  { name:"All Language Resources", url:"https://www.alllanguageresources.com", desc:"Reddit-recommended review site — like Consumer Reports for language learning tools." },
+  { name:"FREEMEDIAHECKYEAH Language Wiki", url:"https://www.reddit.com/r/FREEMEDIAHECKYEAH/wiki/tools-misc#wiki_.25B7_language_learning", desc:"Massive community-maintained index of free language-learning tools, books, and sites." },
+];
+
+/* ============================================================
+   ROADMAP — phase-by-phase plan with embedded links
+   ============================================================ */
+const ROADMAP = {
+  korean: [
+    {
+      id:"p1", phase:"Phase 1", title:"Foundation", period:"Months 1–3",
+      goal:"Build the script and pronunciation base, acquire 300–600 words, and get to simple sentence production.",
+      blocks:[
+        { heading:"Weeks 1–2 — Hangul, exclusively",
+          body:"Do not use romanization. Read street signs, song lyrics, actor names. Sound everything out loud. By the end of week two you should be able to read any Korean word aloud even if you don't know what it means.",
+          links:[
+            { label:"Talk To Me In Korean — Hangul lessons", url:"https://talktomeinkorean.com" },
+            { label:"How To Study Korean", url:"https://www.howtostudykorean.com" },
+          ]},
+        { heading:"Weeks 3–8 — First 500 words and SOV sentence structure",
+          body:"Set up Anki with 10–15 new cards per day, maximum. The temptation is to do 50. Don't — the review load compounds and you'll burn out by week six. A reasonable config: 10–20 new cards/day, graduating interval 3–4 days, max interval 120–180 days. Go Billy Korean's 100-video beginner course is a free structured alternative.",
+          links:[
+            { label:"Anki", url:"https://apps.ankiweb.net" },
+            { label:"Go Billy Korean (YouTube)", url:"https://www.youtube.com/@GoBillyKorean" },
+            { label:"Naver Dictionary", url:"https://dict.naver.com" },
+          ]},
+        { heading:"Weeks 9–12 — First output",
+          body:"Write five sentences a day about your actual day. Post them to LangCorrect or r/WriteStreakKorean for native corrections. Start TTMIK's Level 1 grammar course in parallel. The goal is not accuracy; it's the habit of producing Korean without translating from English in your head first.",
+          links:[
+            { label:"LangCorrect", url:"https://langcorrect.com" },
+            { label:"r/WriteStreakKorean", url:"https://www.reddit.com/r/WriteStreakKorean/" },
+          ]},
+      ],
+    },
+    {
+      id:"p2", phase:"Phase 2", title:"Core Skills", period:"Months 4–12",
+      goal:"1,000–2,500 words, working command of core grammar, first real media consumption, regular output practice.",
+      blocks:[
+        { heading:"Grammar focus — connectors, comparison, causation",
+          body:"Connectors (그리고, 그래서, 지만), comparisons (보다), cause and effect (아/어서 vs 때문에). By month 9 you should be comfortable with 것 같다 (seems like) and basic reported speech (다고 하다). Grammar at this stage should come from things you encountered in input, not from a textbook chapter you decided to work through.",
+          links:[
+            { label:"Talk To Me In Korean", url:"https://talktomeinkorean.com" },
+            { label:"Mirinae (sentence analyzer)", url:"https://mirinae.io" },
+            { label:"Verbix Conjugator", url:"https://www.verbix.com/languages/korean" },
+          ]},
+        { heading:"Reading — Durukitab → Naver Webtoon",
+          body:"Webtoons are visual, free, and the dialogue is colloquial. Read one episode a day with Naver Dictionary open in another tab. The goal is volume, not perfection.",
+          links:[
+            { label:"두루책방 (Durukitab)", url:"https://durumiai.com/durukitab" },
+            { label:"Naver Webtoon", url:"https://comic.naver.com" },
+            { label:"Hello Jadoo (YouTube)", url:"https://www.youtube.com/@HelloJadoo" },
+          ]},
+        { heading:"Listening — TTMIK Iyagi",
+          body:"The single best intermediate listening resource — two native speakers having natural conversations with full transcripts. Listen once without the transcript, then again with it, then shadow the parts you missed. Reddit also recommends studying podcast transcripts and adding vocab to Migaku as you go.",
+          links:[
+            { label:"TTMIK Iyagi", url:"https://talktomeinkorean.com/iyagi" },
+            { label:"TTMIK Podcast", url:"https://talktomeinkorean.com/podcast" },
+            { label:"Migaku", url:"https://migaku.com" },
+          ]},
+        { heading:"Speaking — italki from month 6",
+          body:"The goal at this stage is fluency over accuracy — you want to reach the point where you can produce a sentence without planning it word by word. Before month 6, HelloTalk voice messages are enough. Reddit users frequently pair weekly Preply or italki lessons with homework.",
+          links:[
+            { label:"italki", url:"https://www.italki.com" },
+            { label:"Preply", url:"https://preply.com" },
+            { label:"HelloTalk", url:"https://www.hellotalk.com" },
+          ]},
+        { heading:"Writing — weekly 200–300 word journals",
+          body:"Native speakers will correct them on LangCorrect or r/WriteStreakKorean. Read the corrections carefully and note recurring error patterns. If you see the same mistake three times, that's the next thing to study explicitly.",
+          links:[
+            { label:"LangCorrect", url:"https://langcorrect.com" },
+            { label:"r/WriteStreakKorean", url:"https://www.reddit.com/r/WriteStreakKorean/" },
+          ]},
+      ],
+    },
+    {
+      id:"p3", phase:"Phase 3", title:"Intermediate", period:"Year 2",
+      goal:"Native media with decreasing support, 4,000–5,500 words, first formal exam prep, comfortable unscripted output.",
+      blocks:[
+        { heading:"Months 13–15 — Drama with Korean subtitles",
+          body:"First drama with Korean subtitles (not English). Viki and Netflix both work. Weekly italki conversation. 500-word journal entries.",
+          links:[
+            { label:"Viki", url:"https://www.viki.com" },
+            { label:"Netflix", url:"https://www.netflix.com" },
+          ]},
+        { heading:"Months 16–18 — First graded novel cover to cover",
+          body:"Ridibooks has Korean graded readers and light novels. Daily Naver News, simple articles. Finishing one book matters more than sampling ten.",
+          links:[
+            { label:"Ridibooks", url:"https://ridibooks.com" },
+            { label:"Naver News", url:"https://news.naver.com" },
+          ]},
+        { heading:"Months 19–21 — Formal TOPIK II preparation",
+          body:"The exam has a specific format — listening, reading, writing — and preparation means timed mock tests, not just more study. A consistent 2–3 month structured prep period is standard before sitting the exam.",
+          links:[
+            { label:"TOPIK official", url:"https://www.topik.go.kr" },
+            { label:"TOPIK past papers", url:"https://www.topik.go.kr/usr/cmm/subLocation.do?menuSeq=2110401" },
+          ]},
+        { heading:"Months 22–24 — Native content becomes the default",
+          body:"One ungraded novel every two months. Daily native news. 1,000-word essay, tutor-reviewed.",
+          links:[]},
+      ],
+    },
+    {
+      id:"p4", phase:"Phase 4", title:"Advanced & Maintenance", period:"Year 3+",
+      goal:"Native-speed comprehension, domain specialization, and a sustainable maintenance routine.",
+      blocks:[
+        { heading:"Months 25–30 — Pick a specialty and go deep",
+          body:"Business, tech, academic, literature — choose one. Daily news in that domain. Monthly writing reviewed by a tutor. Podcasts at 1.25x speed. Weekly hour-long conversation.",
+          links:[]},
+        { heading:"Months 31–36 — Consolidate and give back",
+          body:"Advanced TOPIK II preparation if needed. Academic-register writing drills. By month 36 you should be able to explain something to another learner, in Korean.",
+          links:[]},
+        { heading:"Maintenance",
+          body:"Daily: 15–20 minutes — Anki reviews plus one article or podcast episode. Weekly: one conversation session and one film or episode. Yearly: at least two native novels. Consider a new language.",
+          links:[]},
+      ],
+    },
+  ],
+  japanese: [
+    {
+      id:"p1", phase:"Phase 1", title:"Foundation", period:"Months 1–3",
+      goal:"Both kana scripts, first 100 kanji, 300–600 words, simple sentence production.",
+      blocks:[
+        { heading:"Weeks 1–3 — Hiragana and katakana, both scripts, no kanji yet",
+          body:"This is non-negotiable and takes longer than Hangul. Use Tofugu's hiragana and katakana guides — they are the best free mnemonics available. Practice writing by hand, not just recognition. By week three you should be able to sound out any kana word.",
+          links:[
+            { label:"Tofugu — Hiragana", url:"https://www.tofugu.com/japanese/learn-hiragana/" },
+            { label:"Tofugu — Katakana", url:"https://www.tofugu.com/japanese/learn-katakana/" },
+          ]},
+        { heading:"Weeks 4–8 — First 100 kanji and basic sentence patterns",
+          body:"Start WaniKani if you're willing to pay after level 3; it's the most efficient kanji acquisition system available. If not, Anki with a Core 2k/6k deck works. For grammar, Tae Kim's Guide is the clearest free foundation. Work through it slowly — one section per day, with the example sentences written out by hand.",
+          links:[
+            { label:"WaniKani", url:"https://www.wanikani.com" },
+            { label:"Anki Core 2k/6k Deck", url:"https://ankiweb.net/shared/info/1880390099" },
+            { label:"Tae Kim's Guide", url:"https://guidetojapanese.org" },
+          ]},
+        { heading:"Weeks 9–12 — First graded reading",
+          body:"Start Tadoku free graded readers at level 0. These are free, illustrated, and leveled. The goal is volume — read 10 short books rather than agonizing over one. Pair this with Nihongo con Teppei starting around week 8 for beginner listening.",
+          links:[
+            { label:"Tadoku Graded Readers", url:"https://tadoku.org/japanese/en/free-books-2/" },
+            { label:"Nihongo con Teppei", url:"https://nihongoconteppei.com" },
+            { label:"Jisho (dictionary)", url:"https://jisho.org" },
+          ]},
+      ],
+    },
+    {
+      id:"p2", phase:"Phase 2", title:"Core Skills", period:"Months 4–12",
+      goal:"1,000–2,200 words, 300–500 kanji, te-form and conditionals, first real media.",
+      blocks:[
+        { heading:"Grammar focus — te-form, conditionals, potential",
+          body:"Te-form requests (てください), prohibition (てはいけません), comparisons (より/ほど), conditionals (なら/たら), and by month 10 the potential form. Bunpro is useful here — it's an SRS specifically for grammar points, tagged by JLPT level. Reddit also recommends Imabi for deeper grammar study.",
+          links:[
+            { label:"Bunpro", url:"https://bunpro.jp" },
+            { label:"Imabi", url:"https://imabi.org/" },
+            { label:"Tae Kim's Guide", url:"https://guidetojapanese.org" },
+            { label:"Cure Dolly (YouTube)", url:"https://www.youtube.com/@CureDolly" },
+          ]},
+        { heading:"Kanji — target 300–500 by month 12",
+          body:"WaniKani handles this if you keep up with reviews. If you're using Anki, the Core 2k/6k deck builds kanji recognition through vocabulary. Reddit's current favourite is jpdb.io, which teaches kanji from media you actually want to consume.",
+          links:[
+            { label:"WaniKani", url:"https://www.wanikani.com" },
+            { label:"jpdb.io", url:"https://jpdb.io" },
+            { label:"Kanji Koohii", url:"https://kanji.koohii.com" },
+          ]},
+        { heading:"Reading — Tadoku levels 2–4 → NHK Easy News",
+          body:"NHK Easy is real news rewritten for learners with furigana and audio. This is where Japanese starts to feel like a real language rather than a study project. Aozora Bunko has free public-domain literature once you're ready.",
+          links:[
+            { label:"Tadoku Graded Readers", url:"https://tadoku.org/japanese/en/free-books-2/" },
+            { label:"NHK Easy News", url:"https://www3.nhk.or.jp/news/easy/" },
+            { label:"Aozora Bunko", url:"https://www.aozora.gr.jp" },
+          ]},
+        { heading:"Listening — volume is the whole point",
+          body:"Nihongo con Teppei becomes comprehensible around month 6. Comprehensible Japanese offers graded video input. The key is 30 minutes daily, even if you don't understand everything — you acquire language by understanding messages slightly beyond your current level, not by memorizing rules.",
+          links:[
+            { label:"Nihongo con Teppei", url:"https://nihongoconteppei.com" },
+            { label:"Comprehensible Japanese", url:"https://cijapanese.com" },
+            { label:"JapanesePod101", url:"https://www.japanesepod101.com" },
+          ]},
+        { heading:"Speaking — italki or Cafetalk weekly from month 8",
+          body:"Shadowing is particularly useful for Japanese because pitch accent and mora timing are hard to acquire from reading alone. Shadowing means listening to native audio and repeating it within about 150 milliseconds — speaking with the recording rather than after it.",
+          links:[
+            { label:"italki", url:"https://www.italki.com" },
+            { label:"Cafetalk", url:"https://cafetalk.com" },
+          ]},
+      ],
+    },
+    {
+      id:"p3", phase:"Phase 3", title:"Intermediate", period:"Year 2",
+      goal:"N2-level grammar, 1,000+ kanji, first full novel, native drama without subtitles.",
+      blocks:[
+        { heading:"Months 13–15 — N2 grammar and kanji volume",
+          body:"One grammar-focused textbook, e.g. an N2 prep book. One anime episode a week without subtitles. Weekly italki conversation.",
+          links:[
+            { label:"Bunpro", url:"https://bunpro.jp" },
+            { label:"JLPT Sensei — N2 lists", url:"https://jlptsensei.com" },
+          ]},
+        { heading:"Months 16–18 — First full novel",
+          body:"One novel per ~6 weeks with a dictionary at hand. Satori Reader is worth the subscription here — curated stories with per-word notes, audio, and SRS integration. Daily NHK Easy News. hanabira.org is a free open-source reader that works with YouTube subtitles.",
+          links:[
+            { label:"Satori Reader", url:"https://www.satorireader.com" },
+            { label:"hanabira.org", url:"https://hanabira.org" },
+            { label:"NHK Easy News", url:"https://www3.nhk.or.jp/news/easy/" },
+          ]},
+        { heading:"Months 19–21 — Formal JLPT N2 preparation",
+          body:"A standard prep cycle is three phases: foundation (2–3 months), focused drilling on the weakest section (1–2 months), and full mock exams (1 month). Keigo in real conversational contexts — not just recognition but production.",
+          links:[
+            { label:"JLPT Official", url:"https://www.jlpt.jp/e/" },
+            { label:"JLPT sample questions", url:"https://www.jlpt.jp/e/samples/" },
+          ]},
+        { heading:"Months 22–24 — Native drama, no subtitles at all",
+          body:"Weekly conversation practice. Begin light N1 grammar exposure.",
+          links:[]},
+      ],
+    },
+    {
+      id:"p4", phase:"Phase 4", title:"Advanced & Maintenance", period:"Year 3+",
+      goal:"N1-level comprehension, native literature, keigo in professional contexts.",
+      blocks:[
+        { heading:"Months 25–30 — N1 grammar and a much larger kanji set",
+          body:"Target 1,500–2,000 kanji. Daily NHK news. Weekly writing practice. Keigo in business-style contexts.",
+          links:[
+            { label:"NHK News", url:"https://www3.nhk.or.jp/news/" },
+          ]},
+        { heading:"Months 31–36 — Formal JLPT N1 preparation",
+          body:"Regular mock tests. Native literature exposure. Domain-specific vocabulary.",
+          links:[
+            { label:"JLPT Official", url:"https://www.jlpt.jp/e/" },
+          ]},
+        { heading:"Maintenance",
+          body:"Daily: 15–20 minutes — Anki reviews plus one NHK Easy article. Weekly: one conversation session and one episode with Japanese subtitles. Yearly: two to three novels. Consider a new language.",
+          links:[]},
+      ],
+    },
+  ],
+  chinese: [
+    {
+      id:"p1", phase:"Phase 1", title:"Foundation", period:"Months 1–3",
+      goal:"Tones and pinyin solid, first 200–300 characters, basic sentence patterns.",
+      blocks:[
+        { heading:"Weeks 1–3 — Tones and pinyin, exclusively",
+          body:"Do not learn characters yet. This is the single most important decision in Chinese learning. Tones are not a detail you add later; they are the language. A native speaker who hears you say mā when you meant mà will understand you as saying 'mother' instead of 'scold.' Spend the first three weeks doing tone drills, shadowing native audio, and recording yourself to compare.",
+          links:[
+            { label:"HelloChinese (tone module)", url:"https://www.hellochinese.cc" },
+            { label:"Pleco", url:"https://www.pleco.com" },
+          ]},
+        { heading:"Weeks 4–8 — First 200 characters and basic sentence patterns",
+          body:"Start character learning with HanziCraft to understand characters as assemblies of components rather than stroke sequences. Use Anki with an HSK 1–2 deck. Begin the Chinese Grammar Wiki for 是 / 有 / 在 and 吗 questions. Do not try to learn 了 yet — it will confuse you if you map it onto English past tense.",
+          links:[
+            { label:"HanziCraft", url:"https://hanzicraft.com" },
+            { label:"Anki HSK decks", url:"https://ankiweb.net/shared/decks/hsk" },
+            { label:"Chinese Grammar Wiki", url:"https://resources.allsetlearning.com/chinese/grammar/" },
+          ]},
+        { heading:"Weeks 9–12 — First graded reading and listening",
+          body:"Du Chinese has free HSK 1–2 stories with human narration and pop-up dictionary. Hidden Dragon has 210+ free interactive stories across HSK levels. For listening, start ChinesePod Newbie lessons. Reddit also recommends Say Nihao's YouTube channel for full textbook walkthroughs, and Little Fox Chinese for video-based learning.",
+          links:[
+            { label:"Du Chinese", url:"https://www.duchinese.net" },
+            { label:"Hidden Dragon", url:"https://hidden-dragon.app" },
+            { label:"Say Nihao (YouTube)", url:"https://www.youtube.com/@SayNihao" },
+            { label:"Little Fox Chinese", url:"https://www.littlefox.com/en/chinese" },
+            { label:"ChinesePod", url:"https://chinesepod.com" },
+          ]},
+      ],
+    },
+    {
+      id:"p2", phase:"Phase 2", title:"Core Skills", period:"Months 4–12",
+      goal:"800–1,200 characters, completion 了, complements, first real reading and listening.",
+      blocks:[
+        { heading:"Grammar focus — 了 as completion, not past tense",
+          body:"了 as completion marker (not past tense), 比 comparisons, result complements (看完, 听懂), directional complements. The Chinese Grammar Wiki is your primary reference. Do not rely on textbook explanations that frame 了 as 'past tense' — it isn't, and unlearning that framing later is painful.",
+          links:[
+            { label:"Chinese Grammar Wiki", url:"https://resources.allsetlearning.com/chinese/grammar/" },
+            { label:"Hacking Chinese", url:"https://www.hackingchinese.com" },
+          ]},
+        { heading:"Characters — target 800–1,200 by month 12",
+          body:"Skritter is worth the subscription if handwriting matters to you. If you only need reading, Anki with an HSK deck is sufficient. Reddit also recommends TofuLearn as a free character-learning SRS. Learn characters as components, not stroke sequences — HanziCraft and YellowBridge both help here.",
+          links:[
+            { label:"Skritter", url:"https://skritter.com" },
+            { label:"TofuLearn", url:"https://tofulearn.com" },
+            { label:"HanziCraft", url:"https://hanzicraft.com" },
+            { label:"YellowBridge", url:"https://www.yellowbridge.com" },
+          ]},
+        { heading:"Reading — Du Chinese → The Chairman's Bao",
+          body:"Du Chinese at HSK 3 level, then The Chairman's Bao for real news rewritten by level. The Hidden Dragon app offers free stories across HSK levels. HSK textbooks and workbooks are available as free PDFs on Internet Archive — they include grammar points and audio.",
+          links:[
+            { label:"Du Chinese", url:"https://www.duchinese.net" },
+            { label:"The Chairman's Bao", url:"https://www.thechairmansbao.com" },
+            { label:"HSK Textbooks (Internet Archive)", url:"https://archive.org/search?query=HSK+textbook" },
+          ]},
+        { heading:"Listening — tones in connected speech",
+          body:"The listening challenge in Chinese is not vocabulary but tone recognition in connected speech — native speakers neutralize tones in ways that textbook audio doesn't prepare you for. ChinesePod Intermediate and Mandarin Corner's dual-subtitled street interviews are both good for this. Searching YouTube for 'mandarin comprehensible input' also yields a lot of graded video.",
+          links:[
+            { label:"ChinesePod", url:"https://chinesepod.com" },
+            { label:"Mandarin Corner", url:"https://www.youtube.com/@MandarinCorner" },
+          ]},
+        { heading:"Speaking — italki weekly from month 8",
+          body:"Tones will still be your weakest link in spontaneous speech. Record yourself in conversations and listen back. You will hear tone errors you didn't notice while speaking.",
+          links:[
+            { label:"italki", url:"https://www.italki.com" },
+          ]},
+      ],
+    },
+    {
+      id:"p3", phase:"Phase 3", title:"Intermediate", period:"Year 2",
+      goal:"HSK 5 grammar, 2,700+ words, native media routine, formal exam prep.",
+      blocks:[
+        { heading:"Months 13–15 — HSK 5 grammar with a real vocabulary push",
+          body:"An HSK 5 textbook. Advanced-tier graded reading. Weekly italki conversation. Peking University's HSK courses on Coursera go up to HSK 6 and are free to audit.",
+          links:[
+            { label:"Chinese Grammar Wiki", url:"https://resources.allsetlearning.com/chinese/grammar/" },
+            { label:"Peking University HSK (Coursera)", url:"https://www.coursera.org/learn/hsk-1" },
+            { label:"HSK Academy", url:"https://www.hsk.academy" },
+          ]},
+        { heading:"Months 16–18 — Native media becomes routine",
+          body:"One drama every two weeks. Graded news at a higher level. Bilibili for native content with Chinese subtitles. Reddit users swear by Bilibili as an underrated resource for real-world input.",
+          links:[
+            { label:"Bilibili", url:"https://www.bilibili.com" },
+            { label:"The Chairman's Bao", url:"https://www.thechairmansbao.com" },
+          ]},
+        { heading:"Months 19–21 — Formal HSK 5 preparation",
+          body:"Timed mock tests. The HSK 5 writing section requires producing a short essay from picture prompts — a specific skill that needs drilling, not just general writing practice. A 24-week balanced plan at 5–9 hours per week is realistic for HSK 5 if you've completed HSK 4.",
+          links:[
+            { label:"HSK Official", url:"https://www.chinesetest.cn" },
+            { label:"HSK past papers", url:"https://www.chinesetest.cn/godownload.do" },
+          ]},
+        { heading:"Months 22–24 — HSK 6 exposure begins",
+          body:"HSK 6 vocabulary. Native podcast daily. 故事FM is excellent for advanced listening — native first-person storytelling.",
+          links:[
+            { label:"故事FM", url:"https://storyfm.cn" },
+          ]},
+      ],
+    },
+    {
+      id:"p4", phase:"Phase 4", title:"Advanced & Maintenance", period:"Year 3+",
+      goal:"HSK 6, formal register, working set of chengyu, native literature.",
+      blocks:[
+        { heading:"Months 25–30 — HSK 6 and formal register",
+          body:"HSK 6 grammar. Business-Chinese exposure. A working set of chengyu (idioms) — not a memorized list, but 50–100 you can actually deploy.",
+          links:[]},
+        { heading:"Months 31–36 — Formal HSK 6 preparation",
+          body:"Regular mock tests. Native literature exposure. Longer essays, tutor-reviewed.",
+          links:[
+            { label:"HSK Official", url:"https://www.chinesetest.cn" },
+          ]},
+        { heading:"Maintenance",
+          body:"Daily: 15–20 minutes — Anki reviews plus one article. Weekly: one conversation session and one drama episode. Yearly: two to three books. Consider a new language.",
+          links:[]},
+      ],
+    },
+  ],
+};
+
+const BRIDGE = [
+  { t:"은/는 vs 이/가, and は vs が, work almost the same way", d:"Korean's topic/subject particle distinction maps closely onto Japanese は/が. Learn the logic once and you get most of it in the other language for free. Chinese has no direct equivalent — don't expect the same shortcut there.", tags:["korean","japanese"] },
+  { t:"Korean 았/었 and Japanese た mark tense. Chinese 了 marks completion, not tense.", d:"This is a very common error for Korean/Japanese speakers learning Chinese: 了 isn't 'past tense' — a sentence can describe yesterday with no 了 at all if it's not about completion. Don't map it 1:1 onto what you know.", tags:["korean","japanese","chinese"] },
+  { t:"Word order: SOV vs SOV vs SVO", d:"Korean and Japanese are both verb-final, which is why their grammar transfers so well to each other. Chinese is closer to English word order — the 'grammar vacation' people mention for Chinese is real, but tones tend to eat back the time saved.", tags:["korean","japanese","chinese"] },
+  { t:"Hanja, Kanji, and Hanzi share a real core of roots", d:"A meaningful share of everyday characters overlap in shape and meaning across the three systems (even where pronunciation differs completely). Learning common roots once pays off across all three.", tags:["korean","japanese","chinese"] },
+  { t:"Politeness lives in different places grammatically", d:"Korean encodes politeness mainly in verb endings. Japanese uses both endings and a separate keigo vocabulary. Chinese handles it mostly through word choice (您 vs 你) rather than grammar. Don't assume a strategy that works in one transfers directly.", tags:["korean","japanese","chinese"] },
+  { t:"Counters exist in all three, with different strictness", d:"Japanese counters are the least forgiving (一本 vs 一枚 vs 一台 genuinely matter). Korean is more relaxed. Chinese's 个 works as an acceptable fallback in casual speech far more often. Learning Japanese counters first tends to make the other two feel easy by comparison.", tags:["korean","japanese","chinese"] },
+];
+
+const EXAM_PREP_STEPS = [
+  { step:"1. Diagnostic", body:"Take a past paper cold. Score it. Identify which section is weakest. This is not a study session — it's a measurement." },
+  { step:"2. Foundation (6–8 weeks)", body:"Vocabulary and grammar targeting the exam's level. Daily Anki with exam-specific decks. Cover the grammar points that appear most frequently in past papers." },
+  { step:"3. Focused drilling (4–8 weeks)", body:"Focused work on the weakest section. If listening is weakest, daily dictation. If writing is weakest, timed essay practice with corrections." },
+  { step:"4. Mock exams (2–4 weeks)", body:"Full timed papers under exam conditions. Review every error, not just the ones you got wrong by guessing." },
+];
+
+const EXAM_LINKS = [
+  { label:"TOPIK past papers", url:"https://www.topik.go.kr/usr/cmm/subLocation.do?menuSeq=2110401" },
+  { label:"JLPT samples", url:"https://www.jlpt.jp/e/samples/" },
+  { label:"HSK past papers", url:"https://www.chinesetest.cn/godownload.do" },
+];
+
+const WEEKLY_RHYTHM = [
+  { label:"Three days a week", body:"New input. A lesson, an article, a podcast episode with transcript." },
+  { label:"Two days a week", body:"Output. Journal entries, voice messages, conversation sessions." },
+  { label:"One day a week", body:"Review only. No new material. Anki, reread old corrections, revisit content that was hard three months ago." },
+  { label:"One day a week", body:"Immersion without study. Watch something, listen to something, read something — without looking things up." },
+];
+
+/* ============================================================
+   CURRICULUM REFERENCE DATA
+   ============================================================ */
+const yearData = {
+  korean: {
+    vocab: [300,600,1000,1300,1600,2000,2500,3000,3500,4000,4500,5000],
+    grammar: [
+      { phase:"Months 1–3", level:"TOPIK I Lv.1", points:["이다 / 아니다 (to be / not be)","Topic 은/는 vs Subject 이/가","Questions, Negatives","Past Tense + Future","고 싶다 (want to)"] },
+      { phase:"Months 4–6", level:"TOPIK I Lv.2", points:["Connectors: 그리고, 그래서, 지만","Comparisons: 보다","Cause & Effect: 아/어서 vs 때문에"] },
+      { phase:"Months 7–12", level:"Early TOPIK II", points:["면서 (simultaneous)","는데/은데 (background/contrast)","것 같다 (seems like)","다고 하다 (reported speech)"] },
+    ],
+    culture: [
+      { period:"Months 1–3", topic:"Speech Levels", detail:"Polite informal (-요) is your default safe mode; formal polite (-습니다) for presentations and service." },
+      { period:"Months 4–6", topic:"Hierarchy in Action", detail:"Age and status are the invisible grammar of Korean society — 선배/후배 and sibling terms." },
+      { period:"Months 7–9", topic:"Group Concepts", detail:"눈치 (reading the room), 정 (deep affection over time), 체면 (face)." },
+      { period:"Months 10–12", topic:"Indirect Communication", detail:"좀 그렇다 can mean a hard no. Direct 'no' can be seen as rude." },
+    ],
+  },
+  japanese: {
+    vocab: [300,600,1000,1300,1700,2200,2700,3200,3700,4200,4700,5500],
+    grammar: [
+      { phase:"Months 1–3", level:"JLPT N5", points:["です/だ (to be)","は vs が","を, に/で, か","Past tense, Te-form"] },
+      { phase:"Months 4–6", level:"JLPT N4", points:["Requests -てください","Prohibition -てはいけません","Comparisons より/ほど","Conditionals なら/たら"] },
+      { phase:"Months 7–12", level:"JLPT N3", points:["Potential form","Passive & Causative","Keigo — Sonkeigo, Kenjougo, Teineigo"] },
+    ],
+    culture: [
+      { period:"Months 1–3", topic:"Surface Politeness", detail:"です/ます is your default safe mode. すみません covers excuse me, sorry, and thank you." },
+      { period:"Months 4–6", topic:"Honne vs Tatemae", detail:"本音 (true feelings) vs 建前 (social front). Learn to read the air (空気を読む)." },
+      { period:"Months 7–9", topic:"Group Harmony (和)", detail:"Harmony is prioritized over individual expression; sempai-kohai has linguistic markers." },
+      { period:"Months 10–12", topic:"Professional Keigo", detail:"Sonkeigo (raise others), Kenjougo (lower yourself), Teineigo (です/ます)." },
+    ],
+  },
+  chinese: {
+    vocab: [300,600,1000,1400,1800,2200,2700,3200,3700,4200,4700,5500],
+    grammar: [
+      { phase:"Months 1–3", level:"HSK 1–2", points:["是, 有, 在","吗 questions; 不 vs 没","了 — completion, not past tense","Measure words (量词)"] },
+      { phase:"Months 4–6", level:"HSK 3", points:["比 comparisons","Result complements: 看完, 听懂","Directional complements"] },
+      { phase:"Months 7–12", level:"HSK 4–5", points:["把 construction","被 passive voice","Topic-comment structures"] },
+    ],
+    culture: [
+      { period:"Months 1–3", topic:"面子 (Miànzi) — Face", detail:"Causing loss of face (丢脸) is a serious social error. 吃了吗 is a casual greeting." },
+      { period:"Months 4–6", topic:"Family & Hierarchy", detail:"Distinct words for maternal vs paternal relatives; 阿姨/叔叔 extend to non-relatives." },
+      { period:"Months 7–9", topic:"关系 (Guānxi)", detail:"The network of relationships and obligations. Business is built on guanxi first." },
+      { period:"Months 10–12", topic:"Indirect Harmony", detail:"'Maybe' or 'I'll think about it' are often polite refusals. Public criticism is avoided." },
+    ],
+  },
+};
+
+/* Per-month titles and skill focus — feeds the Path timeline */
+const MONTH_META = {
+  korean: [
+    { title:"Hangul & first words",         skills:["script","pronunciation","vocab"] },
+    { title:"Self-introduction",             skills:["grammar","vocab","speaking"] },
+    { title:"Everyday nouns & verbs",        skills:["grammar","vocab","reading"] },
+    { title:"Past tense & connectors",       skills:["grammar","writing","reading"] },
+    { title:"Wanting, needing, planning",    skills:["grammar","speaking"] },
+    { title:"Cause, contrast, comparison",   skills:["grammar","reading"] },
+    { title:"Simultaneous action",           skills:["grammar","listening"] },
+    { title:"Background & description",      skills:["grammar","reading"] },
+    { title:"Reported speech & guessing",    skills:["grammar","listening"] },
+    { title:"Complex sentences",             skills:["grammar","reading","writing"] },
+    { title:"Fluency push",                  skills:["speaking","listening"] },
+    { title:"Consolidation",                 skills:["reading","listening","speaking"] },
+  ],
+  japanese: [
+    { title:"Hiragana & katakana",           skills:["script","pronunciation"] },
+    { title:"First kanji & です/だ",          skills:["script","grammar","vocab"] },
+    { title:"Particles & past tense",        skills:["grammar","vocab","reading"] },
+    { title:"Te-form & requests",            skills:["grammar","writing"] },
+    { title:"Conditionals",                  skills:["grammar","reading"] },
+    { title:"Comparisons & ability",         skills:["grammar","speaking"] },
+    { title:"Potential form",                skills:["grammar","listening"] },
+    { title:"Passive voice",                 skills:["grammar","reading"] },
+    { title:"Causative",                     skills:["grammar","reading"] },
+    { title:"Keigo introduction",            skills:["grammar","speaking","listening"] },
+    { title:"Native reading push",           skills:["reading","listening"] },
+    { title:"Consolidation",                 skills:["reading","listening","speaking"] },
+  ],
+  chinese: [
+    { title:"Tones & pinyin",                skills:["pronunciation","listening"] },
+    { title:"First characters",              skills:["script","vocab"] },
+    { title:"是 / 有 / 在",                   skills:["grammar","vocab","reading"] },
+    { title:"Questions & negation",          skills:["grammar","speaking"] },
+    { title:"了 — completion, not past",     skills:["grammar","reading"] },
+    { title:"Comparisons with 比",            skills:["grammar","speaking"] },
+    { title:"Result complements",            skills:["grammar","listening"] },
+    { title:"Directional complements",       skills:["grammar","reading"] },
+    { title:"把 construction",               skills:["grammar","reading"] },
+    { title:"被 passive",                    skills:["grammar","reading"] },
+    { title:"Native reading push",           skills:["reading","listening"] },
+    { title:"Consolidation",                 skills:["reading","listening","speaking"] },
+  ],
+};
+
+const dailyTasks = [
+  { id:"input", label:"New input", icon:"ti-book", note:"Study a lesson, article, or podcast" },
+  { id:"listening", label:"Primed listening or reading", icon:"ti-headphones", note:"External resource — mark done" },
+  { id:"output", label:"Journal entry or voice message", icon:"ti-pencil", note:"Low-stakes output" },
+  { id:"review", label:"Review yesterday's gaps", icon:"ti-refresh", note:"5 min, non-negotiable" },
+];
+
+const weeklySchedule = [
+  { day:"Mon", focus:"New Input", desc:"New vocabulary + new grammar lesson." },
+  { day:"Tue", focus:"Input Deepening", desc:"Active listening with transcript." },
+  { day:"Wed", focus:"Output Practice", desc:"Journal correction, scripted speaking." },
+  { day:"Thu", focus:"Input Variation", desc:"Different media: podcast, webtoon, vlog." },
+  { day:"Fri", focus:"Free Output", desc:"Free writing, free speaking." },
+  { day:"Sat", focus:"Speaking Day", desc:"45–60 min italki conversation." },
+  { day:"Sun", focus:"Review & Immersion", desc:"Review failed cards, watch with subs." },
+];
+
+const milestonesByMonth = {
+  1:{ celebrate:"Order food at a restaurant using the language." },
+  3:{ celebrate:"Cook a full meal from a target-language recipe video." },
+  6:{ celebrate:"Watch a movie without English subtitles." },
+  9:{ celebrate:"Attend a language exchange meetup or online event." },
+  12:{ celebrate:"Plan a real or imaginary trip to the country — all in the language." },
+};
+
+function selfCheckFor(month) {
+  if (month <= 3) return "Can you hold a two-minute self-introduction without checking notes?";
+  if (month <= 6) return "Can you describe your day in the past tense without checking notes?";
+  if (month <= 9) return "Can you read a graded text at this level with fewer than five lookups per page?";
+  return "Can you express an opinion and disagree politely in a real conversation?";
 }
+
+const FIXIT = [
+  { s:"I know it in flashcards, but can't recognize it in real speech.", d:"Phonological Decoding Gap — visual memory exists, auditory memory is weak.", f:"Audio-first review: hear it before you see it." },
+  { s:"I freeze when I try to speak, even though I know the grammar.", d:"Proceduralization Failure — grammar is a fact you know, not a motor skill you have.", f:"Single-Pattern Speed Drills: 20 variations of one pattern, spoken fast." },
+  { s:"I keep confusing two similar-sounding words.", d:"Interference Error — overlapping neural networks competing for retrieval.", f:"Context Explosion: one vivid, distinct mental image per word." },
+  { s:"My reading is painfully slow.", d:"Subvocalization Bottleneck — you're mentally pronouncing every syllable.", f:"Forced Speed Reading on a text you already know." },
+  { s:"Things collapse in real conversation even though I know them in isolation.", d:"Cognitive Overload — simultaneous demands overwhelm the least-automated skill.", f:"Monitor ONE feature per conversation. Forgive all other errors." },
+  { s:"I've studied for months and feel completely plateaued.", d:"Intermediate Plateau — gains are real but harder to see.", f:"Retrospective Assessment: revisit content that was hard 3 months ago." },
+  { s:"I missed a week and feel like I've lost everything.", d:"Re-entry anxiety — the gap feels bigger than it is.", f:"One 'ease back in' week: no new content, review only, then resume." },
+];
+
+const SECTIONS = [
+  { id:"today", label:"Today", icon:"ti-home" },
+  { id:"path", label:"Path", icon:"ti-route" },
+  { id:"roadmap", label:"Roadmap", icon:"ti-map" },
+  { id:"resources", label:"Resources", icon:"ti-books" },
+  { id:"culture", label:"Culture", icon:"ti-book-2" },
+  { id:"fixit", label:"Fix it", icon:"ti-stethoscope" },
+];
+
+/* ============================================================
+   LOCAL PROGRESS STORE
+   ============================================================ */
+const STORAGE_KEY = "langapp_progress_v5";
+
+function dateKey(d) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,"0");
+  const day = String(d.getDate()).padStart(2,"0");
+  return `${y}-${m}-${day}`;
+}
+function todayKey() { return dateKey(new Date()); }
+function yesterdayKey() { const d = new Date(); d.setDate(d.getDate()-1); return dateKey(d); }
+
+function blankLang() { return { monthDone:{}, selfChecks:{}, y2Done:{}, y3Done:{}, maintDone:false }; }
+function defaultProgress() {
+  return {
+    version: 5,
+    streak:0, lastCompleteDate:null,
+    todayDate:todayKey(), todayTasks:{},
+    history:{},
+    motivation:"",
+    notif:{ enabled:false, time:"19:00", lastNotified:null },
+    langs:{ korean:blankLang(), japanese:blankLang(), chinese:blankLang() },
+  };
+}
+function loadProgress() {
+  try {
+    const raw = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    if (!raw) return defaultProgress();
+    if (raw.todayDate !== todayKey()) { raw.todayDate = todayKey(); raw.todayTasks = {}; }
+    const d = defaultProgress();
+    const langs = Object.fromEntries(
+      Object.keys(d.langs).map(k => [k, { ...d.langs[k], ...((raw.langs && raw.langs[k]) || {}) }])
+    );
+    return { ...d, ...raw, langs };
+  } catch (e) { return defaultProgress(); }
+}
+function saveProgress(p) { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(p)); } catch (e) {} }
+
+function useProgress() {
+  const [progress, setProgress] = useState(loadProgress);
+  useEffect(() => { saveProgress(progress); }, [progress]);
+
+  const toggleTask = (taskId) => {
+    setProgress(p => {
+      const tasks = { ...p.todayTasks, [taskId]: !p.todayTasks[taskId] };
+      const doneCount = dailyTasks.filter(t => tasks[t.id]).length;
+      const allDone = doneCount === dailyTasks.length;
+      let streak = p.streak, lastCompleteDate = p.lastCompleteDate;
+      if (allDone && p.lastCompleteDate !== todayKey()) {
+        streak = p.lastCompleteDate === yesterdayKey() ? p.streak + 1 : 1;
+        lastCompleteDate = todayKey();
+      }
+      return { ...p, todayTasks: tasks, streak, lastCompleteDate, history: { ...p.history, [todayKey()]: doneCount } };
+    });
+  };
+
+  const setSelfCheck = (lang, month, val) => setProgress(p => {
+    const l = p.langs[lang];
+    return { ...p, langs: { ...p.langs, [lang]: { ...l, selfChecks: { ...l.selfChecks, [month]: val } } } };
+  });
+
+  const toggleMonth = (lang, month) => setProgress(p => {
+    const l = p.langs[lang];
+    if (!l.monthDone[month] && l.selfChecks[month] !== true) return p;
+    const monthDone = { ...l.monthDone, [month]: !l.monthDone[month] };
+    return { ...p, langs: { ...p.langs, [lang]: { ...l, monthDone } } };
+  });
+
+  const toggleY2 = (lang, i) => setProgress(p => { const l = p.langs[lang]; return { ...p, langs: { ...p.langs, [lang]: { ...l, y2Done: { ...l.y2Done, [i]: !l.y2Done[i] } } } }; });
+  const toggleY3 = (lang, i) => setProgress(p => { const l = p.langs[lang]; return { ...p, langs: { ...p.langs, [lang]: { ...l, y3Done: { ...l.y3Done, [i]: !l.y3Done[i] } } } }; });
+  const toggleMaint = (lang) => setProgress(p => { const l = p.langs[lang]; return { ...p, langs: { ...p.langs, [lang]: { ...l, maintDone: !l.maintDone } } }; });
+
+  const setMotivation = (text) => setProgress(p => ({ ...p, motivation: text }));
+  const setNotif = (notif) => setProgress(p => ({ ...p, notif: { ...p.notif, ...notif } }));
+
+  const exportData = () => {
+    const blob = new Blob([JSON.stringify(progress, null, 2)], { type:"application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a"); a.href = url; a.download = `langapp-${todayKey()}.json`; a.click();
+    URL.revokeObjectURL(url);
+  };
+  const importData = (file) => {
+    const reader = new FileReader();
+    reader.onload = () => { try { setProgress(JSON.parse(reader.result)); } catch (e) {} };
+    reader.readAsText(file);
+  };
+
+  return { progress, toggleTask, setSelfCheck, toggleMonth, toggleY2, toggleY3, toggleMaint, setMotivation, setNotif, exportData, importData };
+}
+
+function useReminder(progress, setNotif) {
+  useEffect(() => {
+    if (!progress.notif.enabled) return;
+    const check = () => {
+      if (typeof Notification === "undefined" || Notification.permission !== "granted") return;
+      const now = new Date();
+      const current = `${String(now.getHours()).padStart(2,"0")}:${String(now.getMinutes()).padStart(2,"0")}`;
+      const allDone = dailyTasks.every(t => progress.todayTasks[t.id]);
+      if (current === progress.notif.time && progress.notif.lastNotified !== todayKey() && !allDone) {
+        new Notification("Practice reminder", { body: "You still have tasks left for today's session." });
+        setNotif({ lastNotified: todayKey() });
+      }
+    };
+    const interval = setInterval(check, 30000);
+    return () => clearInterval(interval);
+  }, [progress.notif.enabled, progress.notif.time, progress.notif.lastNotified, progress.todayTasks, setNotif]);
+}
+
+/* ============================================================
+   SHARED UI
+   ============================================================ */
+function Checkbox({ done, onClick, color, ariaLabel, disabled }) {
+  return (
+    <button className={`cb ${done?"done":""}`} onClick={onClick} aria-label={ariaLabel} aria-pressed={done} disabled={disabled}
+      style={{ background: done ? color.border : "var(--bg)", opacity: disabled ? 0.5 : 1, cursor: disabled ? "not-allowed" : "pointer" }}>
+      {done && <i className="ti ti-check" aria-hidden="true" style={{ fontSize:13, color:"#fff" }}></i>}
+    </button>
+  );
+}
+
+function LangBadge({ meta, size }) {
+  const s = size || 30;
+  return (
+    <div className="lang-badge" style={{ width:s, height:s, borderRadius:s*0.3, background:meta.color.bg, color:meta.color.text, fontSize:s*0.46 }} aria-hidden="true">
+      {meta.glyph}
+    </div>
+  );
+}
+
+function StreakHeatmap({ history, color }) {
+  const days = 70;
+  const cells = [];
+  const today = new Date();
+  for (let i = days - 1; i >= 0; i--) {
+    const d = new Date(today); d.setDate(today.getDate() - i);
+    cells.push({ key: dateKey(d), count: history[dateKey(d)] || 0 });
+  }
+  const weeks = [];
+  for (let i = 0; i < cells.length; i += 7) weeks.push(cells.slice(i, i+7));
+  const shade = (count) => {
+    if (count <= 0) return "var(--bg2)";
+    const alphas = ["33","66","99","ff"];
+    return color.border + alphas[Math.min(count, 4) - 1];
+  };
+  return (
+    <div>
+      <div style={{ display:"flex", gap:3, overflowX:"auto", paddingBottom:4 }}>
+        {weeks.map((w, wi) => (
+          <div key={wi} style={{ display:"flex", flexDirection:"column", gap:3 }}>
+            {w.map(c => (
+              <div key={c.key} title={`${c.key}: ${c.count}/4 tasks`} style={{ width:10, height:10, borderRadius:2, background: shade(c.count) }}></div>
+            ))}
+          </div>
+        ))}
+      </div>
+      <div style={{ fontSize:11, color:"var(--fg3)", marginTop:6 }}>Last 10 weeks · darker = more tasks completed that day.</div>
+    </div>
+  );
+}
+
+function ActivityBars({ history, color }) {
+  const days = 14;
+  const today = new Date();
+  const data = [];
+  for (let i = days - 1; i >= 0; i--) {
+    const d = new Date(today); d.setDate(today.getDate() - i);
+    data.push({ key: dateKey(d), label: d.toLocaleDateString(undefined, { weekday:"narrow" }), count: history[dateKey(d)] || 0 });
+  }
+  const chartH = 64, barW = 16, gap = 6;
+  const w = data.length * (barW + gap);
+  return (
+    <svg viewBox={`0 0 ${w} ${chartH + 18}`} width="100%" style={{ maxWidth: 420, display:"block" }} role="img" aria-label="Tasks completed over the last 14 days">
+      {data.map((d, i) => {
+        const pct = d.count / 4;
+        const h = Math.max(2, pct * chartH);
+        const x = i * (barW + gap);
+        return (
+          <g key={d.key}>
+            <rect x={x} y={chartH - h} width={barW} height={h} rx={3}
+              fill={d.count > 0 ? color.border : "var(--bd)"} opacity={d.count > 0 ? 1 : 0.35} />
+            <text x={x + barW/2} y={chartH + 13} fontSize="9" textAnchor="middle" fill="var(--fg3)">{d.label}</text>
+          </g>
+        );
+      })}
+    </svg>
+  );
+}
+
+/* ---- Path timeline — vertical journey with phase bands, per-month info ---- */
+const PHASE_BANDS = [
+  { label:"Foundation",     months:[1,2,3]   },
+  { label:"Expansion",      months:[4,5,6]   },
+  { label:"Deepening",      months:[7,8,9]   },
+  { label:"Consolidation",  months:[10,11,12]},
+];
+
+function PathTimeline({ lang, color, progress, onSelectMonth, selected }) {
+  const l = progress.langs[lang];
+  const doneMonths = Object.keys(l.monthDone).filter(m => l.monthDone[m]).map(Number);
+  const currentMonth = Math.min(12, (doneMonths.length ? Math.max(...doneMonths) : 0) + 1);
+  const meta = MONTH_META[lang];
+  const vocabTargets = yearData[lang].vocab;
+
+  return (
+    <div style={{ position:"relative" }}>
+      {/* Continuous spine */}
+      <div style={{ position:"absolute", left:19, top:28, bottom:28, width:2, background:"var(--bd)", zIndex:0 }} aria-hidden="true" />
+
+      {PHASE_BANDS.map((band, bIdx) => (
+        <div key={band.label}>
+          {/* Phase divider */}
+          <div style={{ display:"flex", alignItems:"center", gap:8, marginTop: bIdx === 0 ? 0 : 22, marginBottom:12, position:"relative", zIndex:1 }}>
+            <div style={{ flexShrink:0, fontSize:10, fontWeight:600, color:color.text, textTransform:"uppercase", letterSpacing:0.5, background:color.bg, padding:"4px 10px", borderRadius:20 }}>
+              Phase {bIdx+1} · {band.label}
+            </div>
+            <div style={{ flex:1, height:1, background:"var(--bd)" }} />
+          </div>
+
+          {/* Month rows */}
+          {band.months.map(m => {
+            const done = !!l.monthDone[m];
+            const isCurrent = m === currentMonth && !done;
+            const isSelected = m === selected;
+            const m_meta = meta[m-1] || {};
+            const vocabTarget = vocabTargets[m-1];
+            const hasMilestone = !!milestonesByMonth[m];
+
+            return (
+              <div key={m} style={{ display:"flex", alignItems:"flex-start", marginBottom:8 }}>
+                {/* Dot column */}
+                <div style={{ width:40, flexShrink:0, display:"flex", justifyContent:"center", paddingTop:14, position:"relative", zIndex:1 }}>
+                  <div style={{
+                    width:26, height:26, borderRadius:"50%",
+                    background: done ? color.border : (isCurrent ? color.border : "var(--bg)"),
+                    border: `2px solid ${done || isCurrent ? color.border : "var(--bd)"}`,
+                    display:"flex", alignItems:"center", justifyContent:"center",
+                    fontSize:11, fontWeight:700,
+                    color: done || isCurrent ? "#fff" : "var(--fg3)",
+                    boxShadow: isSelected ? `0 0 0 4px ${color.bg}` : "none",
+                    transition:"box-shadow .15s",
+                    position:"relative",
+                  }}>
+                    {done
+                      ? <i className="ti ti-check" aria-hidden="true" style={{ fontSize:13 }}></i>
+                      : (isCurrent ? <i className="ti ti-map-pin" aria-hidden="true" style={{ fontSize:14 }}></i> : m)}
+                    {hasMilestone && (
+                      <div style={{ position:"absolute", top:-3, right:-3, width:13, height:13, borderRadius:"50%", background:"#BA7517", display:"flex", alignItems:"center", justifyContent:"center", border:"1.5px solid var(--bg)" }}>
+                        <i className="ti ti-flag" aria-hidden="true" style={{ fontSize:7, color:"#fff" }}></i>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Card */}
+                <button
+                  onClick={() => onSelectMonth(m)}
+                  style={{
+                    flex:1, minWidth:0, textAlign:"left", cursor:"pointer",
+                    border: isSelected ? `2px solid ${color.border}` : "1px solid var(--bd)",
+                    borderRadius:"var(--r)",
+                    padding:"10px 12px",
+                    background: isSelected ? color.bg : (done ? "var(--bg2)" : "var(--bg)"),
+                    marginLeft:8,
+                    transition:"border-color .15s, background .15s",
+                    display:"block",
+                    fontFamily:"inherit",
+                  }}
+                >
+                  <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", gap:6, marginBottom:3 }}>
+                    <span style={{ fontSize:10, color: isSelected ? color.text : "var(--fg3)", textTransform:"uppercase", letterSpacing:0.4, fontWeight:600 }}>Month {m}</span>
+                    {isCurrent && <span className="pill" style={{ background: color.border, color:"#fff", fontSize:9 }}>You are here</span>}
+                  </div>
+                  <div style={{ fontSize:13, fontWeight:500, marginBottom:6, color: isSelected ? color.text : "var(--fg)" }}>
+                    {m_meta.title || `Month ${m}`}
+                  </div>
+                  <div style={{ display:"flex", gap:4, flexWrap:"wrap", marginBottom:6 }}>
+                    {(m_meta.skills || []).map(sk => (
+                      <span key={sk} style={{ fontSize:9, padding:"1px 6px", borderRadius:8, background: isSelected ? "#ffffffcc" : "var(--bg2)", color: isSelected ? color.text : "var(--fg2)" }}>{sk}</span>
+                    ))}
+                  </div>
+                  <div style={{ display:"flex", gap:8, fontSize:10.5, color: isSelected ? color.text : "var(--fg3)" }}>
+                    <span>{vocabTarget} words</span>
+                    {hasMilestone && <span>· milestone</span>}
+                  </div>
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function Settings({ progress, setNotif, setMotivation, exportData, importData, onClose }) {
+  const [time, setTime] = useState(progress.notif.time);
+  const [motivation, setMotivationLocal] = useState(progress.motivation);
+  const [note, setNote] = useState("");
+
+  const toggleEnabled = async () => {
+    if (!progress.notif.enabled) {
+      if (typeof Notification === "undefined") { setNote("Notifications aren't supported in this browser."); return; }
+      const perm = await Notification.requestPermission();
+      if (perm !== "granted") { setNote("Permission was not granted — reminders can't be turned on."); return; }
+    }
+    setNotif({ enabled: !progress.notif.enabled });
+  };
+
+  return (
+    <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.4)", zIndex:30, display:"flex", alignItems:"flex-end", justifyContent:"center" }} onClick={onClose}>
+      <div onClick={e => e.stopPropagation()} style={{ background:"var(--bg)", width:"100%", maxWidth:480, borderRadius:"16px 16px 0 0", padding:"20px 20px calc(20px + env(safe-area-inset-bottom))", maxHeight:"85vh", overflowY:"auto" }}>
+        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:16 }}>
+          <span style={{ fontSize:16, fontWeight:500 }}>Settings</span>
+          <button onClick={onClose} aria-label="Close settings" style={{ background:"none", border:"none", cursor:"pointer" }}><i className="ti ti-x" aria-hidden="true" style={{ fontSize:18, color:"var(--fg2)" }}></i></button>
+        </div>
+
+        <div style={{ marginBottom:18 }}>
+          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:6 }}>
+            <span style={{ fontSize:13, fontWeight:500 }}>Daily reminder</span>
+            <button onClick={toggleEnabled} style={{ border:"0.5px solid var(--bd)", borderRadius:20, padding:"4px 12px", fontSize:12, background: progress.notif.enabled ? "#E1F5EE" : "var(--bg)", color: progress.notif.enabled ? "#0F6E56" : "var(--fg2)", cursor:"pointer" }}>
+              {progress.notif.enabled ? "On" : "Off"}
+            </button>
+          </div>
+          {progress.notif.enabled && <input type="time" value={time} onChange={e => { setTime(e.target.value); setNotif({ time: e.target.value }); }} style={{ width:"100%" }} />}
+          {note && <div style={{ fontSize:12, color:"var(--fg2)", marginTop:6 }}>{note}</div>}
+          <div style={{ fontSize:11, color:"var(--fg3)", marginTop:6, lineHeight:1.5 }}>Only fires while this app is open in a browser tab — no backend, no background push.</div>
+        </div>
+
+        <div style={{ marginBottom:18 }}>
+          <div style={{ fontSize:13, fontWeight:500, marginBottom:6 }}>Why are you learning?</div>
+          <input type="text" placeholder="e.g. an upcoming trip, family, work" value={motivation}
+            onChange={e => setMotivationLocal(e.target.value)} onBlur={() => setMotivation(motivation)} style={{ width:"100%" }} />
+          <div style={{ fontSize:11, color:"var(--fg3)", marginTop:6 }}>Shown back on the Today screen.</div>
+        </div>
+
+        <div>
+          <div style={{ fontSize:13, fontWeight:500, marginBottom:6 }}>Backup</div>
+          <div style={{ display:"flex", gap:8 }}>
+            <button className="btn" onClick={exportData} style={{ flex:1 }}>Export JSON</button>
+            <label className="btn" style={{ flex:1, textAlign:"center" }}>
+              Import
+              <input type="file" accept=".json" style={{ display:"none" }} onChange={e => { if (e.target.files[0]) importData(e.target.files[0]); }} />
+            </label>
+          </div>
+          <div style={{ fontSize:11, color:"var(--fg3)", marginTop:6 }}>Your progress lives only in this browser. Export it if you care about keeping it.</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+   TODAY
+   ============================================================ */
+function TodayScreen({ lang, color, progress, toggleTask }) {
+  const done = dailyTasks.filter(t => progress.todayTasks[t.id]).length;
+  const allDone = done === dailyTasks.length;
+  return (
+    <div>
+      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"baseline", marginBottom:6 }}>
+        <span style={{ fontSize:13, color:"var(--fg2)" }}>Today</span>
+        <span style={{ fontSize:12, color:"var(--fg2)", display:"flex", alignItems:"center", gap:4 }}>
+          <i className="ti ti-flame" aria-hidden="true" style={{ fontSize:14, color:"#BA7517" }}></i>{progress.streak} day streak
+        </span>
+      </div>
+      {progress.motivation && <div style={{ fontSize:13, color:"var(--fg2)", marginBottom:14 }}>Because you're learning for {progress.motivation} — keep going.</div>}
+
+      <div style={{ display:"flex", flexDirection:"column", gap:8, marginBottom:16 }}>
+        {dailyTasks.map(t => (
+          <div key={t.id} style={{ display:"flex", alignItems:"center", gap:10, padding:10, border:"0.5px solid var(--bd)", borderRadius:"var(--r)" }}>
+            <Checkbox done={!!progress.todayTasks[t.id]} onClick={() => toggleTask(t.id)} color={color} ariaLabel={`Mark ${t.label} done`} />
+            <div>
+              <div style={{ fontSize:13, fontWeight:500 }}>{t.label}</div>
+              <div style={{ fontSize:12, color:"var(--fg3)" }}>{t.note}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div aria-live="polite" style={{ padding:"10px 12px", background:color.bg, borderRadius:"var(--r)", display:"flex", alignItems:"center", gap:8, marginBottom:22 }}>
+        <i className="ti ti-bulb" aria-hidden="true" style={{ fontSize:16, color:color.text }}></i>
+        <span style={{ fontSize:12, color:color.text }}>
+          {allDone ? "All done for today — streak secured." : `${done} of ${dailyTasks.length} done today.`}
+        </span>
+      </div>
+
+      <div style={{ fontSize:11, textTransform:"uppercase", letterSpacing:0.4, color:"var(--fg3)", fontWeight:500, marginBottom:10 }}>Your tracking</div>
+      <div className="card" style={{ marginBottom:10 }}>
+        <div style={{ fontSize:12, fontWeight:500, marginBottom:8 }}>Daily consistency</div>
+        <StreakHeatmap history={progress.history} color={color} />
+      </div>
+      <div className="card" style={{ marginBottom:20 }}>
+        <div style={{ fontSize:12, fontWeight:500, marginBottom:8 }}>Tasks completed, last 14 days</div>
+        <ActivityBars history={progress.history} color={color} />
+      </div>
+
+      <div style={{ fontSize:15, fontWeight:500, marginBottom:10 }}>This week's rhythm</div>
+      <div style={{ display:"flex", flexDirection:"column", gap:6 }}>
+        {weeklySchedule.map((d, i) => (
+          <div key={i} style={{ display:"flex", gap:10, alignItems:"flex-start", padding:"6px 0", borderBottom:"0.5px solid var(--bd)" }}>
+            <div style={{ minWidth:30, height:30, borderRadius:9, background:color.bg, display:"flex", alignItems:"center", justifyContent:"center", fontSize:10, fontWeight:500, color:color.text }}>{d.day}</div>
+            <div>
+              <div style={{ fontWeight:500, fontSize:13 }}>{d.focus}</div>
+              <div style={{ fontSize:12, color:"var(--fg2)" }}>{d.desc}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+   PATH
+   ============================================================ */
+function PathScreen({ lang, color, progress, onOpenResources, toggleMonth, setSelfCheck, toggleY2, toggleY3, toggleMaint }) {
+  const l = progress.langs[lang];
+  const doneMonths = Object.keys(l.monthDone).filter(m => l.monthDone[m]).map(Number);
+  const defaultMonth = Math.min(12, (doneMonths.length ? Math.max(...doneMonths) : 0) + 1);
+  const [selected, setSelected] = useState(defaultMonth);
+  const [showPacing, setShowPacing] = useState(false);
+  const data = yearData[lang];
+  const quarterIdx = selected <= 3 ? 0 : selected <= 6 ? 1 : 2;
+  const grammar = data.grammar[quarterIdx];
+  const culture = data.culture[Math.min(3, Math.floor((selected-1)/3))];
+  const selfCheckQ = selfCheckFor(selected);
+  const checked = l.selfChecks[selected];
+  const done = !!l.monthDone[selected];
+
+  return (
+    <div>
+      <button onClick={() => setShowPacing(s => !s)} style={{ width:"100%", textAlign:"left", background:color.bg, border:"none", borderRadius:"var(--r)", padding:"10px 12px", marginBottom:14, cursor:"pointer", display:"flex", justifyContent:"space-between", alignItems:"center", gap:8 }}>
+        <span style={{ fontSize:12, color:color.text }}>This is the checklist. For the full how-to plan, open the Roadmap tab.</span>
+        <i className={`ti ${showPacing ? "ti-chevron-up" : "ti-chevron-down"}`} aria-hidden="true" style={{ fontSize:14, color:color.text, flexShrink:0 }}></i>
+      </button>
+      {showPacing && <div style={{ fontSize:12, color:"var(--fg2)", lineHeight:1.6, marginBottom:16, padding:"0 2px" }}>The Path tracks which months you've completed. The Roadmap explains what to actually do, with resources for each phase.</div>}
+
+      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"baseline", marginBottom:6 }}>
+        <span style={{ fontSize:12, color:"var(--fg2)" }}>{doneMonths.length} of 12 months complete</span>
+        <span style={{ fontSize:11, color:"var(--fg3)" }}>{Math.round((doneMonths.length/12)*100)}%</span>
+      </div>
+      <div style={{ height:5, background:"var(--bg2)", borderRadius:3, overflow:"hidden", marginBottom:18 }} aria-hidden="true">
+        <div style={{ width:`${(doneMonths.length/12)*100}%`, height:"100%", background:color.border, transition:"width .4s ease" }} />
+      </div>
+
+      <PathTimeline lang={lang} color={color} progress={progress} onSelectMonth={setSelected} selected={selected} />
+
+      <div style={{ marginTop:20, border:`1px solid ${color.border}`, borderRadius:"var(--rl)", padding:"14px 16px", background:color.bg }}>
+        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:8 }}>
+          <span style={{ fontWeight:500, fontSize:14, color:color.text }}>Month {selected}</span>
+          <span className="pill" style={{ background:"#ffffffaa", color:color.text }}>{grammar.level}</span>
+        </div>
+        <div style={{ fontSize:12, color:color.text, opacity:0.85, marginBottom:8 }}>{grammar.phase}</div>
+        {grammar.points.map((pt, i) => (
+          <div key={i} style={{ display:"flex", gap:8, marginBottom:5, alignItems:"flex-start" }}>
+            <span style={{ minWidth:5, height:5, borderRadius:"50%", background:color.text, marginTop:6, flexShrink:0 }}></span>
+            <span style={{ fontSize:13, color:color.text }}>{pt}</span>
+          </div>
+        ))}
+        <div style={{ marginTop:10, fontSize:12, color:color.text, background:"#ffffff55", padding:"8px 10px", borderRadius:"var(--r)" }}>
+          <strong>Culture note ({culture.period}):</strong> {culture.topic} — {culture.detail}
+        </div>
+        {milestonesByMonth[selected] && (
+          <div style={{ marginTop:8, fontSize:12, color:color.text }}>🏁 Milestone: {milestonesByMonth[selected].celebrate}</div>
+        )}
+
+        <button className="btn" onClick={onOpenResources} style={{ marginTop:10, background:color.border, color:"#fff", borderColor:color.border, width:"100%" }}>
+          Browse resources for this stage →
+        </button>
+
+        <div style={{ marginTop:14, paddingTop:12, borderTop:"0.5px solid #ffffff88" }}>
+          <div style={{ fontSize:12, fontWeight:500, color:color.text, marginBottom:6 }}>Self-check: {selfCheckQ}</div>
+          <div style={{ display:"flex", gap:6, marginBottom:8 }}>
+            <button className="btn" onClick={() => setSelfCheck(lang, selected, true)} style={{ flex:1, background: checked === true ? color.border : "var(--bg)", color: checked === true ? "#fff" : "var(--fg)", borderColor: checked === true ? color.border : "var(--bd)" }}>Yes</button>
+            <button className="btn" onClick={() => setSelfCheck(lang, selected, false)} style={{ flex:1, background: checked === false ? "#D85A30" : "var(--bg)", color: checked === false ? "#fff" : "var(--fg)", borderColor: checked === false ? "#D85A30" : "var(--bd)" }}>Not yet</button>
+          </div>
+          <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+            <Checkbox done={done} onClick={() => toggleMonth(lang, selected)} color={{ border: color.text }} ariaLabel={`Mark month ${selected} complete`} disabled={!done && checked !== true} />
+            <span style={{ fontSize:12, color:color.text }}>{done ? "Month complete" : (checked === true ? "Mark month complete" : "Answer the self-check \"Yes\" to unlock")}</span>
+          </div>
+        </div>
+      </div>
+
+      <div style={{ marginTop:28, fontSize:15, fontWeight:500, marginBottom:8, opacity: doneMonths.length >= 12 ? 1 : 0.55 }}>
+        Year 2 — Consolidation {doneMonths.length < 12 && <span style={{ fontSize:11, color:"var(--fg3)", fontWeight:400 }}>· unlocks after Year 1</span>}
+      </div>
+      {((ROADMAP[lang].find(p => p.id === "p3") || {}).blocks || []).map((q, i) => {
+        const d = !!l.y2Done[i];
+        const unlocked = doneMonths.length >= 12;
+        return (
+          <div key={i} style={{ marginBottom:8, border:"0.5px solid var(--bd)", borderRadius:"var(--rl)", padding:"12px 14px", background: d ? color.bg : "var(--bg)", opacity: unlocked ? 1 : 0.55 }}>
+            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:6 }}>
+              <div style={{ fontWeight:500, fontSize:13 }}>{q.heading.split(" — ")[0]}</div>
+              <Checkbox done={d} onClick={() => unlocked && toggleY2(lang, i)} color={color} ariaLabel={q.heading} disabled={!unlocked} />
+            </div>
+            <div style={{ fontSize:12, color:"var(--fg2)", lineHeight:1.6 }}>{q.body}</div>
+          </div>
+        );
+      })}
+
+      <div style={{ marginTop:20, fontSize:15, fontWeight:500, marginBottom:8, opacity: Object.keys(l.y2Done).filter(k=>l.y2Done[k]).length >= 4 ? 1 : 0.55 }}>
+        Year 3 — Advanced {Object.keys(l.y2Done).filter(k=>l.y2Done[k]).length < 4 && <span style={{ fontSize:11, color:"var(--fg3)", fontWeight:400 }}>· unlocks after Year 2</span>}
+      </div>
+      {((ROADMAP[lang].find(p => p.id === "p4") || {}).blocks || []).map((q, i) => {
+        const d = !!l.y3Done[i];
+        const unlocked = Object.keys(l.y2Done).filter(k=>l.y2Done[k]).length >= 4;
+        return (
+          <div key={i} style={{ marginBottom:8, border:"0.5px solid var(--bd)", borderRadius:"var(--rl)", padding:"12px 14px", background: d ? color.bg : "var(--bg)", opacity: unlocked ? 1 : 0.55 }}>
+            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:6 }}>
+              <div style={{ fontWeight:500, fontSize:13 }}>{q.heading.split(" — ")[0]}</div>
+              <Checkbox done={d} onClick={() => unlocked && toggleY3(lang, i)} color={color} ariaLabel={q.heading} disabled={!unlocked} />
+            </div>
+            <div style={{ fontSize:12, color:"var(--fg2)", lineHeight:1.6 }}>{q.body}</div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+/* ============================================================
+   RESOURCES
+   ============================================================ */
+function ResourcesScreen({ lang, color }) {
+  const [q, setQ] = useState("");
+  const [freeOnly, setFreeOnly] = useState(false);
+  const groups = RESOURCES[lang] || [];
+
+  const filtered = useMemo(() => {
+    const needle = q.trim().toLowerCase();
+    return groups.map(g => ({
+      ...g,
+      items: g.items.filter(it => {
+        if (freeOnly && !it.free) return false;
+        if (!needle) return true;
+        return (it.name + " " + it.desc + " " + g.category).toLowerCase().includes(needle);
+      })
+    })).filter(g => g.items.length > 0);
+  }, [groups, q, freeOnly]);
+
+  const total = groups.reduce((n, g) => n + g.items.length, 0);
+  const shown = filtered.reduce((n, g) => n + g.items.length, 0);
+
+  return (
+    <div>
+      <div style={{ fontSize:13, color:"var(--fg2)", marginBottom:14, lineHeight:1.6 }}>
+        {total} external resources for {META.find(m => m.id === lang).label}, grouped by what you're trying to do. Nothing here is built by this app — these are the sites and tools serious learners actually use, including community-vetted free materials from Reddit.
+      </div>
+
+      <div style={{ display:"flex", gap:8, marginBottom:14, alignItems:"center", flexWrap:"wrap" }}>
+        <input type="text" placeholder="Search resources…" value={q} onChange={e => setQ(e.target.value)} style={{ flex:"1 1 180px", minWidth:0 }} aria-label="Search resources" />
+        <button onClick={() => setFreeOnly(f => !f)} className={`chip ${freeOnly ? "on" : ""}`} aria-pressed={freeOnly}>Free only</button>
+      </div>
+
+      {(q || freeOnly) && <div style={{ fontSize:11, color:"var(--fg3)", marginBottom:10 }}>{shown} of {total} shown</div>}
+
+      {filtered.length === 0 && (
+        <div className="card" style={{ fontSize:13, color:"var(--fg2)" }}>No matches. Try clearing the search or turning off the free filter.</div>
+      )}
+
+      {filtered.map(group => (
+        <div key={group.category}>
+          <div className="res-cat-title">{group.category}</div>
+          <div className="grid-cards">
+            {group.items.map(it => (
+              <a key={it.url + it.name} href={it.url} target="_blank" rel="noopener noreferrer" className="res-item">
+                <div style={{ display:"flex", alignItems:"center", gap:6, marginBottom:4, flexWrap:"wrap" }}>
+                  <span style={{ fontWeight:500, fontSize:13, color:color.text }}>{it.name}</span>
+                  <i className="ti ti-external-link" aria-hidden="true" style={{ fontSize:11, color:color.text, opacity:0.7 }}></i>
+                  <span className="pill" style={{ background: it.free ? "#E1F5EE" : "#FAECE7", color: it.free ? "#0F6E56" : "#993C1D" }}>{it.free ? "Free" : "Paid"}</span>
+                </div>
+                <div style={{ fontSize:12, color:"var(--fg2)", lineHeight:1.55 }}>{it.desc}</div>
+              </a>
+            ))}
+          </div>
+        </div>
+      ))}
+
+      <div className="res-cat-title" style={{ marginTop:28 }}>Works across all three languages</div>
+      <div className="grid-cards">
+        {SHARED_RESOURCES.map(it => (
+          <a key={it.url + it.name} href={it.url} target="_blank" rel="noopener noreferrer" className="res-item">
+            <div style={{ display:"flex", alignItems:"center", gap:6, marginBottom:4 }}>
+              <span style={{ fontWeight:500, fontSize:13 }}>{it.name}</span>
+              <i className="ti ti-external-link" aria-hidden="true" style={{ fontSize:11, color:"var(--fg2)", opacity:0.7 }}></i>
+            </div>
+            <div style={{ fontSize:12, color:"var(--fg2)", lineHeight:1.55 }}>{it.desc}</div>
+          </a>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+   ROADMAP
+   ============================================================ */
+function RoadmapScreen({ lang, color }) {
+  const phases = ROADMAP[lang] || [];
+  const [openId, setOpenId] = useState(phases.length ? phases[0].id : null);
+
+  return (
+    <div>
+      <div className="card" style={{ marginBottom:12, background:color.bg, borderColor:color.border }}>
+        <div style={{ fontSize:14, fontWeight:500, color:color.text, marginBottom:6 }}>How to use this plan</div>
+        <div style={{ fontSize:13, color:color.text, lineHeight:1.65 }}>
+          This is a phase-based plan, not a link dump. Each phase has a goal, a set of activities, and the specific resources that serve those activities — so you always know why you're opening a particular site. It assumes 45–75 minutes a day, 5–6 days a week.
+        </div>
+      </div>
+
+      <div className="card" style={{ marginBottom:20 }}>
+        <div style={{ fontSize:12, fontWeight:500, marginBottom:6 }}>The entry ramp differs by language</div>
+        <div style={{ fontSize:13, color:"var(--fg2)", lineHeight:1.65 }}>
+          <strong>Korean</strong> has the easiest on-ramp (Hangul in two weeks) but the steepest intermediate grammar. <strong>Japanese</strong> has the gentlest grammar curve but the longest character-acquisition runway. <strong>Chinese</strong> has the simplest grammar but the hardest pronunciation floor — tones are non-negotiable from day one. The phases are the same; the emphasis inside each phase shifts.
+        </div>
+        <div style={{ fontSize:12, color:"var(--fg2)", lineHeight:1.65, marginTop:10, paddingTop:10, borderTop:"0.5px solid var(--bd)" }}>
+          Running all three from absolute zero at once means three sets of unfamiliar phonology competing for the same ear-training hours. The honest advice is to stagger them — get one language to a maintenance level before adding the next.
+        </div>
+      </div>
+
+      <div style={{ fontSize:15, fontWeight:500, marginBottom:12 }}>
+        {META.find(m => m.id === lang).label} roadmap
+      </div>
+
+      {phases.map((p) => {
+        const isOpen = openId === p.id;
+        return (
+          <div key={p.id} style={{ marginBottom:10, border:"0.5px solid var(--bd)", borderRadius:"var(--rl)", overflow:"hidden", background:"var(--bg)" }}>
+            <button onClick={() => setOpenId(isOpen ? null : p.id)} aria-expanded={isOpen} style={{ width:"100%", textAlign:"left", padding:"12px 14px", background: isOpen ? color.bg : "var(--bg)", border:"none", cursor:"pointer", display:"flex", justifyContent:"space-between", alignItems:"center", gap:8 }}>
+              <div style={{ minWidth:0 }}>
+                <div style={{ fontSize:10, textTransform:"uppercase", letterSpacing:0.5, color:color.text, fontWeight:600 }}>{p.phase}</div>
+                <div style={{ fontSize:14, fontWeight:500 }}>{p.title}</div>
+                <div style={{ fontSize:12, color:"var(--fg2)" }}>{p.period}</div>
+              </div>
+              <i className={`ti ${isOpen ? "ti-chevron-up" : "ti-chevron-down"}`} aria-hidden="true" style={{ fontSize:14, color:color.text, flexShrink:0 }}></i>
+            </button>
+            {isOpen && (
+              <div style={{ padding:"0 14px 14px", borderTop:"0.5px solid var(--bd)" }}>
+                <div style={{ fontSize:12.5, color:color.text, marginTop:12, marginBottom:14, lineHeight:1.6 }}>
+                  <strong>Goal — </strong>{p.goal}
+                </div>
+                {p.blocks.map((b, j) => (
+                  <div key={j} style={{ marginBottom: j === p.blocks.length - 1 ? 0 : 16 }}>
+                    <div style={{ fontSize:13, fontWeight:500, marginBottom:4 }}>{b.heading}</div>
+                    <div style={{ fontSize:13, color:"var(--fg2)", lineHeight:1.65, marginBottom: (b.links && b.links.length) ? 8 : 0 }}>{b.body}</div>
+                    {b.links && b.links.length > 0 && (
+                      <div style={{ display:"flex", flexWrap:"wrap", gap:6 }}>
+                        {b.links.map((l, k) => (
+                          <a key={k} href={l.url} target="_blank" rel="noopener noreferrer" className="res-chip">
+                            {l.label}<i className="ti ti-external-link" aria-hidden="true"></i>
+                          </a>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        );
+      })}
+
+      {/* Cross-language overlap */}
+      <div style={{ marginTop:32, fontSize:15, fontWeight:500, marginBottom:6 }}>The cross-language overlap</div>
+      <div style={{ fontSize:13, color:"var(--fg2)", marginBottom:12, lineHeight:1.6 }}>
+        Learning all three together is only worth it if you exploit the overlap. This is the actual payoff.
+      </div>
+      {BRIDGE.map((b, i) => (
+        <div key={i} className="card" style={{ marginBottom:8, padding:"12px 14px" }}>
+          <div style={{ fontWeight:500, fontSize:13.5, marginBottom:6 }}>{b.t}</div>
+          <div style={{ fontSize:12.5, color:"var(--fg2)", lineHeight:1.65 }}>{b.d}</div>
+          <div style={{ display:"flex", gap:4, marginTop:8, flexWrap:"wrap" }}>
+            {b.tags.map(t => <span key={t} className="pill" style={{ background:C[t].bg, color:C[t].text }}>{t}</span>)}
+          </div>
+        </div>
+      ))}
+
+      {/* Exam prep */}
+      <div style={{ marginTop:32, fontSize:15, fontWeight:500, marginBottom:6 }}>Exam preparation structure</div>
+      <div style={{ fontSize:13, color:"var(--fg2)", marginBottom:12, lineHeight:1.6 }}>
+        TOPIK, JLPT, and HSK are all format-specific exams. Preparing for them is a different activity from general language study, and the two shouldn't be conflated. A standard prep cycle looks like this for all three:
+      </div>
+      {EXAM_PREP_STEPS.map((s, i) => (
+        <div key={i} style={{ border:"0.5px solid var(--bd)", borderRadius:"var(--r)", padding:"10px 12px", background:"var(--bg)", marginBottom:6 }}>
+          <div style={{ fontSize:13, fontWeight:500, marginBottom:4 }}>{s.step}</div>
+          <div style={{ fontSize:12.5, color:"var(--fg2)", lineHeight:1.6 }}>{s.body}</div>
+        </div>
+      ))}
+      <div style={{ fontSize:12, color:"var(--fg2)", marginTop:12, marginBottom:6, lineHeight:1.6 }}>Past papers are free from the official sites:</div>
+      <div style={{ display:"flex", flexWrap:"wrap", gap:6 }}>
+        {EXAM_LINKS.map((l, i) => (
+          <a key={i} href={l.url} target="_blank" rel="noopener noreferrer" className="res-chip">
+            {l.label}<i className="ti ti-external-link" aria-hidden="true"></i>
+          </a>
+        ))}
+      </div>
+
+      {/* Weekly rhythm */}
+      <div style={{ marginTop:32, fontSize:15, fontWeight:500, marginBottom:6 }}>A weekly rhythm that works</div>
+      <div style={{ fontSize:13, color:"var(--fg2)", marginBottom:12, lineHeight:1.6 }}>
+        The day-by-day schedule in the Today tab is a reasonable template, but the underlying principle matters more than the specific allocation:
+      </div>
+      {WEEKLY_RHYTHM.map((w, i) => (
+        <div key={i} style={{ display:"flex", gap:10, padding:"8px 0", borderBottom: i === WEEKLY_RHYTHM.length - 1 ? "none" : "0.5px solid var(--bd)" }}>
+          <span style={{ minWidth:5, height:5, borderRadius:"50%", background:color.border, marginTop:8, flexShrink:0 }}></span>
+          <div>
+            <div style={{ fontSize:13, fontWeight:500 }}>{w.label}</div>
+            <div style={{ fontSize:12.5, color:"var(--fg2)", lineHeight:1.6 }}>{w.body}</div>
+          </div>
+        </div>
+      ))}
+      <div style={{ fontSize:12, marginTop:12, lineHeight:1.6, padding:"10px 12px", background:color.bg, borderRadius:"var(--r)", color:color.text }}>
+        The review day is the one people skip. It's also the one that determines whether you retain anything from the other six days.
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+   CULTURE
+   ============================================================ */
+function CultureScreen({ lang, color }) {
+  const data = yearData[lang];
+  return (
+    <div>
+      {data.culture.map((c, i) => (
+        <div key={i} className="card" style={{ marginBottom:10, padding:"12px 14px" }}>
+          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:8 }}>
+            <span style={{ fontWeight:500, fontSize:14 }}>{c.topic}</span>
+            <span className="pill" style={{ background:color.bg, color:color.text }}>{c.period}</span>
+          </div>
+          <div style={{ fontSize:13, color:"var(--fg2)", lineHeight:1.6 }}>{c.detail}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* ============================================================
+   FIX IT
+   ============================================================ */
+function FixItScreen({ color }) {
+  const [openI, setOpenI] = useState(null);
+  return (
+    <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
+      {FIXIT.map((t, i) => (
+        <div key={i} style={{ border:"0.5px solid var(--bd)", borderRadius:"var(--r)", overflow:"hidden" }}>
+          <button onClick={() => setOpenI(openI===i ? null : i)} aria-expanded={openI===i} style={{ width:"100%", display:"flex", justifyContent:"space-between", padding:"12px 14px", background:"var(--bg)", border:"none", cursor:"pointer", textAlign:"left", gap:8 }}>
+            <span style={{ fontSize:13, fontWeight:500 }}>"{t.s}"</span>
+            <i className={`ti ${openI===i ? "ti-chevron-up" : "ti-chevron-down"}`} aria-hidden="true" style={{ fontSize:14, color:"var(--fg2)", flexShrink:0 }}></i>
+          </button>
+          {openI === i && (
+            <div style={{ padding:"0 14px 12px", borderTop:"0.5px solid var(--bd)" }}>
+              <div style={{ marginTop:10, fontSize:13, color:"var(--fg2)", marginBottom:8 }}><strong>Diagnosis:</strong> {t.d}</div>
+              <div style={{ fontSize:13, background:color.bg, padding:"10px 12px", borderRadius:"var(--r)", color:"var(--fg2)" }}><strong style={{ color:color.text }}>Fix:</strong> {t.f}</div>
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* ============================================================
+   APP SHELL
+   ============================================================ */
+class ErrorBoundary extends React.Component {
+  constructor(p) { super(p); this.state = { err: null }; }
+  static getDerivedStateFromError(err) { return { err }; }
+  render() {
+    if (this.state.err) {
+      return (
+        <div style={{ padding:24, fontFamily:"system-ui, sans-serif", maxWidth:520, margin:"0 auto" }}>
+          <h2 style={{ fontSize:16, marginBottom:8 }}>Something went wrong.</h2>
+          <p style={{ fontSize:13, color:"#666", lineHeight:1.6, marginBottom:16 }}>
+            Your saved progress is still in this browser. If the app keeps failing to load, export your data from Settings before clearing site data.
+          </p>
+          <button onClick={() => { localStorage.removeItem(STORAGE_KEY); location.reload(); }} style={{ padding:"8px 14px", fontSize:13, cursor:"pointer" }}>
+            Reset local data and reload
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+function App() {
+  const [lang, setLang] = useState("korean");
+  const [view, setView] = useState("today");
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const {
+    progress, toggleTask, setSelfCheck, toggleMonth, toggleY2, toggleY3, toggleMaint,
+    setMotivation, setNotif, exportData, importData,
+  } = useProgress();
+  useReminder(progress, setNotif);
+  const color = C[lang];
+
+  const screens = {
+    today: <TodayScreen lang={lang} color={color} progress={progress} toggleTask={toggleTask} />,
+    path: <PathScreen lang={lang} color={color} progress={progress} onOpenResources={() => setView("resources")} toggleMonth={toggleMonth} setSelfCheck={setSelfCheck} toggleY2={toggleY2} toggleY3={toggleY3} toggleMaint={toggleMaint} />,
+    roadmap: <RoadmapScreen lang={lang} color={color} />,
+    resources: <ResourcesScreen lang={lang} color={color} />,
+    culture: <CultureScreen lang={lang} color={color} />,
+    fixit: <FixItScreen color={color} />,
+  };
+
+  return (
+    <div className="app" style={{ fontFamily:"var(--font-sans)", "--nav-active": color.border }}>
+      <h1 className="sr">East Asian Language Companion — a structured roadmap, progress tracker, and reference library for Korean, Japanese, and Chinese</h1>
+
+      <nav className="side" aria-label="Main navigation">
+        <div style={{ fontSize:13, fontWeight:500, padding:"0 12px 16px" }}>Language Companion</div>
+        {SECTIONS.map(s => (
+          <button key={s.id} className={`nav s ${view===s.id ? "on" : ""}`} onClick={() => setView(s.id)}>
+            <i className={`ti ${s.icon}`} aria-hidden="true" style={{ fontSize:17 }}></i>{s.label}
+          </button>
+        ))}
+        <button className="nav s" onClick={() => setSettingsOpen(true)} style={{ marginTop:"auto" }}>
+          <i className="ti ti-settings" aria-hidden="true" style={{ fontSize:17 }}></i>Settings
+        </button>
+      </nav>
+
+      <div className="main">
+        <div className="inner">
+          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:16, flexWrap:"wrap", gap:8 }}>
+            <div style={{ display:"flex", gap:8 }}>
+              {META.map(m => (
+                <button key={m.id} onClick={() => setLang(m.id)} aria-pressed={lang===m.id} style={{ display:"flex", alignItems:"center", gap:6, padding:"5px 10px 5px 5px", borderRadius:20, border:`1.5px solid ${lang===m.id ? m.color.border : "var(--bd)"}`, background: lang===m.id ? m.color.bg : "var(--bg)", cursor:"pointer" }}>
+                  <LangBadge meta={m} size={22} />
+                  <span style={{ fontSize:12, fontWeight: lang===m.id ? 500 : 400, color: lang===m.id ? m.color.text : "var(--fg2)" }}>{m.label}</span>
+                </button>
+              ))}
+            </div>
+            <button onClick={() => setSettingsOpen(true)} aria-label="Open settings" style={{ background:"none", border:"none", cursor:"pointer" }}>
+              <i className="ti ti-settings" aria-hidden="true" style={{ fontSize:19, color:"var(--fg2)" }}></i>
+            </button>
+          </div>
+
+          {screens[view]}
+        </div>
+      </div>
+
+      <nav className="bottom" aria-label="Main navigation">
+        {SECTIONS.map(s => (
+          <button key={s.id} className={`nav b ${view===s.id ? "on" : ""}`} onClick={() => setView(s.id)}>
+            <i className={`ti ${s.icon}`} aria-hidden="true"></i>{s.label}
+          </button>
+        ))}
+      </nav>
+
+      {settingsOpen && <Settings progress={progress} setNotif={setNotif} setMotivation={setMotivation} exportData={exportData} importData={importData} onClose={() => setSettingsOpen(false)} />}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(
+  <ErrorBoundary><App /></ErrorBoundary>
+);
 </script>
-    <div id="root"></div>
-    
-    <script type="text/babel">
-        const { useState } = React;
-
-        const COLORS = {
-          korean: { bg: "#E1F5EE", text: "#0F6E56", border: "#1D9E75", accent: "#085041" },
-          japanese: { bg: "#EEEDFE", text: "#3C3489", border: "#534AB7", accent: "#26215C" },
-          chinese: { bg: "#FAECE7", text: "#993C1D", border: "#D85A30", accent: "#4A1B0C" },
-          neutral: { bg: "#F1EFE8", text: "#5F5E5A", border: "#888780", accent: "#2C2C2A" },
-        };
-
-        // Resource URLs
-        const RESOURCE_URLS = {
-          // Korean
-          "Talk To Me In Korean": "https://talktomeinkorean.com",
-          "두루책방 (Durukitab)": "https://durumiai.com/durukitab",
-          "Anki": "https://apps.ankiweb.net",
-          "Naver Dictionary": "https://dict.naver.com",
-          "HelloTalk": "https://www.hellotalk.com",
-          "italki": "https://www.italki.com",
-          "Mirinae": "https://mirinae.io",
-          // Japanese
-          "Tae Kim's Guide": "https://guidetojapanese.org",
-          "Cure Dolly (YouTube)": "https://www.youtube.com/@CureDolly",
-          "WaniKani": "https://www.wanikani.com",
-          "Tadoku Graded Readers": "https://tadoku.org/japanese/en/free-books-2",
-          "Satori Reader": "https://www.satorireader.com",
-          "Nihongo con Teppei": "https://nihongoconteppei.com",
-          "Anki + Core 2k/6k Deck": "https://ankiweb.net/shared/info/240418633",
-          // Chinese
-          "Chinese Grammar Wiki": "https://resources.allsetlearning.com/chinese/grammar",
-          "Du Chinese": "https://www.duchinese.net",
-          "Pleco": "https://www.pleco.com",
-          "Skritter": "https://skritter.com",
-          "Chairman's Bao": "https://www.thechairmansbao.com",
-          "ChinesePod": "https://chinesepod.com",
-          "Anki + HSK Decks": "https://ankiweb.net/shared/decks/hsk"
-        };
-
-        const langMeta = [
-          { id: "korean", label: "Year 1 · Korean", emoji: "🇰🇷", tagline: "Build the SOV foundation", color: COLORS.korean, topik: "TOPIK I → Early II", hours: "~540 hrs", scripts: "Hangul (1 month)", grammar: "High — particles, honorifics, conjugations", tones: "Tense/lax consonants, vowel distinctions" },
-          { id: "japanese", label: "Year 2 · Japanese", emoji: "🇯🇵", tagline: "Repurpose your Korean brain", color: COLORS.japanese, topik: "JLPT N5 → N3", hours: "~540 hrs", scripts: "Hiragana + Katakana (1 mo) + Kanji (ongoing)", grammar: "High — particles, Te-form, Keigo", tones: "Mora timing, pitch accent" },
-          { id: "chinese", label: "Year 3 · Chinese", emoji: "🇨🇳", tagline: "Grammar vacation, tonal mountain", color: COLORS.chinese, topik: "HSK 1 → HSK 4/5", hours: "~540 hrs", scripts: "Pinyin (1 mo) + Hanzi (ongoing)", grammar: "Low — no conjugations, no particles!", tones: "Four tones + tone sandhi" },
-        ];
-
-        const coreSection = {
-          title: "The Science Behind This System",
-          principles: [
-            { name: "Comprehensible Input", icon: "ti-book", what: "Absorb language just above your current level (i+1).", how: "Graded readers, learner podcasts, content scaled month by month.", why: "The basal ganglia extracts grammatical rules implicitly — no conscious effort needed." },
-            { name: "Spaced Repetition", icon: "ti-refresh", what: "Review at expanding intervals, just before you forget.", how: "Daily Anki with automated scheduling — 15 minutes, non-negotiable.", why: "Retrieval at the moment of near-forgetting is the single most powerful memory event." },
-            { name: "Active Recall", icon: "ti-brain", what: "Pull information from memory without cues.", how: "Answer flashcards from memory; workbook exercises with the book closed.", why: "Every successful recall physically strengthens the neural pathway. Re-reading does not." },
-            { name: "Deliberate Practice", icon: "ti-target", what: "Isolate and drill specific weaknesses.", how: "Targeted speaking drills, focused pronunciation shadowing, timed conjugation sprints.", why: "Repetition with intense focus builds a faster, more efficient information superhighway." },
-            { name: "Primed Listening", icon: "ti-headphones", what: "Give your brain a search task before passive exposure.", how: "Pre-listen for one feature (e.g. all 2nd tones), then loop the same audio in the background.", why: "Without priming, background audio is noise. Priming tells your brain: 'This is relevant, filter it in.'" },
-            { name: "Low-Stakes Output", icon: "ti-microphone", what: "Speak and write from Day 1 without fear.", how: "The Gibberish Game, ungraded journals, voice messages to partners.", why: "Anxiety blocks language acquisition. Low stakes keep the door open." },
-            { name: "Emotional Encoding", icon: "ti-heart", what: "Tag every word with a personal, absurd, or sensory memory.", how: "One second of feeling before answering an Anki card = 23% better retention.", why: "Emotionally tagged memories are neurologically stronger and more retrievable." },
-            { name: "Sleep Consolidation", icon: "ti-moon", what: "Review before sleep; recall on waking.", how: "5 min pre-sleep review of hardest new words → sleep → 5 min morning recall.", why: "The hippocampus replays the day's learning at 10–20× speed during sleep." },
-            { name: "Habit Formation", icon: "ti-calendar", what: "Systems beat motivation every time.", how: "A Minimum Viable Plan for bad days. An Accountability Triad for accountability.", why: "Automates the decision to study, conserving mental energy for actual learning." },
-          ],
-        };
-
-        const weeklySchedule = [
-          { day: "Mon", focus: "New Input", desc: "New vocabulary + new grammar lesson. Set the week's theme." },
-          { day: "Tue", focus: "Input Deepening", desc: "Active listening with transcript. Intensive reading. Journal drafting." },
-          { day: "Wed", focus: "Output Practice", desc: "Journal correction. Scripted speaking drills. Voice messages." },
-          { day: "Thu", focus: "Input Variation", desc: "Different media: podcast, webtoon chapter, vlog." },
-          { day: "Fri", focus: "Free Output", desc: "Free writing. Free speaking. Review the week's gaps." },
-          { day: "Sat", focus: "Speaking Day", desc: "45–60 min iTalki conversation OR 30 min maintenance of prior language (Year 2–3)." },
-          { day: "Sun", focus: "Review & Immersion", desc: "Review failed Anki cards. Watch a drama/movie with target language subs. Weekly reflection." },
-        ];
-
-        const dailyMatrix = [
-          { slot: "Block 1", mode: "High-Focus", high: "15 min Anki (new cards) + 15 min Grammar / Tones / Kanji writing", low: "10 min Gentle Anki (review only — no new material)" },
-          { slot: "Block 2", mode: "Comprehensible Input", high: "20 min Active Listening with transcript + shadowing. Prime for one specific feature.", low: "20 min Extensive Reading — webtoon, manga, or graded reader. No dictionary. Enjoy." },
-          { slot: "Block 3", mode: "Diffuse Mode", high: "10 min Drama clip, music, or cooking video. Let the brain connect dots.", low: "15 min Re-listen to a familiar podcast while walking." },
-          { slot: "Block 4", mode: "Low-Stakes Output", high: "10 min Journal entry deliberately using today's grammar point.", low: "5 min Voice message to a partner — one new thing you learned today." },
-        ];
-
-        const milestones = [
-          { month: 1, ko: "Read Hangul fluently", ja: "Read Hiragana & Katakana", zh: "Master Pinyin & all 4 tones", celebrate: "Order food at a Korean/Japanese/Chinese restaurant using the language." },
-          { month: 3, ko: "5-min conversation", ja: "5-min conversation", zh: "5-min conversation", celebrate: "Cook a full meal from a target-language recipe video." },
-          { month: 6, ko: "Read a full webtoon chapter", ja: "Read a full NHK Easy article", zh: "Read a full Chinese Breeze book", celebrate: "Watch a movie without English subtitles." },
-          { month: 9, ko: "30-min conversation", ja: "30-min conversation", zh: "30-min conversation", celebrate: "Attend a language exchange meetup or online event." },
-          { month: 12, ko: "60-min conversation", ja: "60-min conversation", zh: "60-min conversation", celebrate: "Plan a real or imaginary trip to the country — all in the language." },
-        ];
-
-        const troubleshooter = [
-          { symptom: "I know it in Anki, but can't recognize it in real speech.", diagnosis: "Phonological Decoding Gap — visual memory exists, auditory memory is weak.", fix: "Phonology-only Anki: put the audio on the front, text on the back. Identify the word by sound alone before seeing it." },
-          { symptom: "I freeze when I try to speak, even though I know the grammar.", diagnosis: "Proceduralization Failure — grammar is a fact you know, not a motor skill you have.", fix: "Single-Pattern Speed Drills: create 20 variations of one pattern and speak them as fast as possible until the pattern flows automatically." },
-          { symptom: "I keep confusing two similar-sounding words.", diagnosis: "Interference Error — overlapping neural networks competing for retrieval.", fix: "Context Explosion: create one vivid, emotionally distinct mental image for each word. Distinct feelings pull memories apart." },
-          { symptom: "My reading is painfully slow — I can decode but I don't read.", diagnosis: "Subvocalization Bottleneck — you're mentally pronouncing every syllable.", fix: "Forced Speed Reading: use your finger to push your eyes faster than you can say the words, on a text you already know. Break the habit." },
-          { symptom: "Tones/particles/pitch are fine in practice, collapse in conversation.", diagnosis: "Cognitive Overload — simultaneous demands overwhelm the least-automated skill.", fix: "Single-Focus Conversation: choose ONE feature to monitor per conversation session. Forgive all other errors. Rotate the focus each day." },
-          { symptom: "I've studied for months and feel like I've completely plateaued.", diagnosis: "Intermediate Plateau — gains are real but harder to see. This is perception, not progress.", fix: "Retrospective Assessment: go back to content that was hard 3 months ago. Your shock at how easy it now is will recalibrate everything." },
-        ];
-
-        const yearData = {
-          korean: {
-            vocab: [300, 600, 1000, 1300, 1600, 2000, 2500, 3000, 3500, 4000, 4500, 5000],
-            grammar: [
-              { phase: "Months 1–3", level: "TOPIK I Lv.1", points: ["이다 / 아니다 (to be / not be)", "Topic 은/는 vs Subject 이/가", "Questions, Negatives (안 / 지 않다)", "Past Tense (았/었다) + Future (겠/ㄹ 것이다)", "고 싶다 (want to)", "Location Particles 에/에서, Direction 으로"] },
-              { phase: "Months 4–6", level: "TOPIK I Lv.2", points: ["Connectors: 그리고, 그래서, 지만", "그래서 vs 그러니까 (causal distinction)", "Comparisons: 보다 (more than)", "Cause & Effect: 아/어서 vs 때문에"] },
-              { phase: "Months 7–12", level: "Early TOPIK II", points: ["면서 (simultaneous actions)", "는데/은데 (background/contrast — most versatile connector)", "거나 (or — linking verbs)", "것 같다 (seems like / likely)", "다고 하다 (reported speech)", "Formal writing endings: ㄴ/는다"] },
-            ],
-            resources: [
-              { name: "Talk To Me In Korean", type: "Core Course", free: true, best: "Structured grammar & beginner-friendly audio", note: "Premium content locked, but free audio is excellent." },
-              { name: "두루책방 (Durukitab)", type: "Graded Readers", free: true, best: "Extensive reading Months 3–8", note: "6 free levels of illustrated e-books. Best free reading resource." },
-              { name: "Anki", type: "SRS", free: true, best: "Vocabulary & grammar memorization", note: "Gold standard. iOS app is a paid purchase (~$25 one-time)." },
-              { name: "Naver Dictionary", type: "Dictionary", free: true, best: "Everything — audio, examples, Hanja", note: "No meaningful alternative. The free standard is perfect." },
-              { name: "HelloTalk", type: "Language Exchange", free: true, best: "Daily writing & speaking with natives", note: "Massive community. Be proactive about finding serious partners." },
-              { name: "italki", type: "Tutoring", free: false, best: "Focused, deliberate speaking practice", note: "$5–30/hr. Even 1 session/week has a massive impact." },
-              { name: "Mirinae", type: "Grammar Analyzer", free: true, best: "Deconstructing complex sentences", note: "Paste a sentence; it explains every grammar point. Free daily quota." },
-            ],
-            culture: [
-              { period: "Months 1–3", topic: "Speech Levels", detail: "Learn polite informal (-요) as your default safe mode. Formal polite (-습니다/ㅂ니다) for presentations and service encounters. Using the wrong level is a social error, not just a grammatical one." },
-              { period: "Months 4–6", topic: "Hierarchy in Action", detail: "Age and status are the invisible grammar of Korean society. Learn 선배/후배, the sibling terms (오빠/언니/형/누나), and that 친구 means only someone your exact age." },
-              { period: "Months 7–9", topic: "Group Concepts", detail: "눈치 (reading the room), 정 (deep-seated affection over time), 체면 (face/social appearance). These are essential for understanding drama dialogue and workplace dynamics." },
-              { period: "Months 10–12", topic: "Indirect Communication", detail: "좀 그렇다 ('it's a bit so-so') can mean a hard no. Learn to read hedging language. Direct 'no' can be seen as rude." },
-            ],
-          },
-          japanese: {
-            vocab: [300, 600, 1000, 1300, 1700, 2200, 2700, 3200, 3700, 4200, 4700, 5500],
-            kanji: [50, 100, 200, 350, 500, 650, 800, 950, 1100, 1250, 1400, 1500],
-            grammar: [
-              { phase: "Months 1–3", level: "JLPT N5", points: ["です/だ (to be)", "は (topic) vs が (subject) — your Korean 은/는 and 이/가 carry over!", "を (object), に/で (location), か (questions)", "Past tense (でした/ました, -た form)", "Desire: -たい (like Korean -고 싶다)", "Te-form — the single most important milestone, unlocks dozens of structures"] },
-              { phase: "Months 4–6", level: "JLPT N4", points: ["Requests (-てください), Permission (-てもいいですか)", "Prohibition (-てはいけません)", "Comparisons: より (more than), ほど (not as much as)", "Conditionals: なら, たら"] },
-              { phase: "Months 7–12", level: "JLPT N3", points: ["Potential form (-られる/れる)", "Passive (-られる) and Causative (-させる)", "Keigo — Sonkeigo, Kenjougo, Teineigo", "Advanced connectors for sophisticated expression", "Korean honorific system intuition makes Keigo logical"] },
-            ],
-            resources: [
-              { name: "Tae Kim's Guide", type: "Grammar", free: true, best: "Complete, no-nonsense grammar foundation", note: "Teaches plain form first — more natural acquisition order." },
-              { name: "Cure Dolly (YouTube)", type: "Grammar", free: true, best: "Deep structural understanding", note: "Explains why Japanese works the way it does. Unconventional presentation." },
-              { name: "WaniKani", type: "Kanji SRS", free: false, best: "Systematic Kanji acquisition", note: "$9/mo. Radicals-first approach. Solves the Kanji problem. Worth every penny." },
-              { name: "Tadoku Graded Readers", type: "Reading", free: true, best: "Extensive reading from Month 2", note: "Completely free, multiple levels, no account needed. Best free reading resource." },
-              { name: "Satori Reader", type: "Reading Platform", free: false, best: "Intermediate reading + listening bridge", note: "$9/mo. Human-narrated stories with grammar explanations. Best from Month 5+." },
-              { name: "Nihongo con Teppei", type: "Podcast", free: true, best: "Beginner listening from Month 3", note: "Native speaker talks naturally about everyday topics. Beginner-adapted version available." },
-              { name: "Anki + Core 2k/6k Deck", type: "SRS", free: true, best: "Vocabulary sentences with native audio", note: "The Core 2k/6k deck is legendary. Download it immediately." },
-            ],
-            culture: [
-              { period: "Months 1–3", topic: "Surface Politeness", detail: "です/ます is your default safe mode. Never plain form with strangers. すみません is a multi-purpose social lubricant: excuse me, sorry, and thank you all in one." },
-              { period: "Months 4–6", topic: "Honne vs Tatemae", detail: "本音 (true feelings) vs 建前 (socially expected position). 'それはちょっと...' is often a hard no. Learn to read the air (空気を読む)." },
-              { period: "Months 7–9", topic: "Group Harmony (和)", detail: "Behaviors that preserve harmony are prioritized over individual expression. The sempai-kohai (先輩-後輩) relationship has linguistic markers you must learn." },
-              { period: "Months 10–12", topic: "Professional Keigo", detail: "Three types: Sonkeigo (raise others), Kenjougo (lower yourself), Teineigo (polite です/ます). Business card exchange requires both hands and genuine respect." },
-            ],
-          },
-          chinese: {
-            vocab: [300, 600, 1000, 1400, 1800, 2200, 2700, 3200, 3700, 4200, 4700, 5500],
-            hanzi: [100, 250, 450, 650, 850, 1000, 1250, 1500, 1750, 2000, 2250, 2500],
-            grammar: [
-              { phase: "Months 1–3", level: "HSK 1–2", points: ["是 (shì - to be), 有 (yǒu - to have), 在 (zài - to be at)", "Questions with 吗 (ma). Negatives: 不 vs 没", "了 (le) — aspect marker for completion (NOT a past tense marker!)", "Measure words (量词) — learn each as a chunk: 一本书, not just 书"] },
-              { phase: "Months 4–6", level: "HSK 3", points: ["比 (bǐ) comparisons: A 比 B Adjective", "Result complements: 看完 (finish reading), 听懂 (understand by listening)", "Directional complements: 进来 (come in), 出去 (go out)", "Your SOV Korean/Japanese brain will find 把 sentences intuitive!"] },
-              { phase: "Months 7–12", level: "HSK 4–5", points: ["把 (bǎ) construction — emphasizes what happened to the object", "被 (bèi) passive voice", "Complex connectors for formal writing", "Topic-comment structures — Chinese is topic-prominent, just like Korean with 은/는"] },
-            ],
-            resources: [
-              { name: "Chinese Grammar Wiki", type: "Grammar", free: true, best: "The definitive grammar reference", note: "Every point organized by HSK level. The single best free Chinese grammar resource." },
-              { name: "Du Chinese", type: "Graded Reading App", free: true, best: "The best graded reading app", note: "Beautiful interface. Human narration. Pop-up dictionary. Pinyin toggle." },
-              { name: "Pleco", type: "Dictionary", free: true, best: "Everything — OCR, flashcards, documents", note: "Best-in-class. Free version is already world-class." },
-              { name: "Skritter", type: "Writing Practice", free: false, best: "Learning to write Hanzi", note: "$14.99/mo. Real-time stroke order feedback. Transformative if handwriting matters to you." },
-              { name: "Chairman's Bao", type: "Graded News", free: true, best: "Real-world news at your level", note: "Updated daily. HSK-graded. Audio and grammar notes. Best from Month 7+." },
-              { name: "ChinesePod", type: "Podcast/Course", free: true, best: "Structured audio from Newbie level", note: "Massive library. Engaging hosts. Premium unlocks most content." },
-              { name: "Anki + HSK Decks", type: "SRS", free: true, best: "Vocabulary memorization", note: "HSK vocabulary decks are widely available and well-made." },
-            ],
-            culture: [
-              { period: "Months 1–3", topic: "面子 (Miànzi) — Face", detail: "Causing someone to lose face (丢脸) is a serious social error. Giving face (给面子) is a gift. 吃了吗 ('Have you eaten?') is a casual greeting, not a literal question." },
-              { period: "Months 4–6", topic: "Family & Hierarchy", detail: "Chinese has distinct words for maternal vs paternal grandparents, aunts, and uncles. Terms like 阿姨 (auntie) and 叔叔 (uncle) extend to non-relatives as a sign of warmth and respect." },
-              { period: "Months 7–9", topic: "关系 (Guānxi)", detail: "The network of relationships, obligations, and social capital. Business is built on guanxi before contracts. Gift-giving and hospitality are central." },
-              { period: "Months 10–12", topic: "Indirect Harmony", detail: "'Maybe', 'it's not convenient', 'I'll think about it' are often polite refusals. Public criticism is avoided. Maintaining harmony (和谐) is a core value." },
-            ],
-          },
-        };
-
-        function VocabChart({ data, label, color, extraData, extraLabel }) {
-          const max = Math.max(...data, ...(extraData || []));
-          return (
-            <div style={{ marginTop: 16 }}>
-              <div style={{ display: "flex", gap: 16, marginBottom: 8, flexWrap: "wrap" }}>
-                <span style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 12, color: "var(--color-text-secondary)" }}>
-                  <span style={{ width: 10, height: 10, borderRadius: 2, background: color.border }}></span>{label}
-                </span>
-                {extraData && <span style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 12, color: "var(--color-text-secondary)" }}>
-                  <span style={{ width: 10, height: 10, borderRadius: 2, border: `2px dashed ${color.border}`, background: "transparent" }}></span>{extraLabel}
-                </span>}
-              </div>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(12, 1fr)", gap: 4, alignItems: "end", height: 80 }}>
-                {data.map((v, i) => (
-                  <div key={i} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2 }}>
-                    <div style={{ width: "100%", background: color.border, borderRadius: 2, height: `${Math.round((v / max) * 64)}px`, minHeight: 4 }}></div>
-                    {extraData && <div style={{ width: "100%", border: `1.5px dashed ${color.border}`, borderRadius: 2, height: `${Math.round((extraData[i] / max) * 64)}px`, minHeight: 4 }}></div>}
-                  </div>
-                ))}
-              </div>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(12, 1fr)", gap: 4, marginTop: 4 }}>
-                {data.map((_, i) => (
-                  <div key={i} style={{ textAlign: "center", fontSize: 10, color: "var(--color-text-tertiary)" }}>M{i + 1}</div>
-                ))}
-              </div>
-            </div>
-          );
-        }
-
-        function SpeakingMilestones({ lang }) {
-          const rows = [
-            { month: 1, target: "30-second self-introduction", tip: "Proceduralize identity: name, country, job." },
-            { month: 2, target: "1-minute monologue", tip: "Chain simple sentences. Describe your family or what you ate yesterday." },
-            { month: 3, target: "5-minute conversation", tip: "Practice turn-taking. Ask your partner 2 follow-up questions." },
-            { month: 6, target: "15-minute conversation", tip: "Tell a simple story. Use temporal connectors." },
-            { month: 9, target: "30-minute conversation", tip: "Express and defend a simple opinion. Compare two movies or cities." },
-            { month: 12, target: "60-minute conversation", tip: "A natural, flowing chat on life goals, current events, or a hobby." },
-          ];
-          const color = COLORS[lang];
-          return (
-            <div>
-              {rows.map((r, i) => (
-                <div key={i} style={{ display: "flex", gap: 12, marginBottom: 12, alignItems: "flex-start" }}>
-                  <div style={{ minWidth: 44, height: 44, borderRadius: "50%", background: color.bg, border: `1.5px solid ${color.border}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 500, color: color.text }}>M{r.month}</div>
-                  <div>
-                    <div style={{ fontWeight: 500, fontSize: 14, color: "var(--color-text-primary)", marginBottom: 2 }}>{r.target}</div>
-                    <div style={{ fontSize: 13, color: "var(--color-text-secondary)" }}>{r.tip}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          );
-        }
-
-        function WritingMilestones({ lang }) {
-          const rowsByLang = {
-            korean: [
-              { month: 1, target: "Single sentences on HelloTalk", focus: "Subject-Object-Verb order. 'I like cats.' 'Coffee is delicious.'" },
-              { month: 2, target: "Daily journal: 3–5 sentences", focus: "Weather, what you ate, what you did. Present/past tense." },
-              { month: 3, target: "100-word entries", focus: "Add future plans (-고 싶다) and reasons (-아/어서)." },
-              { month: 6, target: "250-word entries", focus: "Book or movie review. Use -지만 (but) and -때문에 (because)." },
-              { month: 9, target: "500-word entries", focus: "Structured argument with three reasons. 'Firstly... Secondly... Finally...'" },
-              { month: 12, target: "Short essays & formal letters", focus: "Cover letter or travel recommendation. Formal endings." },
-            ],
-            japanese: [
-              { month: 1, target: "Single sentences on HelloTalk", focus: "Write in Kana + basic Kanji. 'I like cats.' 'Sushi is delicious.'" },
-              { month: 2, target: "Daily journal: 3–5 sentences", focus: "Use です/ます form." },
-              { month: 3, target: "100-word entries", focus: "Add reasons (-から), desires (-たい), and past tense (-た)." },
-              { month: 6, target: "250-word entries", focus: "Book or movie review. Use Te-form connections and -たり." },
-              { month: 9, target: "500-word entries", focus: "Structured argument with three reasons." },
-              { month: 12, target: "Short essays, formal emails", focus: "Cover letter or travel recommendation. Appropriate Keigo." },
-            ],
-            chinese: [
-              { month: 1, target: "Single sentences on HelloTalk", focus: "'我喜欢猫。' '咖啡很好喝。' Pinyin input → character selection." },
-              { month: 2, target: "Daily journal: 3–5 sentences", focus: "Use 了 correctly. Present tense default." },
-              { month: 3, target: "100-word entries", focus: "Add reasons (因为), desires (想/要), and time expressions." },
-              { month: 6, target: "250-word entries", focus: "Book or movie review. Use 比 for comparisons and 把 for object manipulation." },
-              { month: 9, target: "500-word entries", focus: "Structured argument: '我的观点是... 有三个原因。'" },
-              { month: 12, target: "Short essays, formal letters", focus: "Cover letter or travel recommendation. Formal connectors: 因此, 然而." },
-            ],
-          };
-          const rows = rowsByLang[lang];
-          const color = COLORS[lang];
-          return (
-            <div>
-              {rows.map((r, i) => (
-                <div key={i} style={{ borderLeft: `3px solid ${color.border}`, paddingLeft: 12, marginBottom: 12 }}>
-                  <div style={{ fontSize: 11, color: color.text, fontWeight: 500, marginBottom: 2 }}>Month {r.month}</div>
-                  <div style={{ fontWeight: 500, fontSize: 14, color: "var(--color-text-primary)", marginBottom: 2 }}>{r.target}</div>
-                  <div style={{ fontSize: 13, color: "var(--color-text-secondary)" }}>{r.focus}</div>
-                </div>
-              ))}
-            </div>
-          );
-        }
-
-        const SECTIONS = ["Overview", "Daily System", "Milestones", "Grammar", "Vocabulary", "Speaking", "Writing", "Culture", "Resources", "Troubleshooter"];
-
-        function App() {
-          const [activeYear, setActiveYear] = useState("korean");
-          const [activeSection, setActiveSection] = useState("Overview");
-          const [energyMode, setEnergyMode] = useState("high");
-          const [openPrinciple, setOpenPrinciple] = useState(null);
-          const [openTrouble, setOpenTrouble] = useState(null);
-
-          const lang = activeYear;
-          const color = COLORS[lang];
-          const meta = langMeta.find(m => m.id === lang);
-          const data = yearData[lang];
-
-          return (
-            <div style={{ fontFamily: "var(--font-sans)", maxWidth: 680, margin: "0 auto", padding: "1rem 0" }}>
-              <h2 className="sr-only" style={{ position: "absolute", width: 1, height: 1, overflow: "hidden" }}>Three-Year East Asian Language Master Handbook — interactive guide for Korean, Japanese, and Chinese</h2>
-
-              <div style={{ marginBottom: 24 }}>
-                <div style={{ fontSize: 13, color: "var(--color-text-secondary)", marginBottom: 4 }}>Three-Year East Asian Language Mastery System</div>
-                <div style={{ fontSize: 22, fontWeight: 500, color: "var(--color-text-primary)", marginBottom: 8 }}>Your Complete Training Manual</div>
-                <div style={{ fontSize: 14, color: "var(--color-text-secondary)", lineHeight: 1.6 }}>Korean → Japanese → Chinese. From complete beginner to trilingual independent user. 1–2 hrs/day. 36 months. Humanly possible.</div>
-              </div>
-
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8, marginBottom: 20 }}>
-                {langMeta.map(m => (
-                  <button key={m.id} onClick={() => setActiveYear(m.id)} style={{ padding: "10px 8px", borderRadius: "var(--border-radius-lg)", border: `2px solid ${activeYear === m.id ? m.color.border : "var(--color-border-tertiary)"}`, background: activeYear === m.id ? m.color.bg : "var(--color-background-primary)", cursor: "pointer", textAlign: "left", transition: "all 0.15s" }}>
-                    <div style={{ fontSize: 18, marginBottom: 4 }}>{m.emoji}</div>
-                    <div style={{ fontSize: 12, fontWeight: 500, color: activeYear === m.id ? m.color.text : "var(--color-text-primary)" }}>{m.label}</div>
-                    <div style={{ fontSize: 11, color: "var(--color-text-secondary)", marginTop: 2 }}>{m.tagline}</div>
-                  </button>
-                ))}
-              </div>
-
-              <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 20 }}>
-                {SECTIONS.map(s => (
-                  <button key={s} onClick={() => setActiveSection(s)} style={{ padding: "5px 12px", borderRadius: 20, border: `1px solid ${activeSection === s ? color.border : "var(--color-border-tertiary)"}`, background: activeSection === s ? color.bg : "var(--color-background-primary)", fontSize: 12, fontWeight: activeSection === s ? 500 : 400, color: activeSection === s ? color.text : "var(--color-text-secondary)", cursor: "pointer" }}>
-                    {s}
-                  </button>
-                ))}
-              </div>
-
-              {activeSection === "Overview" && (
-                <div>
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 10, marginBottom: 20 }}>
-                    {[
-                      { label: "Certification Target", value: meta.topik },
-                      { label: "Est. Total Time", value: meta.hours },
-                      { label: "Writing System", value: meta.scripts },
-                      { label: "Grammar Load", value: meta.grammar },
-                    ].map((c, i) => (
-                      <div key={i} style={{ background: "var(--color-background-secondary)", borderRadius: "var(--border-radius-md)", padding: "12px 14px" }}>
-                        <div style={{ fontSize: 11, color: "var(--color-text-secondary)", marginBottom: 4 }}>{c.label}</div>
-                        <div style={{ fontSize: 13, fontWeight: 500, color: "var(--color-text-primary)" }}>{c.value}</div>
-                      </div>
-                    ))}
-                  </div>
-                  <div style={{ marginBottom: 16, fontSize: 15, fontWeight: 500 }}>Core Learning Principles</div>
-                  <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                    {coreSection.principles.map((p, i) => (
-                      <div key={i} style={{ border: "0.5px solid var(--color-border-tertiary)", borderRadius: "var(--border-radius-md)", overflow: "hidden" }}>
-                        <button onClick={() => setOpenPrinciple(openPrinciple === i ? null : i)} style={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 14px", background: "var(--color-background-primary)", border: "none", cursor: "pointer", textAlign: "left" }}>
-                          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                            <i className={`ti ${p.icon}`} aria-hidden="true" style={{ fontSize: 16, color: color.border }}></i>
-                            <span style={{ fontSize: 14, fontWeight: 500, color: "var(--color-text-primary)" }}>{p.name}</span>
-                          </div>
-                          <i className={`ti ${openPrinciple === i ? "ti-chevron-up" : "ti-chevron-down"}`} aria-hidden="true" style={{ fontSize: 14, color: "var(--color-text-secondary)" }}></i>
-                        </button>
-                        {openPrinciple === i && (
-                          <div style={{ padding: "0 14px 12px", borderTop: "0.5px solid var(--color-border-tertiary)" }}>
-                            <div style={{ fontSize: 13, color: "var(--color-text-secondary)", marginTop: 10, marginBottom: 6 }}><strong style={{ color: "var(--color-text-primary)" }}>What it is:</strong> {p.what}</div>
-                            <div style={{ fontSize: 13, color: "var(--color-text-secondary)", marginBottom: 6 }}><strong style={{ color: "var(--color-text-primary)" }}>How you'll do it:</strong> {p.how}</div>
-                            <div style={{ fontSize: 13, color: "var(--color-text-secondary)", background: color.bg, padding: "8px 10px", borderRadius: "var(--border-radius-md)", borderLeft: `3px solid ${color.border}` }}><strong style={{ color: color.text }}>Why it works:</strong> {p.why}</div>
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {activeSection === "Daily System" && (
-                <div>
-                  <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
-                    {["high", "low"].map(e => (
-                      <button key={e} onClick={() => setEnergyMode(e)} style={{ padding: "6px 16px", borderRadius: 20, border: `1px solid ${energyMode === e ? color.border : "var(--color-border-tertiary)"}`, background: energyMode === e ? color.bg : "var(--color-background-primary)", fontSize: 13, color: energyMode === e ? color.text : "var(--color-text-secondary)", cursor: "pointer", fontWeight: energyMode === e ? 500 : 400 }}>
-                        {e === "high" ? "⚡ High-energy day" : "🌙 Low-energy day"}
-                      </button>
-                    ))}
-                  </div>
-                  <div style={{ fontSize: 12, color: "var(--color-text-secondary)", marginBottom: 12 }}>
-                    {energyMode === "high" ? "Full ~90-minute schedule. Fresh brain, new material, push forward." : "~50-minute schedule. Tired brain. No new cards. Maintain, don't strain."}
-                  </div>
-                  <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 20 }}>
-                    {dailyMatrix.map((b, i) => (
-                      <div key={i} style={{ border: "0.5px solid var(--color-border-tertiary)", borderRadius: "var(--border-radius-md)", padding: "12px 14px", background: "var(--color-background-primary)" }}>
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-                          <span style={{ fontSize: 12, fontWeight: 500, background: color.bg, color: color.text, padding: "2px 8px", borderRadius: 20 }}>{b.slot}</span>
-                          <span style={{ fontSize: 11, color: "var(--color-text-tertiary)" }}>{b.mode}</span>
-                        </div>
-                        <div style={{ fontSize: 13, color: "var(--color-text-primary)" }}>{energyMode === "high" ? b.high : b.low}</div>
-                      </div>
-                    ))}
-                  </div>
-                  <div style={{ marginBottom: 12, fontSize: 15, fontWeight: 500 }}>Weekly Rhythm</div>
-                  <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                    {weeklySchedule.map((d, i) => (
-                      <div key={i} style={{ display: "flex", gap: 10, alignItems: "flex-start", padding: "8px 0", borderBottom: "0.5px solid var(--color-border-tertiary)" }}>
-                        <div style={{ minWidth: 32, height: 32, borderRadius: "50%", background: color.bg, border: `1.5px solid ${color.border}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, fontWeight: 500, color: color.text }}>{d.day}</div>
-                        <div>
-                          <div style={{ fontWeight: 500, fontSize: 13, color: "var(--color-text-primary)" }}>{d.focus}</div>
-                          <div style={{ fontSize: 12, color: "var(--color-text-secondary)", marginTop: 2 }}>{d.desc}</div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  <div style={{ marginTop: 20, padding: "12px 14px", background: color.bg, borderRadius: "var(--border-radius-md)", borderLeft: `3px solid ${color.border}` }}>
-                    <div style={{ fontWeight: 500, fontSize: 13, color: color.text, marginBottom: 4 }}>The Non-Negotiable 20-Minute Minimum</div>
-                    <div style={{ fontSize: 13, color: "var(--color-text-secondary)", lineHeight: 1.6 }}>
-                      10 min Anki review · 5 min primed listening · 5 min read aloud<br />
-                      <strong style={{ color: "var(--color-text-primary)" }}>Never skip entirely.</strong> A 20-minute day saves 45 minutes of re-learning. A zero day breaks the chain — and often leads to a zero week.
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {activeSection === "Milestones" && (
-                <div>
-                  <div style={{ fontSize: 14, color: "var(--color-text-secondary)", marginBottom: 16, lineHeight: 1.6 }}>Celebration is not optional — your brain needs dopamine rewards tied to effort. Mark every milestone. These aren't checkboxes; they're proof.</div>
-                  {milestones.map((m, i) => (
-                    <div key={i} style={{ marginBottom: 16, border: "0.5px solid var(--color-border-tertiary)", borderRadius: "var(--border-radius-lg)", overflow: "hidden" }}>
-                      <div style={{ background: color.bg, padding: "8px 14px", display: "flex", alignItems: "center", gap: 8 }}>
-                        <span style={{ fontSize: 18, fontWeight: 500, color: color.text }}>Month {m.month}</span>
-                      </div>
-                      <div style={{ padding: "12px 14px" }}>
-                        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8, marginBottom: 10 }}>
-                          {[["🇰🇷 Korean", m.ko], ["🇯🇵 Japanese", m.ja], ["🇨🇳 Chinese", m.zh]].map(([label, val], j) => (
-                            <div key={j} style={{ background: "var(--color-background-secondary)", borderRadius: "var(--border-radius-md)", padding: "8px 10px" }}>
-                              <div style={{ fontSize: 11, color: "var(--color-text-secondary)", marginBottom: 4 }}>{label}</div>
-                              <div style={{ fontSize: 12, fontWeight: 500, color: "var(--color-text-primary)" }}>{val}</div>
-                            </div>
-                          ))}
-                        </div>
-                        <div style={{ fontSize: 13, color: "var(--color-text-secondary)", background: "var(--color-background-secondary)", padding: "8px 10px", borderRadius: "var(--border-radius-md)", display: "flex", gap: 8, alignItems: "flex-start" }}>
-                          <span style={{ fontSize: 16 }}>🎉</span>
-                          <span><strong style={{ color: "var(--color-text-primary)" }}>Celebrate:</strong> {m.celebrate}</span>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {activeSection === "Grammar" && (
-                <div>
-                  {data.grammar.map((g, i) => (
-                    <div key={i} style={{ marginBottom: 16, border: "0.5px solid var(--color-border-tertiary)", borderRadius: "var(--border-radius-lg)", overflow: "hidden" }}>
-                      <div style={{ background: color.bg, padding: "10px 14px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                        <span style={{ fontWeight: 500, fontSize: 14, color: color.text }}>{g.phase}</span>
-                        <span style={{ fontSize: 11, padding: "2px 8px", background: color.border, color: "white", borderRadius: 20 }}>{g.level}</span>
-                      </div>
-                      <div style={{ padding: "12px 14px" }}>
-                        {g.points.map((p, j) => (
-                          <div key={j} style={{ display: "flex", gap: 8, marginBottom: 8, alignItems: "flex-start" }}>
-                            <span style={{ minWidth: 6, height: 6, borderRadius: "50%", background: color.border, marginTop: 6 }}></span>
-                            <span style={{ fontSize: 13, color: "var(--color-text-primary)", lineHeight: 1.5 }}>{p}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                  {lang === "japanese" && (
-                    <div style={{ padding: "14px", background: COLORS.japanese.bg, borderRadius: "var(--border-radius-lg)", borderLeft: `3px solid ${COLORS.japanese.border}` }}>
-                      <div style={{ fontWeight: 500, fontSize: 14, color: COLORS.japanese.text, marginBottom: 8 }}>Your Korean-Japanese Grammar Transfer Advantage</div>
-                      <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                        {[["은/는", "は", "Topic particle"], ["이/가", "が", "Subject particle"], ["을/를", "を", "Object particle"], ["-고 싶다", "-たい", "Want to"], ["-ㅂ니다", "です/ます", "Polite speech level"]].map(([ko, ja, fn], i) => (
-                          <div key={i} style={{ display: "grid", gridTemplateColumns: "1fr 1fr 2fr", gap: 8, fontSize: 13, padding: "4px 0", borderBottom: "0.5px solid var(--color-border-tertiary)" }}>
-                            <span style={{ color: COLORS.korean.text, fontWeight: 500 }}>{ko}</span>
-                            <span style={{ color: COLORS.japanese.text, fontWeight: 500 }}>{ja}</span>
-                            <span style={{ color: "var(--color-text-secondary)" }}>{fn}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                  {lang === "chinese" && (
-                    <div style={{ padding: "14px", background: COLORS.chinese.bg, borderRadius: "var(--border-radius-lg)", borderLeft: `3px solid ${COLORS.chinese.border}` }}>
-                      <div style={{ fontWeight: 500, fontSize: 14, color: COLORS.chinese.text, marginBottom: 8 }}>The SOV → SVO Pivot</div>
-                      <div style={{ fontSize: 13, color: "var(--color-text-secondary)", lineHeight: 1.6 }}>After two years of Korean particles and Japanese Te-form, Chinese grammar will feel almost suspiciously simple. No conjugations. No tenses. No particles. No honorifics. The information that was encoded in grammar is now encoded in word order and context. You must unlearn the habit of looking for endings that aren't there.</div>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {activeSection === "Vocabulary" && (
-                <div>
-                  <div style={{ marginBottom: 20 }}>
-                    <div style={{ fontWeight: 500, fontSize: 15, marginBottom: 4 }}>Cumulative word targets</div>
-                    <div style={{ fontSize: 13, color: "var(--color-text-secondary)", marginBottom: 12 }}>Frequency-based learning. The most common 1,000 words handle 80% of everyday conversations.</div>
-                    <VocabChart data={data.vocab} label="Words" color={color} />
-                    {lang === "japanese" && <VocabChart data={data.kanji} label="Kanji" extraData={data.vocab} extraLabel="Words" color={color} />}
-                    {lang === "chinese" && <VocabChart data={data.hanzi} label="Hanzi" extraData={data.vocab} extraLabel="Words" color={color} />}
-                  </div>
-                  <div style={{ fontSize: 15, fontWeight: 500, marginBottom: 12 }}>Monthly breakdown</div>
-                  <div style={{ border: "0.5px solid var(--color-border-tertiary)", borderRadius: "var(--border-radius-md)", overflow: "hidden" }}>
-                    {data.vocab.map((v, i) => {
-                      const prev = i === 0 ? 0 : data.vocab[i - 1];
-                      const newWords = v - prev;
-                      return (
-                        <div key={i} style={{ display: "grid", gridTemplateColumns: "48px 1fr 80px", gap: 8, padding: "8px 12px", borderBottom: i < 11 ? "0.5px solid var(--color-border-tertiary)" : "none", background: i % 2 === 0 ? "var(--color-background-primary)" : "var(--color-background-secondary)" }}>
-                          <span style={{ fontSize: 12, color: color.text, fontWeight: 500 }}>M{i + 1}</span>
-                          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                            <div style={{ height: 6, borderRadius: 3, background: color.border, width: `${Math.round((v / 5500) * 200)}px`, maxWidth: "100%" }}></div>
-                          </div>
-                          <span style={{ fontSize: 12, color: "var(--color-text-secondary)", textAlign: "right" }}>{v.toLocaleString()} (+{newWords})</span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-
-              {activeSection === "Speaking" && (
-                <div>
-                  <div style={{ marginBottom: 16, padding: "12px 14px", background: color.bg, borderRadius: "var(--border-radius-md)", borderLeft: `3px solid ${color.border}` }}>
-                    <div style={{ fontWeight: 500, fontSize: 13, color: color.text, marginBottom: 4 }}>The Gibberish Game — Week 1, Month 1</div>
-                    <div style={{ fontSize: 13, color: "var(--color-text-secondary)", lineHeight: 1.6 }}>Set a timer for 90 seconds. Speak the target language non-stop — made-up sounds, imitations, random syllables. No English allowed. The goal is not correctness. The goal is to build psychological comfort with unfamiliar sounds and inoculate yourself against the fear of sounding stupid. Play once a week for the first month.</div>
-                  </div>
-                  <div style={{ fontWeight: 500, fontSize: 15, marginBottom: 12 }}>Speaking milestones</div>
-                  <SpeakingMilestones lang={lang} />
-                  <div style={{ marginTop: 20, border: "0.5px solid var(--color-border-tertiary)", borderRadius: "var(--border-radius-md)", padding: "12px 14px" }}>
-                    <div style={{ fontWeight: 500, fontSize: 14, marginBottom: 8 }}>Primed listening — the 3-step cycle</div>
-                    {[["Active (100% focus)", "Listen while reading the transcript. Identify one specific feature, e.g. 'find 5 sentences using this grammar pattern.'"], ["Post-active priming", "Immediately after, mentally review what you found. Tell yourself: 'This is what X sounds like in natural speech.'"], ["Background looping", "Later, put the exact same audio on loop while commuting. Your brain, now primed, will subconsciously flag every instance of the target feature. Unprimed background noise is just noise."]].map(([t, d], i) => (
-                      <div key={i} style={{ display: "flex", gap: 10, marginBottom: 10, alignItems: "flex-start" }}>
-                        <div style={{ minWidth: 24, height: 24, borderRadius: "50%", background: color.border, color: "white", fontSize: 12, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 500 }}>{i + 1}</div>
-                        <div>
-                          <div style={{ fontWeight: 500, fontSize: 13, color: "var(--color-text-primary)", marginBottom: 2 }}>{t}</div>
-                          <div style={{ fontSize: 12, color: "var(--color-text-secondary)" }}>{d}</div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {activeSection === "Writing" && (
-                <div>
-                  <WritingMilestones lang={lang} />
-                  <div style={{ marginTop: 20, border: "0.5px solid var(--color-border-tertiary)", borderRadius: "var(--border-radius-md)", padding: "12px 14px" }}>
-                    <div style={{ fontWeight: 500, fontSize: 14, marginBottom: 8 }}>The Gap Journal</div>
-                    <div style={{ fontSize: 13, color: "var(--color-text-secondary)", marginBottom: 12 }}>After every conversation or writing session, record your output failures. These are the highest-value Anki cards you'll ever make.</div>
-                    {[["What I wanted to say", "I would have gone if it hadn't rained."], ["What I actually said", "It rained. So I didn't go."], ["The gap", "Counterfactual conditional form — add to Anki this Sunday."]].map(([label, example], i) => (
-                      <div key={i} style={{ marginBottom: 8 }}>
-                        <div style={{ fontSize: 11, color: "var(--color-text-secondary)", marginBottom: 2 }}>{label}</div>
-                        <div style={{ fontSize: 13, color: "var(--color-text-primary)", background: "var(--color-background-secondary)", padding: "6px 10px", borderRadius: "var(--border-radius-md)" }}>{example}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {activeSection === "Culture" && (
-                <div>
-                  <div style={{ fontSize: 14, color: "var(--color-text-secondary)", marginBottom: 16, lineHeight: 1.6 }}>Language is encoded culture. Knowing what to say is half the battle. Knowing when, to whom, and how is the other half.</div>
-                  {data.culture.map((c, i) => (
-                    <div key={i} style={{ marginBottom: 14, padding: "12px 14px", border: "0.5px solid var(--color-border-tertiary)", borderRadius: "var(--border-radius-lg)" }}>
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-                        <span style={{ fontWeight: 500, fontSize: 14, color: "var(--color-text-primary)" }}>{c.topic}</span>
-                        <span style={{ fontSize: 11, padding: "2px 8px", background: color.bg, color: color.text, borderRadius: 20 }}>{c.period}</span>
-                      </div>
-                      <div style={{ fontSize: 13, color: "var(--color-text-secondary)", lineHeight: 1.6 }}>{c.detail}</div>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {activeSection === "Resources" && (
-                <div>
-                  <div style={{ fontSize: 14, color: "var(--color-text-secondary)", marginBottom: 16 }}>Reaching TOPIK I Lv.2 / JLPT N3 / HSK 4 is completely possible on free resources. Here's what actually matters.</div>
-                  <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                    {data.resources.map((r, i) => {
-                      const url = RESOURCE_URLS[r.name];
-                      return (
-                        <div key={i} style={{ border: "0.5px solid var(--color-border-tertiary)", borderRadius: "var(--border-radius-md)", padding: "12px 14px", display: "grid", gridTemplateColumns: "1fr auto", gap: 8, background: "var(--color-background-primary)" }}>
-                          <div>
-                            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4, flexWrap: "wrap" }}>
-                              {url ? (
-                                <a href={url} target="_blank" rel="noopener noreferrer" className="resource-link" style={{ fontWeight: 500, fontSize: 14, color: color.text, textDecoration: "none" }}>
-                                  {r.name}
-                                  <span style={{ marginLeft: 4, fontSize: 11, opacity: 0.7 }}>↗</span>
-                                </a>
-                              ) : (
-                                <span style={{ fontWeight: 500, fontSize: 14, color: "var(--color-text-primary)" }}>{r.name}</span>
-                              )}
-                              <span style={{ fontSize: 10, padding: "1px 6px", borderRadius: 20, background: r.free ? COLORS.korean.bg : COLORS.chinese.bg, color: r.free ? COLORS.korean.text : COLORS.chinese.text }}>{r.free ? "Free" : "Paid"}</span>
-                            </div>
-                            <div style={{ fontSize: 11, color: "var(--color-text-tertiary)", marginBottom: 4 }}>{r.type}</div>
-                            <div style={{ fontSize: 13, color: "var(--color-text-secondary)" }}>{r.best}</div>
-                            <div style={{ fontSize: 12, color: "var(--color-text-tertiary)", marginTop: 4, fontStyle: "italic" }}>{r.note}</div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-
-              {activeSection === "Troubleshooter" && (
-                <div>
-                  <div style={{ fontSize: 14, color: "var(--color-text-secondary)", marginBottom: 16, lineHeight: 1.6 }}>When you hit a wall, diagnose before you grind harder. Every plateau has a specific cause and a specific cure.</div>
-                  <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                    {troubleshooter.map((t, i) => (
-                      <div key={i} style={{ border: "0.5px solid var(--color-border-tertiary)", borderRadius: "var(--border-radius-md)", overflow: "hidden" }}>
-                        <button onClick={() => setOpenTrouble(openTrouble === i ? null : i)} style={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "flex-start", padding: "12px 14px", background: "var(--color-background-primary)", border: "none", cursor: "pointer", textAlign: "left", gap: 8 }}>
-                          <div>
-                            <div style={{ fontSize: 13, fontWeight: 500, color: "var(--color-text-primary)", marginBottom: 2 }}>"{t.symptom}"</div>
-                          </div>
-                          <i className={`ti ${openTrouble === i ? "ti-chevron-up" : "ti-chevron-down"}`} aria-hidden="true" style={{ fontSize: 14, color: "var(--color-text-secondary)", flexShrink: 0, marginTop: 2 }}></i>
-                        </button>
-                        {openTrouble === i && (
-                          <div style={{ padding: "0 14px 12px", borderTop: "0.5px solid var(--color-border-tertiary)" }}>
-                            <div style={{ marginTop: 10, fontSize: 13, color: "var(--color-text-secondary)", marginBottom: 8 }}>
-                              <strong style={{ color: "var(--color-text-primary)" }}>Diagnosis:</strong> {t.diagnosis}
-                            </div>
-                            <div style={{ fontSize: 13, background: color.bg, padding: "10px 12px", borderRadius: "var(--border-radius-md)", borderLeft: `3px solid ${color.border}`, color: "var(--color-text-secondary)" }}>
-                              <strong style={{ color: color.text }}>Prescription:</strong> {t.fix}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              <div style={{ marginTop: 32, padding: "16px 14px", borderTop: "0.5px solid var(--color-border-tertiary)", textAlign: "center" }}>
-                <div style={{ fontSize: 14, color: "var(--color-text-secondary)", marginBottom: 8 }}>The only remaining variable is consistent, intelligent effort.</div>
-                <div style={{ fontSize: 16, fontWeight: 500, color: "var(--color-text-primary)" }}>시작하세요 · 始めましょう · 开始吧</div>
-                <div style={{ fontSize: 12, color: "var(--color-text-tertiary)", marginTop: 4 }}>Start now.</div>
-              </div>
-            </div>
-          );
-        }
-
-        ReactDOM.createRoot(document.getElementById("root")).render(<App />);
-    </script>
 </body>
 </html>
