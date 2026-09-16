@@ -12,55 +12,80 @@
 <style>
   * { margin:0; padding:0; box-sizing:border-box; }
   html { -webkit-text-size-adjust:100%; }
-  body {
+  :root {
     --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     --bg:#ffffff; --bg2:#f7f7f8; --fg:#1a1a1e; --fg2:#52525b; --fg3:#a1a1aa;
-    --bd:#e4e4e7; --r:8px; --rl:14px;
-    background:#fafafa;
+    --bd:#e4e4e7; --r:8px; --rl:14px; --page-bg:#fafafa;
+    /* Bump this to make all in-app text larger/smaller in one place */
+    --fs-scale: 1.18;
   }
+  /* Follows OS preference unless the person has explicitly chosen a theme below */
   @media (prefers-color-scheme: dark) {
-    body { --bg:#1a1a1e; --bg2:#2c2c30; --fg:#f4f4f5; --fg2:#a1a1aa; --fg3:#71717a; --bd:#3f3f46; background:#121216; }
+    :root:not([data-theme="light"]) { --bg:#1a1a1e; --bg2:#2c2c30; --fg:#f4f4f5; --fg2:#a1a1aa; --fg3:#71717a; --bd:#3f3f46; --page-bg:#121216; }
   }
+  /* Explicit in-app choice always wins over OS preference */
+  :root[data-theme="dark"] { --bg:#1a1a1e; --bg2:#2c2c30; --fg:#f4f4f5; --fg2:#a1a1aa; --fg3:#71717a; --bd:#3f3f46; --page-bg:#121216; }
+  :root[data-theme="light"] { --bg:#ffffff; --bg2:#f7f7f8; --fg:#1a1a1e; --fg2:#52525b; --fg3:#a1a1aa; --bd:#e4e4e7; --page-bg:#fafafa; }
+  body { background:var(--page-bg); color:var(--fg); font-size:calc(15px * var(--fs-scale)); transition:background .15s ease; }
   button, input { font-family: inherit; }
-  .app { display:block; min-height:100vh; padding-bottom:72px; }
+  .app { display:block; min-height:100vh; }
   .side { display:none; }
-  .bottom { display:flex; position:fixed; bottom:0; left:0; right:0; z-index:20; background:var(--bg); border-top:0.5px solid var(--bd); padding:6px 4px calc(6px + env(safe-area-inset-bottom)); }
   .main { padding:16px; }
   .inner { max-width:680px; margin:0 auto; }
+
+  /* ---- Mobile top bar (shown < 768px) ---- */
+  .topbar { display:flex; align-items:center; justify-content:space-between; gap:8px; position:sticky; top:0; z-index:15; background:var(--bg); border-bottom:0.5px solid var(--bd); padding:10px 6px; }
+  .topbar-btn { background:none; border:none; cursor:pointer; color:var(--fg); padding:8px; display:flex; align-items:center; justify-content:center; border-radius:var(--r); }
+  .topbar-btn i { font-size:calc(20px * var(--fs-scale)); }
+  .topbar-title { font-size:calc(14px * var(--fs-scale)); font-weight:600; }
+  .topbar-actions { display:flex; align-items:center; gap:2px; }
+
+  /* ---- Mobile collapsible sidebar (drawer) ---- */
+  .backdrop { display:none; }
+  .backdrop.show { display:block; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:24; }
+  .drawer {
+    position:fixed; top:0; left:0; bottom:0; width:250px; max-width:82vw; z-index:25;
+    background:var(--bg); border-right:0.5px solid var(--bd);
+    display:flex; flex-direction:column; padding:16px 12px calc(16px + env(safe-area-inset-bottom));
+    gap:4px; overflow-y:auto;
+    transform:translateX(-100%); transition:transform .22s ease;
+  }
+  .drawer.open { transform:translateX(0); }
+  .drawer-head { display:flex; justify-content:space-between; align-items:center; padding:2px 6px 16px; }
+  .drawer-head span { font-size:calc(14px * var(--fs-scale)); font-weight:600; }
+
   @media (min-width:768px) {
-    .app { display:flex; padding-bottom:0; }
-    .side { display:flex; flex-direction:column; width:216px; flex-shrink:0; border-right:0.5px solid var(--bd); padding:24px 12px; gap:4px; position:sticky; top:0; height:100vh; overflow-y:auto; }
-    .bottom { display:none; }
+    .app { display:flex; }
+    .side { display:flex; flex-direction:column; width:230px; flex-shrink:0; border-right:0.5px solid var(--bd); padding:24px 12px; gap:4px; position:sticky; top:0; height:100vh; overflow-y:auto; }
+    .topbar { display:none; }
+    .drawer, .backdrop { display:none !important; }
     .main { flex:1; padding:28px 32px; min-width:0; }
     .inner { max-width:760px; margin:0; }
   }
   @media (min-width:1100px) { .main { padding:36px 48px; } .inner { max-width:840px; margin:0 auto; } }
   .nav { display:flex; align-items:center; gap:10px; border:none; background:none; cursor:pointer; border-radius:var(--r); text-align:left; width:100%; }
-  .nav.s { padding:9px 12px; font-size:14px; color:var(--fg2); }
+  .nav.s { padding:11px 12px; font-size:calc(14px * var(--fs-scale)); color:var(--fg2); }
   .nav.s.on { background:var(--bg2); color:var(--fg); font-weight:500; }
-  .nav.b { flex-direction:column; flex:1; padding:6px 0 4px; font-size:10px; gap:2px; color:var(--fg3); align-items:center; justify-content:center; }
-  .nav.b.on { color:var(--nav-active,#1D9E75); }
-  .nav.b i { font-size:19px; }
-  .cb { width:19px; height:19px; border-radius:5px; flex-shrink:0; cursor:pointer; border:1.5px solid var(--bd); display:flex; align-items:center; justify-content:center; background:var(--bg); }
+  .cb { width:22px; height:22px; border-radius:5px; flex-shrink:0; cursor:pointer; border:1.5px solid var(--bd); display:flex; align-items:center; justify-content:center; background:var(--bg); }
   .cb.done { border-color:transparent; }
   .card { border:0.5px solid var(--bd); border-radius:var(--r); padding:10px 12px; background:var(--bg); }
   .lnk { text-decoration:none; transition:opacity .15s; }
   .lnk:hover { text-decoration:underline; opacity:.85; }
-  .btn { border:0.5px solid var(--bd); border-radius:var(--r); padding:8px 14px; background:var(--bg); cursor:pointer; font-size:13px; color:var(--fg); }
-  .pill { font-size:10px; padding:2px 8px; border-radius:20px; font-weight:500; }
+  .btn { border:0.5px solid var(--bd); border-radius:var(--r); padding:10px 14px; background:var(--bg); cursor:pointer; font-size:calc(13px * var(--fs-scale)); color:var(--fg); }
+  .pill { font-size:calc(10px * var(--fs-scale)); padding:2px 8px; border-radius:20px; font-weight:500; }
   .sr { position:absolute; width:1px; height:1px; overflow:hidden; }
-  input[type=text], input[type=time] { border:0.5px solid var(--bd); border-radius:var(--r); padding:8px 10px; font-size:13px; background:var(--bg); color:var(--fg); }
+  input[type=text], input[type=time] { border:0.5px solid var(--bd); border-radius:var(--r); padding:9px 10px; font-size:calc(13px * var(--fs-scale)); background:var(--bg); color:var(--fg); }
   .grid-cards { display:grid; grid-template-columns:repeat(auto-fit, minmax(150px,1fr)); gap:8px; }
-  .lang-badge { width:30px; height:30px; border-radius:9px; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:600; flex-shrink:0; }
+  .lang-badge { width:30px; height:30px; border-radius:9px; display:flex; align-items:center; justify-content:center; font-size:calc(14px * var(--fs-scale)); font-weight:600; flex-shrink:0; }
   .res-item { display:block; border:0.5px solid var(--bd); border-radius:var(--r); padding:10px 12px; background:var(--bg); text-decoration:none; color:inherit; transition:border-color .15s, background .15s; }
   .res-item:hover { border-color:var(--nav-active, #1D9E75); }
-  .res-cat-title { font-size:11px; text-transform:uppercase; letter-spacing:0.5px; color:var(--fg3); font-weight:600; margin:22px 0 8px; }
+  .res-cat-title { font-size:calc(11px * var(--fs-scale)); text-transform:uppercase; letter-spacing:0.5px; color:var(--fg3); font-weight:600; margin:22px 0 8px; }
   .res-cat-title:first-of-type { margin-top:0; }
-  .chip { border:1px solid var(--bd); border-radius:20px; padding:5px 12px; font-size:12px; background:var(--bg); color:var(--fg2); cursor:pointer; }
+  .chip { border:1px solid var(--bd); border-radius:20px; padding:6px 12px; font-size:calc(12px * var(--fs-scale)); background:var(--bg); color:var(--fg2); cursor:pointer; }
   .chip.on { background:var(--nav-active, #1D9E75); border-color:var(--nav-active, #1D9E75); color:#fff; }
-  .res-chip { display:inline-flex; align-items:center; gap:4px; padding:4px 10px; border-radius:20px; background:var(--bg2); color:var(--fg); font-size:11px; font-weight:500; text-decoration:none; border:0.5px solid var(--bd); transition:border-color .15s; }
+  .res-chip { display:inline-flex; align-items:center; gap:4px; padding:4px 10px; border-radius:20px; background:var(--bg2); color:var(--fg); font-size:calc(11px * var(--fs-scale)); font-weight:500; text-decoration:none; border:0.5px solid var(--bd); transition:border-color .15s; }
   .res-chip:hover { border-color:var(--nav-active, #1D9E75); }
-  .res-chip i { font-size:10px; opacity:0.7; }
+  .res-chip i { font-size:calc(10px * var(--fs-scale)); opacity:0.7; }
 </style>
 </head>
 <body>
@@ -1014,7 +1039,7 @@ function Checkbox({ done, onClick, color, ariaLabel, disabled }) {
   return (
     <button className={`cb ${done?"done":""}`} onClick={onClick} aria-label={ariaLabel} aria-pressed={done} disabled={disabled}
       style={{ background: done ? color.border : "var(--bg)", opacity: disabled ? 0.5 : 1, cursor: disabled ? "not-allowed" : "pointer" }}>
-      {done && <i className="ti ti-check" aria-hidden="true" style={{ fontSize:13, color:"#fff" }}></i>}
+      {done && <i className="ti ti-check" aria-hidden="true" style={{ fontSize:"calc(13px * var(--fs-scale))", color:"#fff" }}></i>}
     </button>
   );
 }
@@ -1022,7 +1047,7 @@ function Checkbox({ done, onClick, color, ariaLabel, disabled }) {
 function LangBadge({ meta, size }) {
   const s = size || 30;
   return (
-    <div className="lang-badge" style={{ width:s, height:s, borderRadius:s*0.3, background:meta.color.bg, color:meta.color.text, fontSize:s*0.46 }} aria-hidden="true">
+    <div className="lang-badge" style={{ width:s, height:s, borderRadius:s*0.3, background:meta.color.bg, color:meta.color.text, fontSize:s*0.5 }} aria-hidden="true">
       {meta.glyph}
     </div>
   );
@@ -1054,7 +1079,7 @@ function StreakHeatmap({ history, color }) {
           </div>
         ))}
       </div>
-      <div style={{ fontSize:11, color:"var(--fg3)", marginTop:6 }}>Last 10 weeks · darker = more tasks completed that day.</div>
+      <div style={{ fontSize:"calc(11px * var(--fs-scale))", color:"var(--fg3)", marginTop:6 }}>Last 10 weeks · darker = more tasks completed that day.</div>
     </div>
   );
 }
@@ -1079,7 +1104,7 @@ function ActivityBars({ history, color }) {
           <g key={d.key}>
             <rect x={x} y={chartH - h} width={barW} height={h} rx={3}
               fill={d.count > 0 ? color.border : "var(--bd)"} opacity={d.count > 0 ? 1 : 0.35} />
-            <text x={x + barW/2} y={chartH + 13} fontSize="9" textAnchor="middle" fill="var(--fg3)">{d.label}</text>
+            <text x={x + barW/2} y={chartH + 13} fontSize="11" textAnchor="middle" fill="var(--fg3)">{d.label}</text>
           </g>
         );
       })}
@@ -1111,7 +1136,7 @@ function PathTimeline({ lang, color, progress, onSelectMonth, selected }) {
         <div key={band.label}>
           {/* Phase divider */}
           <div style={{ display:"flex", alignItems:"center", gap:8, marginTop: bIdx === 0 ? 0 : 22, marginBottom:12, position:"relative", zIndex:1 }}>
-            <div style={{ flexShrink:0, fontSize:10, fontWeight:600, color:color.text, textTransform:"uppercase", letterSpacing:0.5, background:color.bg, padding:"4px 10px", borderRadius:20 }}>
+            <div style={{ flexShrink:0, fontSize:"calc(10px * var(--fs-scale))", fontWeight:600, color:color.text, textTransform:"uppercase", letterSpacing:0.5, background:color.bg, padding:"4px 10px", borderRadius:20 }}>
               Phase {bIdx+1} · {band.label}
             </div>
             <div style={{ flex:1, height:1, background:"var(--bd)" }} />
@@ -1135,18 +1160,18 @@ function PathTimeline({ lang, color, progress, onSelectMonth, selected }) {
                     background: done ? color.border : (isCurrent ? color.border : "var(--bg)"),
                     border: `2px solid ${done || isCurrent ? color.border : "var(--bd)"}`,
                     display:"flex", alignItems:"center", justifyContent:"center",
-                    fontSize:11, fontWeight:700,
+                    fontSize:"calc(11px * var(--fs-scale))", fontWeight:700,
                     color: done || isCurrent ? "#fff" : "var(--fg3)",
                     boxShadow: isSelected ? `0 0 0 4px ${color.bg}` : "none",
                     transition:"box-shadow .15s",
                     position:"relative",
                   }}>
                     {done
-                      ? <i className="ti ti-check" aria-hidden="true" style={{ fontSize:13 }}></i>
-                      : (isCurrent ? <i className="ti ti-map-pin" aria-hidden="true" style={{ fontSize:14 }}></i> : m)}
+                      ? <i className="ti ti-check" aria-hidden="true" style={{ fontSize:"calc(13px * var(--fs-scale))" }}></i>
+                      : (isCurrent ? <i className="ti ti-map-pin" aria-hidden="true" style={{ fontSize:"calc(14px * var(--fs-scale))" }}></i> : m)}
                     {hasMilestone && (
                       <div style={{ position:"absolute", top:-3, right:-3, width:13, height:13, borderRadius:"50%", background:"#BA7517", display:"flex", alignItems:"center", justifyContent:"center", border:"1.5px solid var(--bg)" }}>
-                        <i className="ti ti-flag" aria-hidden="true" style={{ fontSize:7, color:"#fff" }}></i>
+                        <i className="ti ti-flag" aria-hidden="true" style={{ fontSize:"calc(7px * var(--fs-scale))", color:"#fff" }}></i>
                       </div>
                     )}
                   </div>
@@ -1168,18 +1193,18 @@ function PathTimeline({ lang, color, progress, onSelectMonth, selected }) {
                   }}
                 >
                   <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", gap:6, marginBottom:3 }}>
-                    <span style={{ fontSize:10, color: isSelected ? color.text : "var(--fg3)", textTransform:"uppercase", letterSpacing:0.4, fontWeight:600 }}>Month {m}</span>
-                    {isCurrent && <span className="pill" style={{ background: color.border, color:"#fff", fontSize:9 }}>You are here</span>}
+                    <span style={{ fontSize:"calc(10px * var(--fs-scale))", color: isSelected ? color.text : "var(--fg3)", textTransform:"uppercase", letterSpacing:0.4, fontWeight:600 }}>Month {m}</span>
+                    {isCurrent && <span className="pill" style={{ background: color.border, color:"#fff", fontSize:"calc(9px * var(--fs-scale))" }}>You are here</span>}
                   </div>
-                  <div style={{ fontSize:13, fontWeight:500, marginBottom:6, color: isSelected ? color.text : "var(--fg)" }}>
+                  <div style={{ fontSize:"calc(13px * var(--fs-scale))", fontWeight:500, marginBottom:6, color: isSelected ? color.text : "var(--fg)" }}>
                     {m_meta.title || `Month ${m}`}
                   </div>
                   <div style={{ display:"flex", gap:4, flexWrap:"wrap", marginBottom:6 }}>
                     {(m_meta.skills || []).map(sk => (
-                      <span key={sk} style={{ fontSize:9, padding:"1px 6px", borderRadius:8, background: isSelected ? "#ffffffcc" : "var(--bg2)", color: isSelected ? color.text : "var(--fg2)" }}>{sk}</span>
+                      <span key={sk} style={{ fontSize:"calc(9px * var(--fs-scale))", padding:"1px 6px", borderRadius:8, background: isSelected ? "#ffffffcc" : "var(--bg2)", color: isSelected ? color.text : "var(--fg2)" }}>{sk}</span>
                     ))}
                   </div>
-                  <div style={{ display:"flex", gap:8, fontSize:10.5, color: isSelected ? color.text : "var(--fg3)" }}>
+                  <div style={{ display:"flex", gap:8, fontSize:"calc(10.5px * var(--fs-scale))", color: isSelected ? color.text : "var(--fg3)" }}>
                     <span>{vocabTarget} words</span>
                     {hasMilestone && <span>· milestone</span>}
                   </div>
@@ -1193,7 +1218,7 @@ function PathTimeline({ lang, color, progress, onSelectMonth, selected }) {
   );
 }
 
-function Settings({ progress, setNotif, setMotivation, exportData, importData, onClose }) {
+function Settings({ progress, setNotif, setMotivation, exportData, importData, onClose, theme, setTheme }) {
   const [time, setTime] = useState(progress.notif.time);
   const [motivation, setMotivationLocal] = useState(progress.motivation);
   const [note, setNote] = useState("");
@@ -1211,31 +1236,41 @@ function Settings({ progress, setNotif, setMotivation, exportData, importData, o
     <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.4)", zIndex:30, display:"flex", alignItems:"flex-end", justifyContent:"center" }} onClick={onClose}>
       <div onClick={e => e.stopPropagation()} style={{ background:"var(--bg)", width:"100%", maxWidth:480, borderRadius:"16px 16px 0 0", padding:"20px 20px calc(20px + env(safe-area-inset-bottom))", maxHeight:"85vh", overflowY:"auto" }}>
         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:16 }}>
-          <span style={{ fontSize:16, fontWeight:500 }}>Settings</span>
-          <button onClick={onClose} aria-label="Close settings" style={{ background:"none", border:"none", cursor:"pointer" }}><i className="ti ti-x" aria-hidden="true" style={{ fontSize:18, color:"var(--fg2)" }}></i></button>
+          <span style={{ fontSize:"calc(16px * var(--fs-scale))", fontWeight:500 }}>Settings</span>
+          <button onClick={onClose} aria-label="Close settings" style={{ background:"none", border:"none", cursor:"pointer" }}><i className="ti ti-x" aria-hidden="true" style={{ fontSize:"calc(18px * var(--fs-scale))", color:"var(--fg2)" }}></i></button>
+        </div>
+
+        <div style={{ marginBottom:18 }}>
+          <div style={{ fontSize:"calc(13px * var(--fs-scale))", fontWeight:500, marginBottom:8 }}>Appearance</div>
+          <div style={{ display:"flex", gap:6 }}>
+            {[["system","Auto"],["light","Light"],["dark","Dark"]].map(([id,label]) => (
+              <button key={id} onClick={() => setTheme(id)} aria-pressed={theme===id} className={`chip ${theme===id ? "on" : ""}`} style={{ flex:1, textAlign:"center" }}>{label}</button>
+            ))}
+          </div>
+          <div style={{ fontSize:"calc(11px * var(--fs-scale))", color:"var(--fg3)", marginTop:6 }}>"Auto" follows your device's light/dark setting.</div>
         </div>
 
         <div style={{ marginBottom:18 }}>
           <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:6 }}>
-            <span style={{ fontSize:13, fontWeight:500 }}>Daily reminder</span>
-            <button onClick={toggleEnabled} style={{ border:"0.5px solid var(--bd)", borderRadius:20, padding:"4px 12px", fontSize:12, background: progress.notif.enabled ? "#E1F5EE" : "var(--bg)", color: progress.notif.enabled ? "#0F6E56" : "var(--fg2)", cursor:"pointer" }}>
+            <span style={{ fontSize:"calc(13px * var(--fs-scale))", fontWeight:500 }}>Daily reminder</span>
+            <button onClick={toggleEnabled} style={{ border:"0.5px solid var(--bd)", borderRadius:20, padding:"4px 12px", fontSize:"calc(12px * var(--fs-scale))", background: progress.notif.enabled ? "#E1F5EE" : "var(--bg)", color: progress.notif.enabled ? "#0F6E56" : "var(--fg2)", cursor:"pointer" }}>
               {progress.notif.enabled ? "On" : "Off"}
             </button>
           </div>
           {progress.notif.enabled && <input type="time" value={time} onChange={e => { setTime(e.target.value); setNotif({ time: e.target.value }); }} style={{ width:"100%" }} />}
-          {note && <div style={{ fontSize:12, color:"var(--fg2)", marginTop:6 }}>{note}</div>}
-          <div style={{ fontSize:11, color:"var(--fg3)", marginTop:6, lineHeight:1.5 }}>Only fires while this app is open in a browser tab — no backend, no background push.</div>
+          {note && <div style={{ fontSize:"calc(12px * var(--fs-scale))", color:"var(--fg2)", marginTop:6 }}>{note}</div>}
+          <div style={{ fontSize:"calc(11px * var(--fs-scale))", color:"var(--fg3)", marginTop:6, lineHeight:1.5 }}>Only fires while this app is open in a browser tab — no backend, no background push.</div>
         </div>
 
         <div style={{ marginBottom:18 }}>
-          <div style={{ fontSize:13, fontWeight:500, marginBottom:6 }}>Why are you learning?</div>
+          <div style={{ fontSize:"calc(13px * var(--fs-scale))", fontWeight:500, marginBottom:6 }}>Why are you learning?</div>
           <input type="text" placeholder="e.g. an upcoming trip, family, work" value={motivation}
             onChange={e => setMotivationLocal(e.target.value)} onBlur={() => setMotivation(motivation)} style={{ width:"100%" }} />
-          <div style={{ fontSize:11, color:"var(--fg3)", marginTop:6 }}>Shown back on the Today screen.</div>
+          <div style={{ fontSize:"calc(11px * var(--fs-scale))", color:"var(--fg3)", marginTop:6 }}>Shown back on the Today screen.</div>
         </div>
 
         <div>
-          <div style={{ fontSize:13, fontWeight:500, marginBottom:6 }}>Backup</div>
+          <div style={{ fontSize:"calc(13px * var(--fs-scale))", fontWeight:500, marginBottom:6 }}>Backup</div>
           <div style={{ display:"flex", gap:8 }}>
             <button className="btn" onClick={exportData} style={{ flex:1 }}>Export JSON</button>
             <label className="btn" style={{ flex:1, textAlign:"center" }}>
@@ -1243,7 +1278,7 @@ function Settings({ progress, setNotif, setMotivation, exportData, importData, o
               <input type="file" accept=".json" style={{ display:"none" }} onChange={e => { if (e.target.files[0]) importData(e.target.files[0]); }} />
             </label>
           </div>
-          <div style={{ fontSize:11, color:"var(--fg3)", marginTop:6 }}>Your progress lives only in this browser. Export it if you care about keeping it.</div>
+          <div style={{ fontSize:"calc(11px * var(--fs-scale))", color:"var(--fg3)", marginTop:6 }}>Your progress lives only in this browser. Export it if you care about keeping it.</div>
         </div>
       </div>
     </div>
@@ -1259,50 +1294,50 @@ function TodayScreen({ lang, color, progress, toggleTask }) {
   return (
     <div>
       <div style={{ display:"flex", justifyContent:"space-between", alignItems:"baseline", marginBottom:6 }}>
-        <span style={{ fontSize:13, color:"var(--fg2)" }}>Today</span>
-        <span style={{ fontSize:12, color:"var(--fg2)", display:"flex", alignItems:"center", gap:4 }}>
-          <i className="ti ti-flame" aria-hidden="true" style={{ fontSize:14, color:"#BA7517" }}></i>{progress.streak} day streak
+        <span style={{ fontSize:"calc(13px * var(--fs-scale))", color:"var(--fg2)" }}>Today</span>
+        <span style={{ fontSize:"calc(12px * var(--fs-scale))", color:"var(--fg2)", display:"flex", alignItems:"center", gap:4 }}>
+          <i className="ti ti-flame" aria-hidden="true" style={{ fontSize:"calc(14px * var(--fs-scale))", color:"#BA7517" }}></i>{progress.streak} day streak
         </span>
       </div>
-      {progress.motivation && <div style={{ fontSize:13, color:"var(--fg2)", marginBottom:14 }}>Because you're learning for {progress.motivation} — keep going.</div>}
+      {progress.motivation && <div style={{ fontSize:"calc(13px * var(--fs-scale))", color:"var(--fg2)", marginBottom:14 }}>Because you're learning for {progress.motivation} — keep going.</div>}
 
       <div style={{ display:"flex", flexDirection:"column", gap:8, marginBottom:16 }}>
         {dailyTasks.map(t => (
           <div key={t.id} style={{ display:"flex", alignItems:"center", gap:10, padding:10, border:"0.5px solid var(--bd)", borderRadius:"var(--r)" }}>
             <Checkbox done={!!progress.todayTasks[t.id]} onClick={() => toggleTask(t.id)} color={color} ariaLabel={`Mark ${t.label} done`} />
             <div>
-              <div style={{ fontSize:13, fontWeight:500 }}>{t.label}</div>
-              <div style={{ fontSize:12, color:"var(--fg3)" }}>{t.note}</div>
+              <div style={{ fontSize:"calc(13px * var(--fs-scale))", fontWeight:500 }}>{t.label}</div>
+              <div style={{ fontSize:"calc(12px * var(--fs-scale))", color:"var(--fg3)" }}>{t.note}</div>
             </div>
           </div>
         ))}
       </div>
 
       <div aria-live="polite" style={{ padding:"10px 12px", background:color.bg, borderRadius:"var(--r)", display:"flex", alignItems:"center", gap:8, marginBottom:22 }}>
-        <i className="ti ti-bulb" aria-hidden="true" style={{ fontSize:16, color:color.text }}></i>
-        <span style={{ fontSize:12, color:color.text }}>
+        <i className="ti ti-bulb" aria-hidden="true" style={{ fontSize:"calc(16px * var(--fs-scale))", color:color.text }}></i>
+        <span style={{ fontSize:"calc(12px * var(--fs-scale))", color:color.text }}>
           {allDone ? "All done for today — streak secured." : `${done} of ${dailyTasks.length} done today.`}
         </span>
       </div>
 
-      <div style={{ fontSize:11, textTransform:"uppercase", letterSpacing:0.4, color:"var(--fg3)", fontWeight:500, marginBottom:10 }}>Your tracking</div>
+      <div style={{ fontSize:"calc(11px * var(--fs-scale))", textTransform:"uppercase", letterSpacing:0.4, color:"var(--fg3)", fontWeight:500, marginBottom:10 }}>Your tracking</div>
       <div className="card" style={{ marginBottom:10 }}>
-        <div style={{ fontSize:12, fontWeight:500, marginBottom:8 }}>Daily consistency</div>
+        <div style={{ fontSize:"calc(12px * var(--fs-scale))", fontWeight:500, marginBottom:8 }}>Daily consistency</div>
         <StreakHeatmap history={progress.history} color={color} />
       </div>
       <div className="card" style={{ marginBottom:20 }}>
-        <div style={{ fontSize:12, fontWeight:500, marginBottom:8 }}>Tasks completed, last 14 days</div>
+        <div style={{ fontSize:"calc(12px * var(--fs-scale))", fontWeight:500, marginBottom:8 }}>Tasks completed, last 14 days</div>
         <ActivityBars history={progress.history} color={color} />
       </div>
 
-      <div style={{ fontSize:15, fontWeight:500, marginBottom:10 }}>This week's rhythm</div>
+      <div style={{ fontSize:"calc(15px * var(--fs-scale))", fontWeight:500, marginBottom:10 }}>This week's rhythm</div>
       <div style={{ display:"flex", flexDirection:"column", gap:6 }}>
         {weeklySchedule.map((d, i) => (
           <div key={i} style={{ display:"flex", gap:10, alignItems:"flex-start", padding:"6px 0", borderBottom:"0.5px solid var(--bd)" }}>
-            <div style={{ minWidth:30, height:30, borderRadius:9, background:color.bg, display:"flex", alignItems:"center", justifyContent:"center", fontSize:10, fontWeight:500, color:color.text }}>{d.day}</div>
+            <div style={{ minWidth:30, height:30, borderRadius:9, background:color.bg, display:"flex", alignItems:"center", justifyContent:"center", fontSize:"calc(10px * var(--fs-scale))", fontWeight:500, color:color.text }}>{d.day}</div>
             <div>
-              <div style={{ fontWeight:500, fontSize:13 }}>{d.focus}</div>
-              <div style={{ fontSize:12, color:"var(--fg2)" }}>{d.desc}</div>
+              <div style={{ fontWeight:500, fontSize:"calc(13px * var(--fs-scale))" }}>{d.focus}</div>
+              <div style={{ fontSize:"calc(12px * var(--fs-scale))", color:"var(--fg2)" }}>{d.desc}</div>
             </div>
           </div>
         ))}
@@ -1331,14 +1366,14 @@ function PathScreen({ lang, color, progress, onOpenResources, toggleMonth, setSe
   return (
     <div>
       <button onClick={() => setShowPacing(s => !s)} style={{ width:"100%", textAlign:"left", background:color.bg, border:"none", borderRadius:"var(--r)", padding:"10px 12px", marginBottom:14, cursor:"pointer", display:"flex", justifyContent:"space-between", alignItems:"center", gap:8 }}>
-        <span style={{ fontSize:12, color:color.text }}>This is the checklist. For the full how-to plan, open the Roadmap tab.</span>
-        <i className={`ti ${showPacing ? "ti-chevron-up" : "ti-chevron-down"}`} aria-hidden="true" style={{ fontSize:14, color:color.text, flexShrink:0 }}></i>
+        <span style={{ fontSize:"calc(12px * var(--fs-scale))", color:color.text }}>This is the checklist. For the full how-to plan, open the Roadmap tab.</span>
+        <i className={`ti ${showPacing ? "ti-chevron-up" : "ti-chevron-down"}`} aria-hidden="true" style={{ fontSize:"calc(14px * var(--fs-scale))", color:color.text, flexShrink:0 }}></i>
       </button>
-      {showPacing && <div style={{ fontSize:12, color:"var(--fg2)", lineHeight:1.6, marginBottom:16, padding:"0 2px" }}>The Path tracks which months you've completed. The Roadmap explains what to actually do, with resources for each phase.</div>}
+      {showPacing && <div style={{ fontSize:"calc(12px * var(--fs-scale))", color:"var(--fg2)", lineHeight:1.6, marginBottom:16, padding:"0 2px" }}>The Path tracks which months you've completed. The Roadmap explains what to actually do, with resources for each phase.</div>}
 
       <div style={{ display:"flex", justifyContent:"space-between", alignItems:"baseline", marginBottom:6 }}>
-        <span style={{ fontSize:12, color:"var(--fg2)" }}>{doneMonths.length} of 12 months complete</span>
-        <span style={{ fontSize:11, color:"var(--fg3)" }}>{Math.round((doneMonths.length/12)*100)}%</span>
+        <span style={{ fontSize:"calc(12px * var(--fs-scale))", color:"var(--fg2)" }}>{doneMonths.length} of 12 months complete</span>
+        <span style={{ fontSize:"calc(11px * var(--fs-scale))", color:"var(--fg3)" }}>{Math.round((doneMonths.length/12)*100)}%</span>
       </div>
       <div style={{ height:5, background:"var(--bg2)", borderRadius:3, overflow:"hidden", marginBottom:18 }} aria-hidden="true">
         <div style={{ width:`${(doneMonths.length/12)*100}%`, height:"100%", background:color.border, transition:"width .4s ease" }} />
@@ -1348,21 +1383,21 @@ function PathScreen({ lang, color, progress, onOpenResources, toggleMonth, setSe
 
       <div style={{ marginTop:20, border:`1px solid ${color.border}`, borderRadius:"var(--rl)", padding:"14px 16px", background:color.bg }}>
         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:8 }}>
-          <span style={{ fontWeight:500, fontSize:14, color:color.text }}>Month {selected}</span>
+          <span style={{ fontWeight:500, fontSize:"calc(14px * var(--fs-scale))", color:color.text }}>Month {selected}</span>
           <span className="pill" style={{ background:"#ffffffaa", color:color.text }}>{grammar.level}</span>
         </div>
-        <div style={{ fontSize:12, color:color.text, opacity:0.85, marginBottom:8 }}>{grammar.phase}</div>
+        <div style={{ fontSize:"calc(12px * var(--fs-scale))", color:color.text, opacity:0.85, marginBottom:8 }}>{grammar.phase}</div>
         {grammar.points.map((pt, i) => (
           <div key={i} style={{ display:"flex", gap:8, marginBottom:5, alignItems:"flex-start" }}>
             <span style={{ minWidth:5, height:5, borderRadius:"50%", background:color.text, marginTop:6, flexShrink:0 }}></span>
-            <span style={{ fontSize:13, color:color.text }}>{pt}</span>
+            <span style={{ fontSize:"calc(13px * var(--fs-scale))", color:color.text }}>{pt}</span>
           </div>
         ))}
-        <div style={{ marginTop:10, fontSize:12, color:color.text, background:"#ffffff55", padding:"8px 10px", borderRadius:"var(--r)" }}>
+        <div style={{ marginTop:10, fontSize:"calc(12px * var(--fs-scale))", color:color.text, background:"#ffffff55", padding:"8px 10px", borderRadius:"var(--r)" }}>
           <strong>Culture note ({culture.period}):</strong> {culture.topic} — {culture.detail}
         </div>
         {milestonesByMonth[selected] && (
-          <div style={{ marginTop:8, fontSize:12, color:color.text }}>🏁 Milestone: {milestonesByMonth[selected].celebrate}</div>
+          <div style={{ marginTop:8, fontSize:"calc(12px * var(--fs-scale))", color:color.text }}>🏁 Milestone: {milestonesByMonth[selected].celebrate}</div>
         )}
 
         <button className="btn" onClick={onOpenResources} style={{ marginTop:10, background:color.border, color:"#fff", borderColor:color.border, width:"100%" }}>
@@ -1370,20 +1405,20 @@ function PathScreen({ lang, color, progress, onOpenResources, toggleMonth, setSe
         </button>
 
         <div style={{ marginTop:14, paddingTop:12, borderTop:"0.5px solid #ffffff88" }}>
-          <div style={{ fontSize:12, fontWeight:500, color:color.text, marginBottom:6 }}>Self-check: {selfCheckQ}</div>
+          <div style={{ fontSize:"calc(12px * var(--fs-scale))", fontWeight:500, color:color.text, marginBottom:6 }}>Self-check: {selfCheckQ}</div>
           <div style={{ display:"flex", gap:6, marginBottom:8 }}>
             <button className="btn" onClick={() => setSelfCheck(lang, selected, true)} style={{ flex:1, background: checked === true ? color.border : "var(--bg)", color: checked === true ? "#fff" : "var(--fg)", borderColor: checked === true ? color.border : "var(--bd)" }}>Yes</button>
             <button className="btn" onClick={() => setSelfCheck(lang, selected, false)} style={{ flex:1, background: checked === false ? "#D85A30" : "var(--bg)", color: checked === false ? "#fff" : "var(--fg)", borderColor: checked === false ? "#D85A30" : "var(--bd)" }}>Not yet</button>
           </div>
           <div style={{ display:"flex", alignItems:"center", gap:8 }}>
             <Checkbox done={done} onClick={() => toggleMonth(lang, selected)} color={{ border: color.text }} ariaLabel={`Mark month ${selected} complete`} disabled={!done && checked !== true} />
-            <span style={{ fontSize:12, color:color.text }}>{done ? "Month complete" : (checked === true ? "Mark month complete" : "Answer the self-check \"Yes\" to unlock")}</span>
+            <span style={{ fontSize:"calc(12px * var(--fs-scale))", color:color.text }}>{done ? "Month complete" : (checked === true ? "Mark month complete" : "Answer the self-check \"Yes\" to unlock")}</span>
           </div>
         </div>
       </div>
 
-      <div style={{ marginTop:28, fontSize:15, fontWeight:500, marginBottom:8, opacity: doneMonths.length >= 12 ? 1 : 0.55 }}>
-        Year 2 — Consolidation {doneMonths.length < 12 && <span style={{ fontSize:11, color:"var(--fg3)", fontWeight:400 }}>· unlocks after Year 1</span>}
+      <div style={{ marginTop:28, fontSize:"calc(15px * var(--fs-scale))", fontWeight:500, marginBottom:8, opacity: doneMonths.length >= 12 ? 1 : 0.55 }}>
+        Year 2 — Consolidation {doneMonths.length < 12 && <span style={{ fontSize:"calc(11px * var(--fs-scale))", color:"var(--fg3)", fontWeight:400 }}>· unlocks after Year 1</span>}
       </div>
       {((ROADMAP[lang].find(p => p.id === "p3") || {}).blocks || []).map((q, i) => {
         const d = !!l.y2Done[i];
@@ -1391,16 +1426,16 @@ function PathScreen({ lang, color, progress, onOpenResources, toggleMonth, setSe
         return (
           <div key={i} style={{ marginBottom:8, border:"0.5px solid var(--bd)", borderRadius:"var(--rl)", padding:"12px 14px", background: d ? color.bg : "var(--bg)", opacity: unlocked ? 1 : 0.55 }}>
             <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:6 }}>
-              <div style={{ fontWeight:500, fontSize:13 }}>{q.heading.split(" — ")[0]}</div>
+              <div style={{ fontWeight:500, fontSize:"calc(13px * var(--fs-scale))" }}>{q.heading.split(" — ")[0]}</div>
               <Checkbox done={d} onClick={() => unlocked && toggleY2(lang, i)} color={color} ariaLabel={q.heading} disabled={!unlocked} />
             </div>
-            <div style={{ fontSize:12, color:"var(--fg2)", lineHeight:1.6 }}>{q.body}</div>
+            <div style={{ fontSize:"calc(12px * var(--fs-scale))", color:"var(--fg2)", lineHeight:1.6 }}>{q.body}</div>
           </div>
         );
       })}
 
-      <div style={{ marginTop:20, fontSize:15, fontWeight:500, marginBottom:8, opacity: Object.keys(l.y2Done).filter(k=>l.y2Done[k]).length >= 4 ? 1 : 0.55 }}>
-        Year 3 — Advanced {Object.keys(l.y2Done).filter(k=>l.y2Done[k]).length < 4 && <span style={{ fontSize:11, color:"var(--fg3)", fontWeight:400 }}>· unlocks after Year 2</span>}
+      <div style={{ marginTop:20, fontSize:"calc(15px * var(--fs-scale))", fontWeight:500, marginBottom:8, opacity: Object.keys(l.y2Done).filter(k=>l.y2Done[k]).length >= 4 ? 1 : 0.55 }}>
+        Year 3 — Advanced {Object.keys(l.y2Done).filter(k=>l.y2Done[k]).length < 4 && <span style={{ fontSize:"calc(11px * var(--fs-scale))", color:"var(--fg3)", fontWeight:400 }}>· unlocks after Year 2</span>}
       </div>
       {((ROADMAP[lang].find(p => p.id === "p4") || {}).blocks || []).map((q, i) => {
         const d = !!l.y3Done[i];
@@ -1408,10 +1443,10 @@ function PathScreen({ lang, color, progress, onOpenResources, toggleMonth, setSe
         return (
           <div key={i} style={{ marginBottom:8, border:"0.5px solid var(--bd)", borderRadius:"var(--rl)", padding:"12px 14px", background: d ? color.bg : "var(--bg)", opacity: unlocked ? 1 : 0.55 }}>
             <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:6 }}>
-              <div style={{ fontWeight:500, fontSize:13 }}>{q.heading.split(" — ")[0]}</div>
+              <div style={{ fontWeight:500, fontSize:"calc(13px * var(--fs-scale))" }}>{q.heading.split(" — ")[0]}</div>
               <Checkbox done={d} onClick={() => unlocked && toggleY3(lang, i)} color={color} ariaLabel={q.heading} disabled={!unlocked} />
             </div>
-            <div style={{ fontSize:12, color:"var(--fg2)", lineHeight:1.6 }}>{q.body}</div>
+            <div style={{ fontSize:"calc(12px * var(--fs-scale))", color:"var(--fg2)", lineHeight:1.6 }}>{q.body}</div>
           </div>
         );
       })}
@@ -1444,7 +1479,7 @@ function ResourcesScreen({ lang, color }) {
 
   return (
     <div>
-      <div style={{ fontSize:13, color:"var(--fg2)", marginBottom:14, lineHeight:1.6 }}>
+      <div style={{ fontSize:"calc(13px * var(--fs-scale))", color:"var(--fg2)", marginBottom:14, lineHeight:1.6 }}>
         {total} external resources for {META.find(m => m.id === lang).label}, grouped by what you're trying to do. Nothing here is built by this app — these are the sites and tools serious learners actually use, including community-vetted free materials from Reddit.
       </div>
 
@@ -1453,10 +1488,10 @@ function ResourcesScreen({ lang, color }) {
         <button onClick={() => setFreeOnly(f => !f)} className={`chip ${freeOnly ? "on" : ""}`} aria-pressed={freeOnly}>Free only</button>
       </div>
 
-      {(q || freeOnly) && <div style={{ fontSize:11, color:"var(--fg3)", marginBottom:10 }}>{shown} of {total} shown</div>}
+      {(q || freeOnly) && <div style={{ fontSize:"calc(11px * var(--fs-scale))", color:"var(--fg3)", marginBottom:10 }}>{shown} of {total} shown</div>}
 
       {filtered.length === 0 && (
-        <div className="card" style={{ fontSize:13, color:"var(--fg2)" }}>No matches. Try clearing the search or turning off the free filter.</div>
+        <div className="card" style={{ fontSize:"calc(13px * var(--fs-scale))", color:"var(--fg2)" }}>No matches. Try clearing the search or turning off the free filter.</div>
       )}
 
       {filtered.map(group => (
@@ -1466,11 +1501,11 @@ function ResourcesScreen({ lang, color }) {
             {group.items.map(it => (
               <a key={it.url + it.name} href={it.url} target="_blank" rel="noopener noreferrer" className="res-item">
                 <div style={{ display:"flex", alignItems:"center", gap:6, marginBottom:4, flexWrap:"wrap" }}>
-                  <span style={{ fontWeight:500, fontSize:13, color:color.text }}>{it.name}</span>
-                  <i className="ti ti-external-link" aria-hidden="true" style={{ fontSize:11, color:color.text, opacity:0.7 }}></i>
+                  <span style={{ fontWeight:500, fontSize:"calc(13px * var(--fs-scale))", color:color.text }}>{it.name}</span>
+                  <i className="ti ti-external-link" aria-hidden="true" style={{ fontSize:"calc(11px * var(--fs-scale))", color:color.text, opacity:0.7 }}></i>
                   <span className="pill" style={{ background: it.free ? "#E1F5EE" : "#FAECE7", color: it.free ? "#0F6E56" : "#993C1D" }}>{it.free ? "Free" : "Paid"}</span>
                 </div>
-                <div style={{ fontSize:12, color:"var(--fg2)", lineHeight:1.55 }}>{it.desc}</div>
+                <div style={{ fontSize:"calc(12px * var(--fs-scale))", color:"var(--fg2)", lineHeight:1.55 }}>{it.desc}</div>
               </a>
             ))}
           </div>
@@ -1482,10 +1517,10 @@ function ResourcesScreen({ lang, color }) {
         {SHARED_RESOURCES.map(it => (
           <a key={it.url + it.name} href={it.url} target="_blank" rel="noopener noreferrer" className="res-item">
             <div style={{ display:"flex", alignItems:"center", gap:6, marginBottom:4 }}>
-              <span style={{ fontWeight:500, fontSize:13 }}>{it.name}</span>
-              <i className="ti ti-external-link" aria-hidden="true" style={{ fontSize:11, color:"var(--fg2)", opacity:0.7 }}></i>
+              <span style={{ fontWeight:500, fontSize:"calc(13px * var(--fs-scale))" }}>{it.name}</span>
+              <i className="ti ti-external-link" aria-hidden="true" style={{ fontSize:"calc(11px * var(--fs-scale))", color:"var(--fg2)", opacity:0.7 }}></i>
             </div>
-            <div style={{ fontSize:12, color:"var(--fg2)", lineHeight:1.55 }}>{it.desc}</div>
+            <div style={{ fontSize:"calc(12px * var(--fs-scale))", color:"var(--fg2)", lineHeight:1.55 }}>{it.desc}</div>
           </a>
         ))}
       </div>
@@ -1503,23 +1538,23 @@ function RoadmapScreen({ lang, color }) {
   return (
     <div>
       <div className="card" style={{ marginBottom:12, background:color.bg, borderColor:color.border }}>
-        <div style={{ fontSize:14, fontWeight:500, color:color.text, marginBottom:6 }}>How to use this plan</div>
-        <div style={{ fontSize:13, color:color.text, lineHeight:1.65 }}>
+        <div style={{ fontSize:"calc(14px * var(--fs-scale))", fontWeight:500, color:color.text, marginBottom:6 }}>How to use this plan</div>
+        <div style={{ fontSize:"calc(13px * var(--fs-scale))", color:color.text, lineHeight:1.65 }}>
           This is a phase-based plan, not a link dump. Each phase has a goal, a set of activities, and the specific resources that serve those activities — so you always know why you're opening a particular site. It assumes 45–75 minutes a day, 5–6 days a week.
         </div>
       </div>
 
       <div className="card" style={{ marginBottom:20 }}>
-        <div style={{ fontSize:12, fontWeight:500, marginBottom:6 }}>The entry ramp differs by language</div>
-        <div style={{ fontSize:13, color:"var(--fg2)", lineHeight:1.65 }}>
+        <div style={{ fontSize:"calc(12px * var(--fs-scale))", fontWeight:500, marginBottom:6 }}>The entry ramp differs by language</div>
+        <div style={{ fontSize:"calc(13px * var(--fs-scale))", color:"var(--fg2)", lineHeight:1.65 }}>
           <strong>Korean</strong> has the easiest on-ramp (Hangul in two weeks) but the steepest intermediate grammar. <strong>Japanese</strong> has the gentlest grammar curve but the longest character-acquisition runway. <strong>Chinese</strong> has the simplest grammar but the hardest pronunciation floor — tones are non-negotiable from day one. The phases are the same; the emphasis inside each phase shifts.
         </div>
-        <div style={{ fontSize:12, color:"var(--fg2)", lineHeight:1.65, marginTop:10, paddingTop:10, borderTop:"0.5px solid var(--bd)" }}>
+        <div style={{ fontSize:"calc(12px * var(--fs-scale))", color:"var(--fg2)", lineHeight:1.65, marginTop:10, paddingTop:10, borderTop:"0.5px solid var(--bd)" }}>
           Running all three from absolute zero at once means three sets of unfamiliar phonology competing for the same ear-training hours. The honest advice is to stagger them — get one language to a maintenance level before adding the next.
         </div>
       </div>
 
-      <div style={{ fontSize:15, fontWeight:500, marginBottom:12 }}>
+      <div style={{ fontSize:"calc(15px * var(--fs-scale))", fontWeight:500, marginBottom:12 }}>
         {META.find(m => m.id === lang).label} roadmap
       </div>
 
@@ -1529,21 +1564,21 @@ function RoadmapScreen({ lang, color }) {
           <div key={p.id} style={{ marginBottom:10, border:"0.5px solid var(--bd)", borderRadius:"var(--rl)", overflow:"hidden", background:"var(--bg)" }}>
             <button onClick={() => setOpenId(isOpen ? null : p.id)} aria-expanded={isOpen} style={{ width:"100%", textAlign:"left", padding:"12px 14px", background: isOpen ? color.bg : "var(--bg)", border:"none", cursor:"pointer", display:"flex", justifyContent:"space-between", alignItems:"center", gap:8 }}>
               <div style={{ minWidth:0 }}>
-                <div style={{ fontSize:10, textTransform:"uppercase", letterSpacing:0.5, color:color.text, fontWeight:600 }}>{p.phase}</div>
-                <div style={{ fontSize:14, fontWeight:500 }}>{p.title}</div>
-                <div style={{ fontSize:12, color:"var(--fg2)" }}>{p.period}</div>
+                <div style={{ fontSize:"calc(10px * var(--fs-scale))", textTransform:"uppercase", letterSpacing:0.5, color:color.text, fontWeight:600 }}>{p.phase}</div>
+                <div style={{ fontSize:"calc(14px * var(--fs-scale))", fontWeight:500 }}>{p.title}</div>
+                <div style={{ fontSize:"calc(12px * var(--fs-scale))", color:"var(--fg2)" }}>{p.period}</div>
               </div>
-              <i className={`ti ${isOpen ? "ti-chevron-up" : "ti-chevron-down"}`} aria-hidden="true" style={{ fontSize:14, color:color.text, flexShrink:0 }}></i>
+              <i className={`ti ${isOpen ? "ti-chevron-up" : "ti-chevron-down"}`} aria-hidden="true" style={{ fontSize:"calc(14px * var(--fs-scale))", color:color.text, flexShrink:0 }}></i>
             </button>
             {isOpen && (
               <div style={{ padding:"0 14px 14px", borderTop:"0.5px solid var(--bd)" }}>
-                <div style={{ fontSize:12.5, color:color.text, marginTop:12, marginBottom:14, lineHeight:1.6 }}>
+                <div style={{ fontSize:"calc(12.5px * var(--fs-scale))", color:color.text, marginTop:12, marginBottom:14, lineHeight:1.6 }}>
                   <strong>Goal — </strong>{p.goal}
                 </div>
                 {p.blocks.map((b, j) => (
                   <div key={j} style={{ marginBottom: j === p.blocks.length - 1 ? 0 : 16 }}>
-                    <div style={{ fontSize:13, fontWeight:500, marginBottom:4 }}>{b.heading}</div>
-                    <div style={{ fontSize:13, color:"var(--fg2)", lineHeight:1.65, marginBottom: (b.links && b.links.length) ? 8 : 0 }}>{b.body}</div>
+                    <div style={{ fontSize:"calc(13px * var(--fs-scale))", fontWeight:500, marginBottom:4 }}>{b.heading}</div>
+                    <div style={{ fontSize:"calc(13px * var(--fs-scale))", color:"var(--fg2)", lineHeight:1.65, marginBottom: (b.links && b.links.length) ? 8 : 0 }}>{b.body}</div>
                     {b.links && b.links.length > 0 && (
                       <div style={{ display:"flex", flexWrap:"wrap", gap:6 }}>
                         {b.links.map((l, k) => (
@@ -1562,14 +1597,14 @@ function RoadmapScreen({ lang, color }) {
       })}
 
       {/* Cross-language overlap */}
-      <div style={{ marginTop:32, fontSize:15, fontWeight:500, marginBottom:6 }}>The cross-language overlap</div>
-      <div style={{ fontSize:13, color:"var(--fg2)", marginBottom:12, lineHeight:1.6 }}>
+      <div style={{ marginTop:32, fontSize:"calc(15px * var(--fs-scale))", fontWeight:500, marginBottom:6 }}>The cross-language overlap</div>
+      <div style={{ fontSize:"calc(13px * var(--fs-scale))", color:"var(--fg2)", marginBottom:12, lineHeight:1.6 }}>
         Learning all three together is only worth it if you exploit the overlap. This is the actual payoff.
       </div>
       {BRIDGE.map((b, i) => (
         <div key={i} className="card" style={{ marginBottom:8, padding:"12px 14px" }}>
-          <div style={{ fontWeight:500, fontSize:13.5, marginBottom:6 }}>{b.t}</div>
-          <div style={{ fontSize:12.5, color:"var(--fg2)", lineHeight:1.65 }}>{b.d}</div>
+          <div style={{ fontWeight:500, fontSize:"calc(13.5px * var(--fs-scale))", marginBottom:6 }}>{b.t}</div>
+          <div style={{ fontSize:"calc(12.5px * var(--fs-scale))", color:"var(--fg2)", lineHeight:1.65 }}>{b.d}</div>
           <div style={{ display:"flex", gap:4, marginTop:8, flexWrap:"wrap" }}>
             {b.tags.map(t => <span key={t} className="pill" style={{ background:C[t].bg, color:C[t].text }}>{t}</span>)}
           </div>
@@ -1577,17 +1612,17 @@ function RoadmapScreen({ lang, color }) {
       ))}
 
       {/* Exam prep */}
-      <div style={{ marginTop:32, fontSize:15, fontWeight:500, marginBottom:6 }}>Exam preparation structure</div>
-      <div style={{ fontSize:13, color:"var(--fg2)", marginBottom:12, lineHeight:1.6 }}>
+      <div style={{ marginTop:32, fontSize:"calc(15px * var(--fs-scale))", fontWeight:500, marginBottom:6 }}>Exam preparation structure</div>
+      <div style={{ fontSize:"calc(13px * var(--fs-scale))", color:"var(--fg2)", marginBottom:12, lineHeight:1.6 }}>
         TOPIK, JLPT, and HSK are all format-specific exams. Preparing for them is a different activity from general language study, and the two shouldn't be conflated. A standard prep cycle looks like this for all three:
       </div>
       {EXAM_PREP_STEPS.map((s, i) => (
         <div key={i} style={{ border:"0.5px solid var(--bd)", borderRadius:"var(--r)", padding:"10px 12px", background:"var(--bg)", marginBottom:6 }}>
-          <div style={{ fontSize:13, fontWeight:500, marginBottom:4 }}>{s.step}</div>
-          <div style={{ fontSize:12.5, color:"var(--fg2)", lineHeight:1.6 }}>{s.body}</div>
+          <div style={{ fontSize:"calc(13px * var(--fs-scale))", fontWeight:500, marginBottom:4 }}>{s.step}</div>
+          <div style={{ fontSize:"calc(12.5px * var(--fs-scale))", color:"var(--fg2)", lineHeight:1.6 }}>{s.body}</div>
         </div>
       ))}
-      <div style={{ fontSize:12, color:"var(--fg2)", marginTop:12, marginBottom:6, lineHeight:1.6 }}>Past papers are free from the official sites:</div>
+      <div style={{ fontSize:"calc(12px * var(--fs-scale))", color:"var(--fg2)", marginTop:12, marginBottom:6, lineHeight:1.6 }}>Past papers are free from the official sites:</div>
       <div style={{ display:"flex", flexWrap:"wrap", gap:6 }}>
         {EXAM_LINKS.map((l, i) => (
           <a key={i} href={l.url} target="_blank" rel="noopener noreferrer" className="res-chip">
@@ -1597,20 +1632,20 @@ function RoadmapScreen({ lang, color }) {
       </div>
 
       {/* Weekly rhythm */}
-      <div style={{ marginTop:32, fontSize:15, fontWeight:500, marginBottom:6 }}>A weekly rhythm that works</div>
-      <div style={{ fontSize:13, color:"var(--fg2)", marginBottom:12, lineHeight:1.6 }}>
+      <div style={{ marginTop:32, fontSize:"calc(15px * var(--fs-scale))", fontWeight:500, marginBottom:6 }}>A weekly rhythm that works</div>
+      <div style={{ fontSize:"calc(13px * var(--fs-scale))", color:"var(--fg2)", marginBottom:12, lineHeight:1.6 }}>
         The day-by-day schedule in the Today tab is a reasonable template, but the underlying principle matters more than the specific allocation:
       </div>
       {WEEKLY_RHYTHM.map((w, i) => (
         <div key={i} style={{ display:"flex", gap:10, padding:"8px 0", borderBottom: i === WEEKLY_RHYTHM.length - 1 ? "none" : "0.5px solid var(--bd)" }}>
           <span style={{ minWidth:5, height:5, borderRadius:"50%", background:color.border, marginTop:8, flexShrink:0 }}></span>
           <div>
-            <div style={{ fontSize:13, fontWeight:500 }}>{w.label}</div>
-            <div style={{ fontSize:12.5, color:"var(--fg2)", lineHeight:1.6 }}>{w.body}</div>
+            <div style={{ fontSize:"calc(13px * var(--fs-scale))", fontWeight:500 }}>{w.label}</div>
+            <div style={{ fontSize:"calc(12.5px * var(--fs-scale))", color:"var(--fg2)", lineHeight:1.6 }}>{w.body}</div>
           </div>
         </div>
       ))}
-      <div style={{ fontSize:12, marginTop:12, lineHeight:1.6, padding:"10px 12px", background:color.bg, borderRadius:"var(--r)", color:color.text }}>
+      <div style={{ fontSize:"calc(12px * var(--fs-scale))", marginTop:12, lineHeight:1.6, padding:"10px 12px", background:color.bg, borderRadius:"var(--r)", color:color.text }}>
         The review day is the one people skip. It's also the one that determines whether you retain anything from the other six days.
       </div>
     </div>
@@ -1627,10 +1662,10 @@ function CultureScreen({ lang, color }) {
       {data.culture.map((c, i) => (
         <div key={i} className="card" style={{ marginBottom:10, padding:"12px 14px" }}>
           <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:8 }}>
-            <span style={{ fontWeight:500, fontSize:14 }}>{c.topic}</span>
+            <span style={{ fontWeight:500, fontSize:"calc(14px * var(--fs-scale))" }}>{c.topic}</span>
             <span className="pill" style={{ background:color.bg, color:color.text }}>{c.period}</span>
           </div>
-          <div style={{ fontSize:13, color:"var(--fg2)", lineHeight:1.6 }}>{c.detail}</div>
+          <div style={{ fontSize:"calc(13px * var(--fs-scale))", color:"var(--fg2)", lineHeight:1.6 }}>{c.detail}</div>
         </div>
       ))}
     </div>
@@ -1647,13 +1682,13 @@ function FixItScreen({ color }) {
       {FIXIT.map((t, i) => (
         <div key={i} style={{ border:"0.5px solid var(--bd)", borderRadius:"var(--r)", overflow:"hidden" }}>
           <button onClick={() => setOpenI(openI===i ? null : i)} aria-expanded={openI===i} style={{ width:"100%", display:"flex", justifyContent:"space-between", padding:"12px 14px", background:"var(--bg)", border:"none", cursor:"pointer", textAlign:"left", gap:8 }}>
-            <span style={{ fontSize:13, fontWeight:500 }}>"{t.s}"</span>
-            <i className={`ti ${openI===i ? "ti-chevron-up" : "ti-chevron-down"}`} aria-hidden="true" style={{ fontSize:14, color:"var(--fg2)", flexShrink:0 }}></i>
+            <span style={{ fontSize:"calc(13px * var(--fs-scale))", fontWeight:500 }}>"{t.s}"</span>
+            <i className={`ti ${openI===i ? "ti-chevron-up" : "ti-chevron-down"}`} aria-hidden="true" style={{ fontSize:"calc(14px * var(--fs-scale))", color:"var(--fg2)", flexShrink:0 }}></i>
           </button>
           {openI === i && (
             <div style={{ padding:"0 14px 12px", borderTop:"0.5px solid var(--bd)" }}>
-              <div style={{ marginTop:10, fontSize:13, color:"var(--fg2)", marginBottom:8 }}><strong>Diagnosis:</strong> {t.d}</div>
-              <div style={{ fontSize:13, background:color.bg, padding:"10px 12px", borderRadius:"var(--r)", color:"var(--fg2)" }}><strong style={{ color:color.text }}>Fix:</strong> {t.f}</div>
+              <div style={{ marginTop:10, fontSize:"calc(13px * var(--fs-scale))", color:"var(--fg2)", marginBottom:8 }}><strong>Diagnosis:</strong> {t.d}</div>
+              <div style={{ fontSize:"calc(13px * var(--fs-scale))", background:color.bg, padding:"10px 12px", borderRadius:"var(--r)", color:"var(--fg2)" }}><strong style={{ color:color.text }}>Fix:</strong> {t.f}</div>
             </div>
           )}
         </div>
@@ -1665,6 +1700,19 @@ function FixItScreen({ color }) {
 /* ============================================================
    APP SHELL
    ============================================================ */
+function ThemeToggle({ theme, setTheme, size, style }) {
+  const order = ["system", "light", "dark"];
+  const icons = { system: "ti-device-desktop", light: "ti-sun", dark: "ti-moon" };
+  const labels = { system: "Matching system", light: "Light", dark: "Dark" };
+  const next = () => setTheme(order[(order.indexOf(theme) + 1) % order.length]);
+  return (
+    <button onClick={next} aria-label={`Theme: ${labels[theme]}. Tap to switch.`} title={`Theme: ${labels[theme]}`}
+      style={{ background:"none", border:"none", cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", padding:6, borderRadius:"var(--r)", ...style }}>
+      <i className={`ti ${icons[theme]}`} aria-hidden="true" style={{ fontSize:`calc(${size || 19}px * var(--fs-scale))`, color:"var(--fg2)" }}></i>
+    </button>
+  );
+}
+
 class ErrorBoundary extends React.Component {
   constructor(p) { super(p); this.state = { err: null }; }
   static getDerivedStateFromError(err) { return { err }; }
@@ -1672,11 +1720,11 @@ class ErrorBoundary extends React.Component {
     if (this.state.err) {
       return (
         <div style={{ padding:24, fontFamily:"system-ui, sans-serif", maxWidth:520, margin:"0 auto" }}>
-          <h2 style={{ fontSize:16, marginBottom:8 }}>Something went wrong.</h2>
-          <p style={{ fontSize:13, color:"#666", lineHeight:1.6, marginBottom:16 }}>
+          <h2 style={{ fontSize:"calc(16px * var(--fs-scale))", marginBottom:8 }}>Something went wrong.</h2>
+          <p style={{ fontSize:"calc(13px * var(--fs-scale))", color:"#666", lineHeight:1.6, marginBottom:16 }}>
             Your saved progress is still in this browser. If the app keeps failing to load, export your data from Settings before clearing site data.
           </p>
-          <button onClick={() => { localStorage.removeItem(STORAGE_KEY); location.reload(); }} style={{ padding:"8px 14px", fontSize:13, cursor:"pointer" }}>
+          <button onClick={() => { localStorage.removeItem(STORAGE_KEY); location.reload(); }} style={{ padding:"8px 14px", fontSize:"calc(13px * var(--fs-scale))", cursor:"pointer" }}>
             Reset local data and reload
           </button>
         </div>
@@ -1690,12 +1738,33 @@ function App() {
   const [lang, setLang] = useState("korean");
   const [view, setView] = useState("today");
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [theme, setTheme] = useState(() => {
+    try { return localStorage.getItem("eal-theme") || "system"; } catch (e) { return "system"; }
+  });
   const {
     progress, toggleTask, setSelfCheck, toggleMonth, toggleY2, toggleY3, toggleMaint,
     setMotivation, setNotif, exportData, importData,
   } = useProgress();
   useReminder(progress, setNotif);
   const color = C[lang];
+
+  useEffect(() => {
+    try { localStorage.setItem("eal-theme", theme); } catch (e) {}
+    if (theme === "system") document.documentElement.removeAttribute("data-theme");
+    else document.documentElement.setAttribute("data-theme", theme);
+  }, [theme]);
+
+  // Lock background scroll while the mobile drawer is open, and let Escape close it
+  useEffect(() => {
+    document.body.style.overflow = drawerOpen ? "hidden" : "";
+    if (!drawerOpen) return;
+    const onKey = (e) => { if (e.key === "Escape") setDrawerOpen(false); };
+    window.addEventListener("keydown", onKey);
+    return () => { window.removeEventListener("keydown", onKey); document.body.style.overflow = ""; };
+  }, [drawerOpen]);
+
+  const goTo = (id) => { setView(id); setDrawerOpen(false); };
 
   const screens = {
     today: <TodayScreen lang={lang} color={color} progress={progress} toggleTask={toggleTask} />,
@@ -1710,15 +1779,49 @@ function App() {
     <div className="app" style={{ fontFamily:"var(--font-sans)", "--nav-active": color.border }}>
       <h1 className="sr">East Asian Language Companion — a structured roadmap, progress tracker, and reference library for Korean, Japanese, and Chinese</h1>
 
+      {/* Mobile-only top bar: hamburger opens the collapsible sidebar drawer */}
+      <div className="topbar">
+        <button className="topbar-btn" onClick={() => setDrawerOpen(true)} aria-label="Open menu" aria-expanded={drawerOpen} aria-controls="mobile-drawer">
+          <i className="ti ti-menu-2" aria-hidden="true"></i>
+        </button>
+        <span className="topbar-title">Language Companion</span>
+        <div className="topbar-actions">
+          <ThemeToggle theme={theme} setTheme={setTheme} size={20} />
+          <button className="topbar-btn" onClick={() => setSettingsOpen(true)} aria-label="Open settings">
+            <i className="ti ti-settings" aria-hidden="true"></i>
+          </button>
+        </div>
+      </div>
+
+      {/* Desktop-only persistent sidebar */}
       <nav className="side" aria-label="Main navigation">
-        <div style={{ fontSize:13, fontWeight:500, padding:"0 12px 16px" }}>Language Companion</div>
+        <div style={{ fontSize:"calc(13px * var(--fs-scale))", fontWeight:500, padding:"0 12px 16px" }}>Language Companion</div>
         {SECTIONS.map(s => (
           <button key={s.id} className={`nav s ${view===s.id ? "on" : ""}`} onClick={() => setView(s.id)}>
-            <i className={`ti ${s.icon}`} aria-hidden="true" style={{ fontSize:17 }}></i>{s.label}
+            <i className={`ti ${s.icon}`} aria-hidden="true" style={{ fontSize:"calc(17px * var(--fs-scale))" }}></i>{s.label}
           </button>
         ))}
         <button className="nav s" onClick={() => setSettingsOpen(true)} style={{ marginTop:"auto" }}>
-          <i className="ti ti-settings" aria-hidden="true" style={{ fontSize:17 }}></i>Settings
+          <i className="ti ti-settings" aria-hidden="true" style={{ fontSize:"calc(17px * var(--fs-scale))" }}></i>Settings
+        </button>
+      </nav>
+
+      {/* Mobile-only collapsible sidebar (drawer) + backdrop, replaces the old bottom tab bar */}
+      <div className={`backdrop ${drawerOpen ? "show" : ""}`} onClick={() => setDrawerOpen(false)} aria-hidden="true"></div>
+      <nav id="mobile-drawer" className={`drawer ${drawerOpen ? "open" : ""}`} aria-label="Main navigation" aria-hidden={!drawerOpen}>
+        <div className="drawer-head">
+          <span>Language Companion</span>
+          <button className="topbar-btn" onClick={() => setDrawerOpen(false)} aria-label="Close menu">
+            <i className="ti ti-x" aria-hidden="true"></i>
+          </button>
+        </div>
+        {SECTIONS.map(s => (
+          <button key={s.id} className={`nav s ${view===s.id ? "on" : ""}`} onClick={() => goTo(s.id)}>
+            <i className={`ti ${s.icon}`} aria-hidden="true" style={{ fontSize:"calc(17px * var(--fs-scale))" }}></i>{s.label}
+          </button>
+        ))}
+        <button className="nav s" onClick={() => { setSettingsOpen(true); setDrawerOpen(false); }} style={{ marginTop:"auto" }}>
+          <i className="ti ti-settings" aria-hidden="true" style={{ fontSize:"calc(17px * var(--fs-scale))" }}></i>Settings
         </button>
       </nav>
 
@@ -1729,28 +1832,23 @@ function App() {
               {META.map(m => (
                 <button key={m.id} onClick={() => setLang(m.id)} aria-pressed={lang===m.id} style={{ display:"flex", alignItems:"center", gap:6, padding:"5px 10px 5px 5px", borderRadius:20, border:`1.5px solid ${lang===m.id ? m.color.border : "var(--bd)"}`, background: lang===m.id ? m.color.bg : "var(--bg)", cursor:"pointer" }}>
                   <LangBadge meta={m} size={22} />
-                  <span style={{ fontSize:12, fontWeight: lang===m.id ? 500 : 400, color: lang===m.id ? m.color.text : "var(--fg2)" }}>{m.label}</span>
+                  <span style={{ fontSize:"calc(12px * var(--fs-scale))", fontWeight: lang===m.id ? 500 : 400, color: lang===m.id ? m.color.text : "var(--fg2)" }}>{m.label}</span>
                 </button>
               ))}
             </div>
-            <button onClick={() => setSettingsOpen(true)} aria-label="Open settings" style={{ background:"none", border:"none", cursor:"pointer" }}>
-              <i className="ti ti-settings" aria-hidden="true" style={{ fontSize:19, color:"var(--fg2)" }}></i>
-            </button>
+            <div style={{ display:"flex", alignItems:"center", gap:2 }}>
+              <ThemeToggle theme={theme} setTheme={setTheme} />
+              <button onClick={() => setSettingsOpen(true)} aria-label="Open settings" style={{ background:"none", border:"none", cursor:"pointer", padding:6 }}>
+                <i className="ti ti-settings" aria-hidden="true" style={{ fontSize:"calc(19px * var(--fs-scale))", color:"var(--fg2)" }}></i>
+              </button>
+            </div>
           </div>
 
           {screens[view]}
         </div>
       </div>
 
-      <nav className="bottom" aria-label="Main navigation">
-        {SECTIONS.map(s => (
-          <button key={s.id} className={`nav b ${view===s.id ? "on" : ""}`} onClick={() => setView(s.id)}>
-            <i className={`ti ${s.icon}`} aria-hidden="true"></i>{s.label}
-          </button>
-        ))}
-      </nav>
-
-      {settingsOpen && <Settings progress={progress} setNotif={setNotif} setMotivation={setMotivation} exportData={exportData} importData={importData} onClose={() => setSettingsOpen(false)} />}
+      {settingsOpen && <Settings progress={progress} setNotif={setNotif} setMotivation={setMotivation} exportData={exportData} importData={importData} onClose={() => setSettingsOpen(false)} theme={theme} setTheme={setTheme} />}
     </div>
   );
 }
