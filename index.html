@@ -7,7 +7,7 @@
 <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.development.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.development.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/babel-standalone@6.26.0/babel.min.js"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tabler-icons@1.119.0/iconfont/tabler-icons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.34.0/dist/tabler-icons.min.css">
 <meta name="theme-color" content="#1D9E75">
 <style>
   * { margin:0; padding:0; box-sizing:border-box; }
@@ -37,7 +37,7 @@
   .topbar { display:flex; align-items:center; justify-content:space-between; gap:8px; position:sticky; top:0; z-index:15; background:var(--bg); border-bottom:0.5px solid var(--bd); padding:10px 6px; }
   .topbar-btn { background:none; border:none; cursor:pointer; color:var(--fg); padding:8px; display:flex; align-items:center; justify-content:center; border-radius:var(--r); }
   .topbar-btn i { font-size:calc(20px * var(--fs-scale)); }
-  .topbar-title { font-size:calc(14px * var(--fs-scale)); font-weight:600; }
+  .topbar-title { font-size:calc(14px * var(--fs-scale)); font-weight:600; display:flex; align-items:center; gap:6px; }
   .topbar-actions { display:flex; align-items:center; gap:2px; }
 
   /* ---- Mobile collapsible sidebar (drawer) ---- */
@@ -52,7 +52,7 @@
   }
   .drawer.open { transform:translateX(0); }
   .drawer-head { display:flex; justify-content:space-between; align-items:center; padding:2px 6px 16px; }
-  .drawer-head span { font-size:calc(14px * var(--fs-scale)); font-weight:600; }
+  .drawer-head span { font-size:calc(14px * var(--fs-scale)); font-weight:600; display:flex; align-items:center; gap:6px; }
 
   @media (min-width:768px) {
     .app { display:flex; }
@@ -79,13 +79,16 @@
   .lang-badge { width:30px; height:30px; border-radius:9px; display:flex; align-items:center; justify-content:center; font-size:calc(14px * var(--fs-scale)); font-weight:600; flex-shrink:0; }
   .res-item { display:block; border:0.5px solid var(--bd); border-radius:var(--r); padding:10px 12px; background:var(--bg); text-decoration:none; color:inherit; transition:border-color .15s, background .15s; }
   .res-item:hover { border-color:var(--nav-active, #1D9E75); }
-  .res-cat-title { font-size:calc(11px * var(--fs-scale)); text-transform:uppercase; letter-spacing:0.5px; color:var(--fg3); font-weight:600; margin:22px 0 8px; }
+  .res-cat-title { font-size:calc(11px * var(--fs-scale)); text-transform:uppercase; letter-spacing:0.5px; color:var(--fg3); font-weight:600; margin:22px 0 8px; display:flex; align-items:center; gap:6px; }
+  .res-cat-title i { font-size:calc(14px * var(--fs-scale)); }
   .res-cat-title:first-of-type { margin-top:0; }
   .chip { border:1px solid var(--bd); border-radius:20px; padding:6px 12px; font-size:calc(12px * var(--fs-scale)); background:var(--bg); color:var(--fg2); cursor:pointer; }
   .chip.on { background:var(--nav-active, #1D9E75); border-color:var(--nav-active, #1D9E75); color:#fff; }
   .res-chip { display:inline-flex; align-items:center; gap:4px; padding:4px 10px; border-radius:20px; background:var(--bg2); color:var(--fg); font-size:calc(11px * var(--fs-scale)); font-weight:500; text-decoration:none; border:0.5px solid var(--bd); transition:border-color .15s; }
   .res-chip:hover { border-color:var(--nav-active, #1D9E75); }
   .res-chip i { font-size:calc(10px * var(--fs-scale)); opacity:0.7; }
+  /* Reusable icon tile */
+  .tile { display:flex; align-items:center; justify-content:center; flex-shrink:0; border-radius:9px; }
 </style>
 </head>
 <body>
@@ -103,10 +106,59 @@ const C = {
 };
 
 const META = [
-  { id:"korean",   label:"Korean",   glyph:"한", tagline:"SOV foundation",                 color:C.korean   },
-  { id:"japanese", label:"Japanese", glyph:"日", tagline:"Repurpose the SOV brain",         color:C.japanese },
-  { id:"chinese",  label:"Chinese",  glyph:"中", tagline:"Grammar vacation, tonal mountain", color:C.chinese  },
+  { id:"korean",   label:"Korean",   glyph:"한", tagline:"SOV foundation",                 color:C.korean,   icon:"ti-building-monument" },
+  { id:"japanese", label:"Japanese", glyph:"日", tagline:"Repurpose the SOV brain",         color:C.japanese, icon:"ti-building-torii" },
+  { id:"chinese",  label:"Chinese",  glyph:"中", tagline:"Grammar vacation, tonal mountain", color:C.chinese,  icon:"ti-building-temple" },
 ];
+
+/* ============================================================
+   ICON MAPS — flat Tabler icons for labels throughout the app
+   ============================================================ */
+const SECTION_ICONS = {
+  today:"ti-home", path:"ti-route", roadmap:"ti-map",
+  resources:"ti-books", culture:"ti-world", fixit:"ti-stethoscope",
+};
+
+const RES_CAT_ICON = {
+  "Structured courses":"ti-school",
+  "Community & Reddit":"ti-users",
+  "Grammar reference":"ti-letter-case",
+  "Dictionaries & tools":"ti-tool",
+  "Vocabulary & SRS":"ti-cards",
+  "Reading":"ti-book",
+  "Listening":"ti-headphones",
+  "Speaking & tutoring":"ti-microphone",
+  "Writing & feedback":"ti-pencil",
+  "News & native media":"ti-news",
+  "Exams":"ti-certificate",
+};
+
+const PHASE_ICON = { p1:"ti-flag", p2:"ti-target", p3:"ti-trending-up", p4:"ti-trophy" };
+
+/* ============================================================
+   PER-LINK ICON GUESS — brand icon when we recognize the domain,
+   otherwise a sensible fallback so every resource card gets an icon
+   ============================================================ */
+const DOMAIN_ICON = [
+  [/reddit\.com/, "ti-brand-reddit"],
+  [/youtube\.com|youtu\.be/, "ti-brand-youtube"],
+  [/coursera\.org/, "ti-school"],
+  [/duolingo\.com/, "ti-paw"],
+  [/discord/, "ti-brand-discord"],
+  [/wikipedia\.org|wiktionary\.org/, "ti-brand-wikipedia"],
+  [/archive\.org/, "ti-archive"],
+  [/github\.com/, "ti-brand-github"],
+  [/spotify\.com/, "ti-brand-spotify"],
+  [/netflix\.com/, "ti-brand-netflix"],
+  [/apps\.ankiweb\.net|ankiweb\.net/, "ti-cards"],
+  [/quizlet\.com/, "ti-cards"],
+  [/nytimes\.com/, "ti-news"],
+  [/bbc\.com/, "ti-news"],
+];
+function guessIcon(url, fallback) {
+  for (const [re, icon] of DOMAIN_ICON) if (re.test(url)) return icon;
+  return fallback;
+}
 
 /* ============================================================
    FULL REFERENCE LIBRARY — external learning materials
@@ -382,24 +434,24 @@ const RESOURCES = {
 };
 
 const SHARED_RESOURCES = [
-  { name:"Anki", url:"https://apps.ankiweb.net", desc:"Spaced repetition — the backbone of serious self-study. Works for all three languages." },
-  { name:"Language Reactor", url:"https://www.languagereactor.com", desc:"Dual subtitles and hover dictionary on Netflix and YouTube." },
-  { name:"LingQ", url:"https://www.lingq.com", desc:"Read and listen with instant lookups and known-word tracking." },
-  { name:"Clozemaster", url:"https://www.clozemaster.com", desc:"Fill-in-the-blank practice using real sentences. All three languages." },
-  { name:"Forvo", url:"https://forvo.com", desc:"Native-speaker pronunciations for any word." },
-  { name:"Migaku", url:"https://migaku.com", desc:"Browser extension for mining vocabulary from streaming video." },
-  { name:"Readlang", url:"https://readlang.com", desc:"Web reader with click-to-translate and flashcard export." },
-  { name:"HelloTalk", url:"https://www.hellotalk.com", desc:"Language exchange with native speakers — text, voice, corrections." },
-  { name:"italki", url:"https://www.italki.com", desc:"Book 1-on-1 tutors by the hour in any of the three languages." },
-  { name:"Tandem", url:"https://tandem.net", desc:"Exchange app — the main alternative to HelloTalk." },
-  { name:"LangCorrect", url:"https://langcorrect.com", desc:"Get your writing corrected by native speakers, correct theirs in return." },
-  { name:"HiNative", url:"https://hinative.com", desc:"Ask native speakers short questions about usage and nuance." },
-  { name:"Journaly", url:"https://journaly.com", desc:"Multilingual journaling with inline corrections." },
-  { name:"Speechling", url:"https://speechling.com", desc:"Pronunciation coaching and shadowing drills." },
-  { name:"r/languagelearning", url:"https://www.reddit.com/r/languagelearning/", desc:"Reddit's main language-learning hub — general methodology and cross-language discussion." },
-  { name:"r/languagelearning Wiki", url:"https://www.reddit.com/r/languagelearning/wiki/index/", desc:"Community-maintained wiki with resource lists for every language, including all three here." },
-  { name:"All Language Resources", url:"https://www.alllanguageresources.com", desc:"Reddit-recommended review site — like Consumer Reports for language learning tools." },
-  { name:"FREEMEDIAHECKYEAH Language Wiki", url:"https://www.reddit.com/r/FREEMEDIAHECKYEAH/wiki/tools-misc#wiki_.25B7_language_learning", desc:"Massive community-maintained index of free language-learning tools, books, and sites." },
+  { name:"Anki", url:"https://apps.ankiweb.net", desc:"Spaced repetition — the backbone of serious self-study. Works for all three languages.", icon:"ti-cards" },
+  { name:"Language Reactor", url:"https://www.languagereactor.com", desc:"Dual subtitles and hover dictionary on Netflix and YouTube.", icon:"ti-device-tv" },
+  { name:"LingQ", url:"https://www.lingq.com", desc:"Read and listen with instant lookups and known-word tracking.", icon:"ti-book" },
+  { name:"Clozemaster", url:"https://www.clozemaster.com", desc:"Fill-in-the-blank practice using real sentences. All three languages.", icon:"ti-forms" },
+  { name:"Forvo", url:"https://forvo.com", desc:"Native-speaker pronunciations for any word.", icon:"ti-volume" },
+  { name:"Migaku", url:"https://migaku.com", desc:"Browser extension for mining vocabulary from streaming video.", icon:"ti-puzzle" },
+  { name:"Readlang", url:"https://readlang.com", desc:"Web reader with click-to-translate and flashcard export.", icon:"ti-book-2" },
+  { name:"HelloTalk", url:"https://www.hellotalk.com", desc:"Language exchange with native speakers — text, voice, corrections.", icon:"ti-message-circle" },
+  { name:"italki", url:"https://www.italki.com", desc:"Book 1-on-1 tutors by the hour in any of the three languages.", icon:"ti-microphone" },
+  { name:"Tandem", url:"https://tandem.net", desc:"Exchange app — the main alternative to HelloTalk.", icon:"ti-users" },
+  { name:"LangCorrect", url:"https://langcorrect.com", desc:"Get your writing corrected by native speakers, correct theirs in return.", icon:"ti-pencil" },
+  { name:"HiNative", url:"https://hinative.com", desc:"Ask native speakers short questions about usage and nuance.", icon:"ti-help-circle" },
+  { name:"Journaly", url:"https://journaly.com", desc:"Multilingual journaling with inline corrections.", icon:"ti-notebook" },
+  { name:"Speechling", url:"https://speechling.com", desc:"Pronunciation coaching and shadowing drills.", icon:"ti-ear" },
+  { name:"r/languagelearning", url:"https://www.reddit.com/r/languagelearning/", desc:"Reddit's main language-learning hub — general methodology and cross-language discussion.", icon:"ti-users" },
+  { name:"r/languagelearning Wiki", url:"https://www.reddit.com/r/languagelearning/wiki/index/", desc:"Community-maintained wiki with resource lists for every language, including all three here.", icon:"ti-book" },
+  { name:"All Language Resources", url:"https://www.alllanguageresources.com", desc:"Reddit-recommended review site — like Consumer Reports for language learning tools.", icon:"ti-star" },
+  { name:"FREEMEDIAHECKYEAH Language Wiki", url:"https://www.reddit.com/r/FREEMEDIAHECKYEAH/wiki/tools-misc#wiki_.25B7_language_learning", desc:"Massive community-maintained index of free language-learning tools, books, and sites.", icon:"ti-compass" },
 ];
 
 /* ============================================================
@@ -749,19 +801,19 @@ const ROADMAP = {
 };
 
 const BRIDGE = [
-  { t:"은/는 vs 이/가, and は vs が, work almost the same way", d:"Korean's topic/subject particle distinction maps closely onto Japanese は/が. Learn the logic once and you get most of it in the other language for free. Chinese has no direct equivalent — don't expect the same shortcut there.", tags:["korean","japanese"] },
-  { t:"Korean 았/었 and Japanese た mark tense. Chinese 了 marks completion, not tense.", d:"This is a very common error for Korean/Japanese speakers learning Chinese: 了 isn't 'past tense' — a sentence can describe yesterday with no 了 at all if it's not about completion. Don't map it 1:1 onto what you know.", tags:["korean","japanese","chinese"] },
-  { t:"Word order: SOV vs SOV vs SVO", d:"Korean and Japanese are both verb-final, which is why their grammar transfers so well to each other. Chinese is closer to English word order — the 'grammar vacation' people mention for Chinese is real, but tones tend to eat back the time saved.", tags:["korean","japanese","chinese"] },
-  { t:"Hanja, Kanji, and Hanzi share a real core of roots", d:"A meaningful share of everyday characters overlap in shape and meaning across the three systems (even where pronunciation differs completely). Learning common roots once pays off across all three.", tags:["korean","japanese","chinese"] },
-  { t:"Politeness lives in different places grammatically", d:"Korean encodes politeness mainly in verb endings. Japanese uses both endings and a separate keigo vocabulary. Chinese handles it mostly through word choice (您 vs 你) rather than grammar. Don't assume a strategy that works in one transfers directly.", tags:["korean","japanese","chinese"] },
-  { t:"Counters exist in all three, with different strictness", d:"Japanese counters are the least forgiving (一本 vs 一枚 vs 一台 genuinely matter). Korean is more relaxed. Chinese's 个 works as an acceptable fallback in casual speech far more often. Learning Japanese counters first tends to make the other two feel easy by comparison.", tags:["korean","japanese","chinese"] },
+  { t:"은/는 vs 이/가, and は vs が, work almost the same way", d:"Korean's topic/subject particle distinction maps closely onto Japanese は/が. Learn the logic once and you get most of it in the other language for free. Chinese has no direct equivalent — don't expect the same shortcut there.", tags:["korean","japanese"], icon:"ti-arrows-shuffle" },
+  { t:"Korean 았/었 and Japanese た mark tense. Chinese 了 marks completion, not tense.", d:"This is a very common error for Korean/Japanese speakers learning Chinese: 了 isn't 'past tense' — a sentence can describe yesterday with no 了 at all if it's not about completion. Don't map it 1:1 onto what you know.", tags:["korean","japanese","chinese"], icon:"ti-clock" },
+  { t:"Word order: SOV vs SOV vs SVO", d:"Korean and Japanese are both verb-final, which is why their grammar transfers so well to each other. Chinese is closer to English word order — the 'grammar vacation' people mention for Chinese is real, but tones tend to eat back the time saved.", tags:["korean","japanese","chinese"], icon:"ti-arrows-right" },
+  { t:"Hanja, Kanji, and Hanzi share a real core of roots", d:"A meaningful share of everyday characters overlap in shape and meaning across the three systems (even where pronunciation differs completely). Learning common roots once pays off across all three.", tags:["korean","japanese","chinese"], icon:"ti-language" },
+  { t:"Politeness lives in different places grammatically", d:"Korean encodes politeness mainly in verb endings. Japanese uses both endings and a separate keigo vocabulary. Chinese handles it mostly through word choice (您 vs 你) rather than grammar. Don't assume a strategy that works in one transfers directly.", tags:["korean","japanese","chinese"], icon:"ti-user-check" },
+  { t:"Counters exist in all three, with different strictness", d:"Japanese counters are the least forgiving (一本 vs 一枚 vs 一台 genuinely matter). Korean is more relaxed. Chinese's 个 works as an acceptable fallback in casual speech far more often. Learning Japanese counters first tends to make the other two feel easy by comparison.", tags:["korean","japanese","chinese"], icon:"ti-hash" },
 ];
 
 const EXAM_PREP_STEPS = [
-  { step:"1. Diagnostic", body:"Take a past paper cold. Score it. Identify which section is weakest. This is not a study session — it's a measurement." },
-  { step:"2. Foundation (6–8 weeks)", body:"Vocabulary and grammar targeting the exam's level. Daily Anki with exam-specific decks. Cover the grammar points that appear most frequently in past papers." },
-  { step:"3. Focused drilling (4–8 weeks)", body:"Focused work on the weakest section. If listening is weakest, daily dictation. If writing is weakest, timed essay practice with corrections." },
-  { step:"4. Mock exams (2–4 weeks)", body:"Full timed papers under exam conditions. Review every error, not just the ones you got wrong by guessing." },
+  { step:"1. Diagnostic", body:"Take a past paper cold. Score it. Identify which section is weakest. This is not a study session — it's a measurement.", icon:"ti-search" },
+  { step:"2. Foundation (6–8 weeks)", body:"Vocabulary and grammar targeting the exam's level. Daily Anki with exam-specific decks. Cover the grammar points that appear most frequently in past papers.", icon:"ti-books" },
+  { step:"3. Focused drilling (4–8 weeks)", body:"Focused work on the weakest section. If listening is weakest, daily dictation. If writing is weakest, timed essay practice with corrections.", icon:"ti-target" },
+  { step:"4. Mock exams (2–4 weeks)", body:"Full timed papers under exam conditions. Review every error, not just the ones you got wrong by guessing.", icon:"ti-checklist" },
 ];
 
 const EXAM_LINKS = [
@@ -771,10 +823,10 @@ const EXAM_LINKS = [
 ];
 
 const WEEKLY_RHYTHM = [
-  { label:"Three days a week", body:"New input. A lesson, an article, a podcast episode with transcript." },
-  { label:"Two days a week", body:"Output. Journal entries, voice messages, conversation sessions." },
-  { label:"One day a week", body:"Review only. No new material. Anki, reread old corrections, revisit content that was hard three months ago." },
-  { label:"One day a week", body:"Immersion without study. Watch something, listen to something, read something — without looking things up." },
+  { label:"Three days a week", body:"New input. A lesson, an article, a podcast episode with transcript.", icon:"ti-book" },
+  { label:"Two days a week", body:"Output. Journal entries, voice messages, conversation sessions.", icon:"ti-pencil" },
+  { label:"One day a week", body:"Review only. No new material. Anki, reread old corrections, revisit content that was hard three months ago.", icon:"ti-refresh" },
+  { label:"One day a week", body:"Immersion without study. Watch something, listen to something, read something — without looking things up.", icon:"ti-device-tv" },
 ];
 
 /* ============================================================
@@ -789,10 +841,10 @@ const yearData = {
       { phase:"Months 7–12", level:"Early TOPIK II", points:["면서 (simultaneous)","는데/은데 (background/contrast)","것 같다 (seems like)","다고 하다 (reported speech)"] },
     ],
     culture: [
-      { period:"Months 1–3", topic:"Speech Levels", detail:"Polite informal (-요) is your default safe mode; formal polite (-습니다) for presentations and service." },
-      { period:"Months 4–6", topic:"Hierarchy in Action", detail:"Age and status are the invisible grammar of Korean society — 선배/후배 and sibling terms." },
-      { period:"Months 7–9", topic:"Group Concepts", detail:"눈치 (reading the room), 정 (deep affection over time), 체면 (face)." },
-      { period:"Months 10–12", topic:"Indirect Communication", detail:"좀 그렇다 can mean a hard no. Direct 'no' can be seen as rude." },
+      { period:"Months 1–3", topic:"Speech Levels", detail:"Polite informal (-요) is your default safe mode; formal polite (-습니다) for presentations and service.", icon:"ti-message-circle" },
+      { period:"Months 4–6", topic:"Hierarchy in Action", detail:"Age and status are the invisible grammar of Korean society — 선배/후배 and sibling terms.", icon:"ti-users" },
+      { period:"Months 7–9", topic:"Group Concepts", detail:"눈치 (reading the room), 정 (deep affection over time), 체면 (face).", icon:"ti-heart-handshake" },
+      { period:"Months 10–12", topic:"Indirect Communication", detail:"좀 그렇다 can mean a hard no. Direct 'no' can be seen as rude.", icon:"ti-eye" },
     ],
   },
   japanese: {
@@ -803,10 +855,10 @@ const yearData = {
       { phase:"Months 7–12", level:"JLPT N3", points:["Potential form","Passive & Causative","Keigo — Sonkeigo, Kenjougo, Teineigo"] },
     ],
     culture: [
-      { period:"Months 1–3", topic:"Surface Politeness", detail:"です/ます is your default safe mode. すみません covers excuse me, sorry, and thank you." },
-      { period:"Months 4–6", topic:"Honne vs Tatemae", detail:"本音 (true feelings) vs 建前 (social front). Learn to read the air (空気を読む)." },
-      { period:"Months 7–9", topic:"Group Harmony (和)", detail:"Harmony is prioritized over individual expression; sempai-kohai has linguistic markers." },
-      { period:"Months 10–12", topic:"Professional Keigo", detail:"Sonkeigo (raise others), Kenjougo (lower yourself), Teineigo (です/ます)." },
+      { period:"Months 1–3", topic:"Surface Politeness", detail:"です/ます is your default safe mode. すみません covers excuse me, sorry, and thank you.", icon:"ti-message-circle" },
+      { period:"Months 4–6", topic:"Honne vs Tatemae", detail:"本音 (true feelings) vs 建前 (social front). Learn to read the air (空気を読む).", icon:"ti-eye" },
+      { period:"Months 7–9", topic:"Group Harmony (和)", detail:"Harmony is prioritized over individual expression; sempai-kohai has linguistic markers.", icon:"ti-heart-handshake" },
+      { period:"Months 10–12", topic:"Professional Keigo", detail:"Sonkeigo (raise others), Kenjougo (lower yourself), Teineigo (です/ます).", icon:"ti-briefcase" },
     ],
   },
   chinese: {
@@ -817,10 +869,10 @@ const yearData = {
       { phase:"Months 7–12", level:"HSK 4–5", points:["把 construction","被 passive voice","Topic-comment structures"] },
     ],
     culture: [
-      { period:"Months 1–3", topic:"面子 (Miànzi) — Face", detail:"Causing loss of face (丢脸) is a serious social error. 吃了吗 is a casual greeting." },
-      { period:"Months 4–6", topic:"Family & Hierarchy", detail:"Distinct words for maternal vs paternal relatives; 阿姨/叔叔 extend to non-relatives." },
-      { period:"Months 7–9", topic:"关系 (Guānxi)", detail:"The network of relationships and obligations. Business is built on guanxi first." },
-      { period:"Months 10–12", topic:"Indirect Harmony", detail:"'Maybe' or 'I'll think about it' are often polite refusals. Public criticism is avoided." },
+      { period:"Months 1–3", topic:"面子 (Miànzi) — Face", detail:"Causing loss of face (丢脸) is a serious social error. 吃了吗 is a casual greeting.", icon:"ti-message-circle" },
+      { period:"Months 4–6", topic:"Family & Hierarchy", detail:"Distinct words for maternal vs paternal relatives; 阿姨/叔叔 extend to non-relatives.", icon:"ti-users" },
+      { period:"Months 7–9", topic:"关系 (Guānxi)", detail:"The network of relationships and obligations. Business is built on guanxi first.", icon:"ti-network" },
+      { period:"Months 10–12", topic:"Indirect Harmony", detail:"'Maybe' or 'I'll think about it' are often polite refusals. Public criticism is avoided.", icon:"ti-eye" },
     ],
   },
 };
@@ -871,6 +923,13 @@ const MONTH_META = {
   ],
 };
 
+/* Map a skill tag to a flat icon */
+const SKILL_ICON = {
+  script:"ti-writing", pronunciation:"ti-volume", vocab:"ti-cards",
+  grammar:"ti-letter-case", speaking:"ti-microphone", listening:"ti-headphones",
+  reading:"ti-book", writing:"ti-pencil",
+};
+
 const dailyTasks = [
   { id:"input", label:"New input", icon:"ti-book", note:"Study a lesson, article, or podcast" },
   { id:"listening", label:"Primed listening or reading", icon:"ti-headphones", note:"External resource — mark done" },
@@ -879,13 +938,13 @@ const dailyTasks = [
 ];
 
 const weeklySchedule = [
-  { day:"Mon", focus:"New Input", desc:"New vocabulary + new grammar lesson." },
-  { day:"Tue", focus:"Input Deepening", desc:"Active listening with transcript." },
-  { day:"Wed", focus:"Output Practice", desc:"Journal correction, scripted speaking." },
-  { day:"Thu", focus:"Input Variation", desc:"Different media: podcast, webtoon, vlog." },
-  { day:"Fri", focus:"Free Output", desc:"Free writing, free speaking." },
-  { day:"Sat", focus:"Speaking Day", desc:"45–60 min italki conversation." },
-  { day:"Sun", focus:"Review & Immersion", desc:"Review failed cards, watch with subs." },
+  { day:"Mon", focus:"New Input", desc:"New vocabulary + new grammar lesson.", icon:"ti-plus" },
+  { day:"Tue", focus:"Input Deepening", desc:"Active listening with transcript.", icon:"ti-headphones" },
+  { day:"Wed", focus:"Output Practice", desc:"Journal correction, scripted speaking.", icon:"ti-pencil" },
+  { day:"Thu", focus:"Input Variation", desc:"Different media: podcast, webtoon, vlog.", icon:"ti-device-tv" },
+  { day:"Fri", focus:"Free Output", desc:"Free writing, free speaking.", icon:"ti-message-circle" },
+  { day:"Sat", focus:"Speaking Day", desc:"45–60 min italki conversation.", icon:"ti-microphone" },
+  { day:"Sun", focus:"Review & Immersion", desc:"Review failed cards, watch with subs.", icon:"ti-refresh" },
 ];
 
 const milestonesByMonth = {
@@ -904,13 +963,13 @@ function selfCheckFor(month) {
 }
 
 const FIXIT = [
-  { s:"I know it in flashcards, but can't recognize it in real speech.", d:"Phonological Decoding Gap — visual memory exists, auditory memory is weak.", f:"Audio-first review: hear it before you see it." },
-  { s:"I freeze when I try to speak, even though I know the grammar.", d:"Proceduralization Failure — grammar is a fact you know, not a motor skill you have.", f:"Single-Pattern Speed Drills: 20 variations of one pattern, spoken fast." },
-  { s:"I keep confusing two similar-sounding words.", d:"Interference Error — overlapping neural networks competing for retrieval.", f:"Context Explosion: one vivid, distinct mental image per word." },
-  { s:"My reading is painfully slow.", d:"Subvocalization Bottleneck — you're mentally pronouncing every syllable.", f:"Forced Speed Reading on a text you already know." },
-  { s:"Things collapse in real conversation even though I know them in isolation.", d:"Cognitive Overload — simultaneous demands overwhelm the least-automated skill.", f:"Monitor ONE feature per conversation. Forgive all other errors." },
-  { s:"I've studied for months and feel completely plateaued.", d:"Intermediate Plateau — gains are real but harder to see.", f:"Retrospective Assessment: revisit content that was hard 3 months ago." },
-  { s:"I missed a week and feel like I've lost everything.", d:"Re-entry anxiety — the gap feels bigger than it is.", f:"One 'ease back in' week: no new content, review only, then resume." },
+  { s:"I know it in flashcards, but can't recognize it in real speech.", d:"Phonological Decoding Gap — visual memory exists, auditory memory is weak.", f:"Audio-first review: hear it before you see it.", icon:"ti-ear" },
+  { s:"I freeze when I try to speak, even though I know the grammar.", d:"Proceduralization Failure — grammar is a fact you know, not a motor skill you have.", f:"Single-Pattern Speed Drills: 20 variations of one pattern, spoken fast.", icon:"ti-microphone-off" },
+  { s:"I keep confusing two similar-sounding words.", d:"Interference Error — overlapping neural networks competing for retrieval.", f:"Context Explosion: one vivid, distinct mental image per word.", icon:"ti-arrows-shuffle" },
+  { s:"My reading is painfully slow.", d:"Subvocalization Bottleneck — you're mentally pronouncing every syllable.", f:"Forced Speed Reading on a text you already know.", icon:"ti-book" },
+  { s:"Things collapse in real conversation even though I know them in isolation.", d:"Cognitive Overload — simultaneous demands overwhelm the least-automated skill.", f:"Monitor ONE feature per conversation. Forgive all other errors.", icon:"ti-brain" },
+  { s:"I've studied for months and feel completely plateaued.", d:"Intermediate Plateau — gains are real but harder to see.", f:"Retrospective Assessment: revisit content that was hard 3 months ago.", icon:"ti-trending-up" },
+  { s:"I missed a week and feel like I've lost everything.", d:"Re-entry anxiety — the gap feels bigger than it is.", f:"One 'ease back in' week: no new content, review only, then resume.", icon:"ti-refresh" },
 ];
 
 const SECTIONS = [
@@ -918,7 +977,7 @@ const SECTIONS = [
   { id:"path", label:"Path", icon:"ti-route" },
   { id:"roadmap", label:"Roadmap", icon:"ti-map" },
   { id:"resources", label:"Resources", icon:"ti-books" },
-  { id:"culture", label:"Culture", icon:"ti-book-2" },
+  { id:"culture", label:"Culture", icon:"ti-world" },
   { id:"fixit", label:"Fix it", icon:"ti-stethoscope" },
 ];
 
@@ -1053,6 +1112,34 @@ function LangBadge({ meta, size }) {
   );
 }
 
+/* Icon tile used for section headings, cards, list rows */
+function Tile({ icon, color, size, radius, filled, style }) {
+  const s = size || 32;
+  return (
+    <div className="tile" style={{
+      width:s, height:s, borderRadius: radius != null ? radius : s*0.3,
+      background: filled ? color.border : color.bg,
+      ...style,
+    }} aria-hidden="true">
+      <i className={`ti ${icon}`} style={{ fontSize:`calc(${s*0.55}px * var(--fs-scale))`, color: filled ? "#fff" : color.text }}></i>
+    </div>
+  );
+}
+
+/* Standard screen title with a flat icon tile */
+function ScreenTitle({ icon, color, title, sub, right }) {
+  return (
+    <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:16 }}>
+      <Tile icon={icon} color={color} size={36} radius={11} />
+      <div style={{ flex:1, minWidth:0 }}>
+        <div style={{ fontSize:"calc(16px * var(--fs-scale))", fontWeight:600, lineHeight:1.25 }}>{title}</div>
+        {sub && <div style={{ fontSize:"calc(12px * var(--fs-scale))", color:"var(--fg3)", marginTop:1 }}>{sub}</div>}
+      </div>
+      {right}
+    </div>
+  );
+}
+
 function StreakHeatmap({ history, color }) {
   const days = 70;
   const cells = [];
@@ -1136,7 +1223,8 @@ function PathTimeline({ lang, color, progress, onSelectMonth, selected }) {
         <div key={band.label}>
           {/* Phase divider */}
           <div style={{ display:"flex", alignItems:"center", gap:8, marginTop: bIdx === 0 ? 0 : 22, marginBottom:12, position:"relative", zIndex:1 }}>
-            <div style={{ flexShrink:0, fontSize:"calc(10px * var(--fs-scale))", fontWeight:600, color:color.text, textTransform:"uppercase", letterSpacing:0.5, background:color.bg, padding:"4px 10px", borderRadius:20 }}>
+            <div style={{ flexShrink:0, display:"flex", alignItems:"center", gap:5, fontSize:"calc(10px * var(--fs-scale))", fontWeight:600, color:color.text, textTransform:"uppercase", letterSpacing:0.5, background:color.bg, padding:"4px 10px", borderRadius:20 }}>
+              <i className="ti ti-flag-2" aria-hidden="true" style={{ fontSize:"calc(11px * var(--fs-scale))" }}></i>
               Phase {bIdx+1} · {band.label}
             </div>
             <div style={{ flex:1, height:1, background:"var(--bd)" }} />
@@ -1193,20 +1281,30 @@ function PathTimeline({ lang, color, progress, onSelectMonth, selected }) {
                   }}
                 >
                   <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", gap:6, marginBottom:3 }}>
-                    <span style={{ fontSize:"calc(10px * var(--fs-scale))", color: isSelected ? color.text : "var(--fg3)", textTransform:"uppercase", letterSpacing:0.4, fontWeight:600 }}>Month {m}</span>
-                    {isCurrent && <span className="pill" style={{ background: color.border, color:"#fff", fontSize:"calc(9px * var(--fs-scale))" }}>You are here</span>}
+                    <span style={{ fontSize:"calc(10px * var(--fs-scale))", color: isSelected ? color.text : "var(--fg3)", textTransform:"uppercase", letterSpacing:0.4, fontWeight:600, display:"flex", alignItems:"center", gap:4 }}>
+                      <i className="ti ti-calendar" aria-hidden="true" style={{ fontSize:"calc(11px * var(--fs-scale))" }}></i>Month {m}
+                    </span>
+                    {isCurrent && <span className="pill" style={{ background: color.border, color:"#fff", fontSize:"calc(9px * var(--fs-scale))", display:"inline-flex", alignItems:"center", gap:3 }}>
+                      <i className="ti ti-map-pin" aria-hidden="true" style={{ fontSize:"calc(9px * var(--fs-scale))" }}></i>You are here
+                    </span>}
                   </div>
                   <div style={{ fontSize:"calc(13px * var(--fs-scale))", fontWeight:500, marginBottom:6, color: isSelected ? color.text : "var(--fg)" }}>
                     {m_meta.title || `Month ${m}`}
                   </div>
                   <div style={{ display:"flex", gap:4, flexWrap:"wrap", marginBottom:6 }}>
                     {(m_meta.skills || []).map(sk => (
-                      <span key={sk} style={{ fontSize:"calc(9px * var(--fs-scale))", padding:"1px 6px", borderRadius:8, background: isSelected ? "#ffffffcc" : "var(--bg2)", color: isSelected ? color.text : "var(--fg2)" }}>{sk}</span>
+                      <span key={sk} style={{ display:"inline-flex", alignItems:"center", gap:3, fontSize:"calc(9px * var(--fs-scale))", padding:"1px 6px", borderRadius:8, background: isSelected ? "#ffffffcc" : "var(--bg2)", color: isSelected ? color.text : "var(--fg2)" }}>
+                        <i className={`ti ${SKILL_ICON[sk] || "ti-point"}`} aria-hidden="true" style={{ fontSize:"calc(10px * var(--fs-scale))" }}></i>{sk}
+                      </span>
                     ))}
                   </div>
                   <div style={{ display:"flex", gap:8, fontSize:"calc(10.5px * var(--fs-scale))", color: isSelected ? color.text : "var(--fg3)" }}>
-                    <span>{vocabTarget} words</span>
-                    {hasMilestone && <span>· milestone</span>}
+                    <span style={{ display:"inline-flex", alignItems:"center", gap:3 }}>
+                      <i className="ti ti-cards" aria-hidden="true" style={{ fontSize:"calc(11px * var(--fs-scale))" }}></i>{vocabTarget} words
+                    </span>
+                    {hasMilestone && <span style={{ display:"inline-flex", alignItems:"center", gap:3 }}>
+                      <i className="ti ti-flag" aria-hidden="true" style={{ fontSize:"calc(11px * var(--fs-scale))" }}></i>milestone
+                    </span>}
                   </div>
                 </button>
               </div>
@@ -1232,19 +1330,29 @@ function Settings({ progress, setNotif, setMotivation, exportData, importData, o
     setNotif({ enabled: !progress.notif.enabled });
   };
 
+  const settingsHeading = (icon, label) => (
+    <div style={{ fontSize:"calc(13px * var(--fs-scale))", fontWeight:500, marginBottom:8, display:"flex", alignItems:"center", gap:6 }}>
+      <i className={`ti ${icon}`} aria-hidden="true" style={{ fontSize:"calc(15px * var(--fs-scale))", color:"var(--fg2)" }}></i>{label}
+    </div>
+  );
+
   return (
     <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.4)", zIndex:30, display:"flex", alignItems:"flex-end", justifyContent:"center" }} onClick={onClose}>
       <div onClick={e => e.stopPropagation()} style={{ background:"var(--bg)", width:"100%", maxWidth:480, borderRadius:"16px 16px 0 0", padding:"20px 20px calc(20px + env(safe-area-inset-bottom))", maxHeight:"85vh", overflowY:"auto" }}>
         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:16 }}>
-          <span style={{ fontSize:"calc(16px * var(--fs-scale))", fontWeight:500 }}>Settings</span>
+          <span style={{ fontSize:"calc(16px * var(--fs-scale))", fontWeight:500, display:"flex", alignItems:"center", gap:8 }}>
+            <i className="ti ti-settings" aria-hidden="true" style={{ fontSize:"calc(18px * var(--fs-scale))", color:"var(--fg2)" }}></i>Settings
+          </span>
           <button onClick={onClose} aria-label="Close settings" style={{ background:"none", border:"none", cursor:"pointer" }}><i className="ti ti-x" aria-hidden="true" style={{ fontSize:"calc(18px * var(--fs-scale))", color:"var(--fg2)" }}></i></button>
         </div>
 
         <div style={{ marginBottom:18 }}>
-          <div style={{ fontSize:"calc(13px * var(--fs-scale))", fontWeight:500, marginBottom:8 }}>Appearance</div>
+          {settingsHeading("ti-palette", "Appearance")}
           <div style={{ display:"flex", gap:6 }}>
-            {[["system","Auto"],["light","Light"],["dark","Dark"]].map(([id,label]) => (
-              <button key={id} onClick={() => setTheme(id)} aria-pressed={theme===id} className={`chip ${theme===id ? "on" : ""}`} style={{ flex:1, textAlign:"center" }}>{label}</button>
+            {[["system","Auto","ti-device-desktop"],["light","Light","ti-sun"],["dark","Dark","ti-moon"]].map(([id,label,icon]) => (
+              <button key={id} onClick={() => setTheme(id)} aria-pressed={theme===id} className={`chip ${theme===id ? "on" : ""}`} style={{ flex:1, textAlign:"center", display:"inline-flex", alignItems:"center", justifyContent:"center", gap:5 }}>
+                <i className={`ti ${icon}`} aria-hidden="true" style={{ fontSize:"calc(13px * var(--fs-scale))" }}></i>{label}
+              </button>
             ))}
           </div>
           <div style={{ fontSize:"calc(11px * var(--fs-scale))", color:"var(--fg3)", marginTop:6 }}>"Auto" follows your device's light/dark setting.</div>
@@ -1252,8 +1360,11 @@ function Settings({ progress, setNotif, setMotivation, exportData, importData, o
 
         <div style={{ marginBottom:18 }}>
           <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:6 }}>
-            <span style={{ fontSize:"calc(13px * var(--fs-scale))", fontWeight:500 }}>Daily reminder</span>
-            <button onClick={toggleEnabled} style={{ border:"0.5px solid var(--bd)", borderRadius:20, padding:"4px 12px", fontSize:"calc(12px * var(--fs-scale))", background: progress.notif.enabled ? "#E1F5EE" : "var(--bg)", color: progress.notif.enabled ? "#0F6E56" : "var(--fg2)", cursor:"pointer" }}>
+            <span style={{ fontSize:"calc(13px * var(--fs-scale))", fontWeight:500, display:"flex", alignItems:"center", gap:6 }}>
+              <i className="ti ti-bell" aria-hidden="true" style={{ fontSize:"calc(15px * var(--fs-scale))", color:"var(--fg2)" }}></i>Daily reminder
+            </span>
+            <button onClick={toggleEnabled} style={{ border:"0.5px solid var(--bd)", borderRadius:20, padding:"4px 12px", fontSize:"calc(12px * var(--fs-scale))", background: progress.notif.enabled ? "#E1F5EE" : "var(--bg)", color: progress.notif.enabled ? "#0F6E56" : "var(--fg2)", cursor:"pointer", display:"inline-flex", alignItems:"center", gap:5 }}>
+              <i className={`ti ${progress.notif.enabled ? "ti-bell-ringing" : "ti-bell-off"}`} aria-hidden="true" style={{ fontSize:"calc(12px * var(--fs-scale))" }}></i>
               {progress.notif.enabled ? "On" : "Off"}
             </button>
           </div>
@@ -1263,18 +1374,20 @@ function Settings({ progress, setNotif, setMotivation, exportData, importData, o
         </div>
 
         <div style={{ marginBottom:18 }}>
-          <div style={{ fontSize:"calc(13px * var(--fs-scale))", fontWeight:500, marginBottom:6 }}>Why are you learning?</div>
+          {settingsHeading("ti-target", "Why are you learning?")}
           <input type="text" placeholder="e.g. an upcoming trip, family, work" value={motivation}
             onChange={e => setMotivationLocal(e.target.value)} onBlur={() => setMotivation(motivation)} style={{ width:"100%" }} />
           <div style={{ fontSize:"calc(11px * var(--fs-scale))", color:"var(--fg3)", marginTop:6 }}>Shown back on the Today screen.</div>
         </div>
 
         <div>
-          <div style={{ fontSize:"calc(13px * var(--fs-scale))", fontWeight:500, marginBottom:6 }}>Backup</div>
+          {settingsHeading("ti-database", "Backup")}
           <div style={{ display:"flex", gap:8 }}>
-            <button className="btn" onClick={exportData} style={{ flex:1 }}>Export JSON</button>
-            <label className="btn" style={{ flex:1, textAlign:"center" }}>
-              Import
+            <button className="btn" onClick={exportData} style={{ flex:1, display:"inline-flex", alignItems:"center", justifyContent:"center", gap:6 }}>
+              <i className="ti ti-download" aria-hidden="true" style={{ fontSize:"calc(14px * var(--fs-scale))" }}></i>Export JSON
+            </button>
+            <label className="btn" style={{ flex:1, textAlign:"center", display:"inline-flex", alignItems:"center", justifyContent:"center", gap:6 }}>
+              <i className="ti ti-upload" aria-hidden="true" style={{ fontSize:"calc(14px * var(--fs-scale))" }}></i>Import
               <input type="file" accept=".json" style={{ display:"none" }} onChange={e => { if (e.target.files[0]) importData(e.target.files[0]); }} />
             </label>
           </div>
@@ -1291,50 +1404,73 @@ function Settings({ progress, setNotif, setMotivation, exportData, importData, o
 function TodayScreen({ lang, color, progress, toggleTask }) {
   const done = dailyTasks.filter(t => progress.todayTasks[t.id]).length;
   const allDone = done === dailyTasks.length;
+  const meta = META.find(m => m.id === lang);
   return (
     <div>
-      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"baseline", marginBottom:6 }}>
-        <span style={{ fontSize:"calc(13px * var(--fs-scale))", color:"var(--fg2)" }}>Today</span>
-        <span style={{ fontSize:"calc(12px * var(--fs-scale))", color:"var(--fg2)", display:"flex", alignItems:"center", gap:4 }}>
-          <i className="ti ti-flame" aria-hidden="true" style={{ fontSize:"calc(14px * var(--fs-scale))", color:"#BA7517" }}></i>{progress.streak} day streak
-        </span>
-      </div>
-      {progress.motivation && <div style={{ fontSize:"calc(13px * var(--fs-scale))", color:"var(--fg2)", marginBottom:14 }}>Because you're learning for {progress.motivation} — keep going.</div>}
+      <ScreenTitle icon="ti-home" color={color} title="Today"
+        sub={meta ? `Your ${meta.label} session` : undefined}
+        right={
+          <span style={{ fontSize:"calc(12px * var(--fs-scale))", color:"var(--fg2)", display:"flex", alignItems:"center", gap:4, background:color.bg, padding:"4px 10px", borderRadius:20 }}>
+            <i className="ti ti-flame" aria-hidden="true" style={{ fontSize:"calc(15px * var(--fs-scale))", color:"#BA7517" }}></i>{progress.streak} day streak
+          </span>
+        } />
+
+      {progress.motivation && (
+        <div style={{ fontSize:"calc(13px * var(--fs-scale))", color:"var(--fg2)", marginBottom:14, display:"flex", alignItems:"flex-start", gap:7, lineHeight:1.5 }}>
+          <i className="ti ti-heart" aria-hidden="true" style={{ fontSize:"calc(15px * var(--fs-scale))", color:color.border, marginTop:2, flexShrink:0 }}></i>
+          <span>Because you're learning for {progress.motivation} — keep going.</span>
+        </div>
+      )}
 
       <div style={{ display:"flex", flexDirection:"column", gap:8, marginBottom:16 }}>
-        {dailyTasks.map(t => (
-          <div key={t.id} style={{ display:"flex", alignItems:"center", gap:10, padding:10, border:"0.5px solid var(--bd)", borderRadius:"var(--r)" }}>
-            <Checkbox done={!!progress.todayTasks[t.id]} onClick={() => toggleTask(t.id)} color={color} ariaLabel={`Mark ${t.label} done`} />
-            <div>
-              <div style={{ fontSize:"calc(13px * var(--fs-scale))", fontWeight:500 }}>{t.label}</div>
-              <div style={{ fontSize:"calc(12px * var(--fs-scale))", color:"var(--fg3)" }}>{t.note}</div>
+        {dailyTasks.map(t => {
+          const isDone = !!progress.todayTasks[t.id];
+          return (
+            <div key={t.id} style={{ display:"flex", alignItems:"center", gap:10, padding:10, border:"0.5px solid var(--bd)", borderRadius:"var(--r)", background: isDone ? "var(--bg2)" : "var(--bg)" }}>
+              <Tile icon={t.icon} color={color} size={34} radius={10} filled={isDone} />
+              <div style={{ flex:1, minWidth:0 }}>
+                <div style={{ fontSize:"calc(13px * var(--fs-scale))", fontWeight:500, textDecoration: isDone ? "line-through" : "none", opacity: isDone ? 0.7 : 1 }}>{t.label}</div>
+                <div style={{ fontSize:"calc(12px * var(--fs-scale))", color:"var(--fg3)" }}>{t.note}</div>
+              </div>
+              <Checkbox done={isDone} onClick={() => toggleTask(t.id)} color={color} ariaLabel={`Mark ${t.label} done`} />
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       <div aria-live="polite" style={{ padding:"10px 12px", background:color.bg, borderRadius:"var(--r)", display:"flex", alignItems:"center", gap:8, marginBottom:22 }}>
-        <i className="ti ti-bulb" aria-hidden="true" style={{ fontSize:"calc(16px * var(--fs-scale))", color:color.text }}></i>
+        <i className={`ti ${allDone ? "ti-confetti" : "ti-bulb"}`} aria-hidden="true" style={{ fontSize:"calc(16px * var(--fs-scale))", color:color.text }}></i>
         <span style={{ fontSize:"calc(12px * var(--fs-scale))", color:color.text }}>
           {allDone ? "All done for today — streak secured." : `${done} of ${dailyTasks.length} done today.`}
         </span>
       </div>
 
-      <div style={{ fontSize:"calc(11px * var(--fs-scale))", textTransform:"uppercase", letterSpacing:0.4, color:"var(--fg3)", fontWeight:500, marginBottom:10 }}>Your tracking</div>
+      <div style={{ display:"flex", alignItems:"center", gap:6, fontSize:"calc(11px * var(--fs-scale))", textTransform:"uppercase", letterSpacing:0.4, color:"var(--fg3)", fontWeight:600, marginBottom:10 }}>
+        <i className="ti ti-chart-bar" aria-hidden="true" style={{ fontSize:"calc(14px * var(--fs-scale))" }}></i>Your tracking
+      </div>
       <div className="card" style={{ marginBottom:10 }}>
-        <div style={{ fontSize:"calc(12px * var(--fs-scale))", fontWeight:500, marginBottom:8 }}>Daily consistency</div>
+        <div style={{ fontSize:"calc(12px * var(--fs-scale))", fontWeight:500, marginBottom:8, display:"flex", alignItems:"center", gap:6 }}>
+          <i className="ti ti-calendar-check" aria-hidden="true" style={{ fontSize:"calc(14px * var(--fs-scale))", color:color.text }}></i>Daily consistency
+        </div>
         <StreakHeatmap history={progress.history} color={color} />
       </div>
       <div className="card" style={{ marginBottom:20 }}>
-        <div style={{ fontSize:"calc(12px * var(--fs-scale))", fontWeight:500, marginBottom:8 }}>Tasks completed, last 14 days</div>
+        <div style={{ fontSize:"calc(12px * var(--fs-scale))", fontWeight:500, marginBottom:8, display:"flex", alignItems:"center", gap:6 }}>
+          <i className="ti ti-chart-histogram" aria-hidden="true" style={{ fontSize:"calc(14px * var(--fs-scale))", color:color.text }}></i>Tasks completed, last 14 days
+        </div>
         <ActivityBars history={progress.history} color={color} />
       </div>
 
-      <div style={{ fontSize:"calc(15px * var(--fs-scale))", fontWeight:500, marginBottom:10 }}>This week's rhythm</div>
+      <div style={{ fontSize:"calc(15px * var(--fs-scale))", fontWeight:500, marginBottom:10, display:"flex", alignItems:"center", gap:7 }}>
+        <i className="ti ti-calendar-week" aria-hidden="true" style={{ fontSize:"calc(17px * var(--fs-scale))", color:color.text }}></i>This week's rhythm
+      </div>
       <div style={{ display:"flex", flexDirection:"column", gap:6 }}>
         {weeklySchedule.map((d, i) => (
-          <div key={i} style={{ display:"flex", gap:10, alignItems:"flex-start", padding:"6px 0", borderBottom:"0.5px solid var(--bd)" }}>
-            <div style={{ minWidth:30, height:30, borderRadius:9, background:color.bg, display:"flex", alignItems:"center", justifyContent:"center", fontSize:"calc(10px * var(--fs-scale))", fontWeight:500, color:color.text }}>{d.day}</div>
+          <div key={i} style={{ display:"flex", gap:10, alignItems:"flex-start", padding:"6px 0", borderBottom: i === weeklySchedule.length - 1 ? "none" : "0.5px solid var(--bd)" }}>
+            <div style={{ minWidth:38, height:34, borderRadius:10, background:color.bg, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", fontSize:"calc(9px * var(--fs-scale))", fontWeight:600, color:color.text, flexShrink:0 }}>
+              <i className={`ti ${d.icon}`} aria-hidden="true" style={{ fontSize:"calc(13px * var(--fs-scale))" }}></i>
+              {d.day}
+            </div>
             <div>
               <div style={{ fontWeight:500, fontSize:"calc(13px * var(--fs-scale))" }}>{d.focus}</div>
               <div style={{ fontSize:"calc(12px * var(--fs-scale))", color:"var(--fg2)" }}>{d.desc}</div>
@@ -1362,17 +1498,30 @@ function PathScreen({ lang, color, progress, onOpenResources, toggleMonth, setSe
   const selfCheckQ = selfCheckFor(selected);
   const checked = l.selfChecks[selected];
   const done = !!l.monthDone[selected];
+  const meta = META.find(m => m.id === lang);
+  const y2DoneCount = Object.keys(l.y2Done).filter(k=>l.y2Done[k]).length;
+  const y2Unlocked = doneMonths.length >= 12;
+  const y3Unlocked = y2DoneCount >= 4;
 
   return (
     <div>
+      <ScreenTitle icon="ti-route" color={color} title="Path"
+        sub={meta ? `${meta.label} · 12-month checklist` : undefined} />
+
       <button onClick={() => setShowPacing(s => !s)} style={{ width:"100%", textAlign:"left", background:color.bg, border:"none", borderRadius:"var(--r)", padding:"10px 12px", marginBottom:14, cursor:"pointer", display:"flex", justifyContent:"space-between", alignItems:"center", gap:8 }}>
-        <span style={{ fontSize:"calc(12px * var(--fs-scale))", color:color.text }}>This is the checklist. For the full how-to plan, open the Roadmap tab.</span>
+        <span style={{ fontSize:"calc(12px * var(--fs-scale))", color:color.text, display:"flex", alignItems:"center", gap:7 }}>
+          <i className="ti ti-info-circle" aria-hidden="true" style={{ fontSize:"calc(14px * var(--fs-scale))", flexShrink:0 }}></i>
+          This is the checklist. For the full how-to plan, open the Roadmap tab.
+        </span>
         <i className={`ti ${showPacing ? "ti-chevron-up" : "ti-chevron-down"}`} aria-hidden="true" style={{ fontSize:"calc(14px * var(--fs-scale))", color:color.text, flexShrink:0 }}></i>
       </button>
       {showPacing && <div style={{ fontSize:"calc(12px * var(--fs-scale))", color:"var(--fg2)", lineHeight:1.6, marginBottom:16, padding:"0 2px" }}>The Path tracks which months you've completed. The Roadmap explains what to actually do, with resources for each phase.</div>}
 
       <div style={{ display:"flex", justifyContent:"space-between", alignItems:"baseline", marginBottom:6 }}>
-        <span style={{ fontSize:"calc(12px * var(--fs-scale))", color:"var(--fg2)" }}>{doneMonths.length} of 12 months complete</span>
+        <span style={{ fontSize:"calc(12px * var(--fs-scale))", color:"var(--fg2)", display:"flex", alignItems:"center", gap:6 }}>
+          <i className="ti ti-circle-check" aria-hidden="true" style={{ fontSize:"calc(14px * var(--fs-scale))" }}></i>
+          {doneMonths.length} of 12 months complete
+        </span>
         <span style={{ fontSize:"calc(11px * var(--fs-scale))", color:"var(--fg3)" }}>{Math.round((doneMonths.length/12)*100)}%</span>
       </div>
       <div style={{ height:5, background:"var(--bg2)", borderRadius:3, overflow:"hidden", marginBottom:18 }} aria-hidden="true">
@@ -1383,68 +1532,100 @@ function PathScreen({ lang, color, progress, onOpenResources, toggleMonth, setSe
 
       <div style={{ marginTop:20, border:`1px solid ${color.border}`, borderRadius:"var(--rl)", padding:"14px 16px", background:color.bg }}>
         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:8 }}>
-          <span style={{ fontWeight:500, fontSize:"calc(14px * var(--fs-scale))", color:color.text }}>Month {selected}</span>
+          <span style={{ fontWeight:600, fontSize:"calc(14px * var(--fs-scale))", color:color.text, display:"flex", alignItems:"center", gap:6 }}>
+            <i className="ti ti-calendar-month" aria-hidden="true" style={{ fontSize:"calc(15px * var(--fs-scale))" }}></i>Month {selected}
+          </span>
           <span className="pill" style={{ background:"#ffffffaa", color:color.text }}>{grammar.level}</span>
         </div>
-        <div style={{ fontSize:"calc(12px * var(--fs-scale))", color:color.text, opacity:0.85, marginBottom:8 }}>{grammar.phase}</div>
+        <div style={{ fontSize:"calc(12px * var(--fs-scale))", color:color.text, opacity:0.85, marginBottom:8, display:"flex", alignItems:"center", gap:5 }}>
+          <i className="ti ti-clock" aria-hidden="true" style={{ fontSize:"calc(12px * var(--fs-scale))" }}></i>{grammar.phase}
+        </div>
         {grammar.points.map((pt, i) => (
           <div key={i} style={{ display:"flex", gap:8, marginBottom:5, alignItems:"flex-start" }}>
-            <span style={{ minWidth:5, height:5, borderRadius:"50%", background:color.text, marginTop:6, flexShrink:0 }}></span>
+            <i className="ti ti-point-filled" aria-hidden="true" style={{ fontSize:"calc(12px * var(--fs-scale))", color:color.text, marginTop:1, flexShrink:0 }}></i>
             <span style={{ fontSize:"calc(13px * var(--fs-scale))", color:color.text }}>{pt}</span>
           </div>
         ))}
-        <div style={{ marginTop:10, fontSize:"calc(12px * var(--fs-scale))", color:color.text, background:"#ffffff55", padding:"8px 10px", borderRadius:"var(--r)" }}>
-          <strong>Culture note ({culture.period}):</strong> {culture.topic} — {culture.detail}
+        <div style={{ marginTop:10, fontSize:"calc(12px * var(--fs-scale))", color:color.text, background:"#ffffff55", padding:"8px 10px", borderRadius:"var(--r)", display:"flex", gap:7, alignItems:"flex-start" }}>
+          <i className={`ti ${culture.icon || "ti-world"}`} aria-hidden="true" style={{ fontSize:"calc(14px * var(--fs-scale))", marginTop:1, flexShrink:0 }}></i>
+          <span><strong>Culture note ({culture.period}):</strong> {culture.topic} — {culture.detail}</span>
         </div>
         {milestonesByMonth[selected] && (
-          <div style={{ marginTop:8, fontSize:"calc(12px * var(--fs-scale))", color:color.text }}>🏁 Milestone: {milestonesByMonth[selected].celebrate}</div>
+          <div style={{ marginTop:8, fontSize:"calc(12px * var(--fs-scale))", color:color.text, display:"flex", alignItems:"flex-start", gap:7 }}>
+            <i className="ti ti-flag" aria-hidden="true" style={{ fontSize:"calc(14px * var(--fs-scale))", marginTop:1, flexShrink:0 }}></i>
+            <span><strong>Milestone:</strong> {milestonesByMonth[selected].celebrate}</span>
+          </div>
         )}
 
-        <button className="btn" onClick={onOpenResources} style={{ marginTop:10, background:color.border, color:"#fff", borderColor:color.border, width:"100%" }}>
-          Browse resources for this stage →
+        <button className="btn" onClick={onOpenResources} style={{ marginTop:12, background:color.border, color:"#fff", borderColor:color.border, width:"100%", display:"inline-flex", alignItems:"center", justifyContent:"center", gap:7 }}>
+          <i className="ti ti-books" aria-hidden="true" style={{ fontSize:"calc(15px * var(--fs-scale))" }}></i>
+          Browse resources for this stage
+          <i className="ti ti-arrow-right" aria-hidden="true" style={{ fontSize:"calc(14px * var(--fs-scale))" }}></i>
         </button>
 
         <div style={{ marginTop:14, paddingTop:12, borderTop:"0.5px solid #ffffff88" }}>
-          <div style={{ fontSize:"calc(12px * var(--fs-scale))", fontWeight:500, color:color.text, marginBottom:6 }}>Self-check: {selfCheckQ}</div>
+          <div style={{ fontSize:"calc(12px * var(--fs-scale))", fontWeight:500, color:color.text, marginBottom:6, display:"flex", alignItems:"flex-start", gap:6 }}>
+            <i className="ti ti-help-circle" aria-hidden="true" style={{ fontSize:"calc(14px * var(--fs-scale))", marginTop:1, flexShrink:0 }}></i>
+            <span><strong>Self-check:</strong> {selfCheckQ}</span>
+          </div>
           <div style={{ display:"flex", gap:6, marginBottom:8 }}>
-            <button className="btn" onClick={() => setSelfCheck(lang, selected, true)} style={{ flex:1, background: checked === true ? color.border : "var(--bg)", color: checked === true ? "#fff" : "var(--fg)", borderColor: checked === true ? color.border : "var(--bd)" }}>Yes</button>
-            <button className="btn" onClick={() => setSelfCheck(lang, selected, false)} style={{ flex:1, background: checked === false ? "#D85A30" : "var(--bg)", color: checked === false ? "#fff" : "var(--fg)", borderColor: checked === false ? "#D85A30" : "var(--bd)" }}>Not yet</button>
+            <button className="btn" onClick={() => setSelfCheck(lang, selected, true)} style={{ flex:1, background: checked === true ? color.border : "var(--bg)", color: checked === true ? "#fff" : "var(--fg)", borderColor: checked === true ? color.border : "var(--bd)", display:"inline-flex", alignItems:"center", justifyContent:"center", gap:5 }}>
+              <i className="ti ti-check" aria-hidden="true" style={{ fontSize:"calc(14px * var(--fs-scale))" }}></i>Yes
+            </button>
+            <button className="btn" onClick={() => setSelfCheck(lang, selected, false)} style={{ flex:1, background: checked === false ? "#D85A30" : "var(--bg)", color: checked === false ? "#fff" : "var(--fg)", borderColor: checked === false ? "#D85A30" : "var(--bd)", display:"inline-flex", alignItems:"center", justifyContent:"center", gap:5 }}>
+              <i className="ti ti-clock-hour-4" aria-hidden="true" style={{ fontSize:"calc(14px * var(--fs-scale))" }}></i>Not yet
+            </button>
           </div>
           <div style={{ display:"flex", alignItems:"center", gap:8 }}>
             <Checkbox done={done} onClick={() => toggleMonth(lang, selected)} color={{ border: color.text }} ariaLabel={`Mark month ${selected} complete`} disabled={!done && checked !== true} />
-            <span style={{ fontSize:"calc(12px * var(--fs-scale))", color:color.text }}>{done ? "Month complete" : (checked === true ? "Mark month complete" : "Answer the self-check \"Yes\" to unlock")}</span>
+            <span style={{ fontSize:"calc(12px * var(--fs-scale))", color:color.text, display:"flex", alignItems:"center", gap:6 }}>
+              <i className={`ti ${done ? "ti-circle-check" : "ti-lock"}`} aria-hidden="true" style={{ fontSize:"calc(13px * var(--fs-scale))" }}></i>
+              {done ? "Month complete" : (checked === true ? "Mark month complete" : "Answer the self-check \"Yes\" to unlock")}
+            </span>
           </div>
         </div>
       </div>
 
-      <div style={{ marginTop:28, fontSize:"calc(15px * var(--fs-scale))", fontWeight:500, marginBottom:8, opacity: doneMonths.length >= 12 ? 1 : 0.55 }}>
-        Year 2 — Consolidation {doneMonths.length < 12 && <span style={{ fontSize:"calc(11px * var(--fs-scale))", color:"var(--fg3)", fontWeight:400 }}>· unlocks after Year 1</span>}
+      <div style={{ marginTop:28, fontSize:"calc(15px * var(--fs-scale))", fontWeight:500, marginBottom:8, opacity: y2Unlocked ? 1 : 0.55, display:"flex", alignItems:"center", gap:7 }}>
+        <i className="ti ti-medal" aria-hidden="true" style={{ fontSize:"calc(17px * var(--fs-scale))", color:color.text }}></i>
+        Year 2 — Consolidation
+        {!y2Unlocked && <span style={{ fontSize:"calc(11px * var(--fs-scale))", color:"var(--fg3)", fontWeight:400, display:"inline-flex", alignItems:"center", gap:4 }}>
+          <i className="ti ti-lock" aria-hidden="true" style={{ fontSize:"calc(11px * var(--fs-scale))" }}></i>unlocks after Year 1
+        </span>}
       </div>
       {((ROADMAP[lang].find(p => p.id === "p3") || {}).blocks || []).map((q, i) => {
         const d = !!l.y2Done[i];
-        const unlocked = doneMonths.length >= 12;
         return (
-          <div key={i} style={{ marginBottom:8, border:"0.5px solid var(--bd)", borderRadius:"var(--rl)", padding:"12px 14px", background: d ? color.bg : "var(--bg)", opacity: unlocked ? 1 : 0.55 }}>
-            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:6 }}>
-              <div style={{ fontWeight:500, fontSize:"calc(13px * var(--fs-scale))" }}>{q.heading.split(" — ")[0]}</div>
-              <Checkbox done={d} onClick={() => unlocked && toggleY2(lang, i)} color={color} ariaLabel={q.heading} disabled={!unlocked} />
+          <div key={i} style={{ marginBottom:8, border:"0.5px solid var(--bd)", borderRadius:"var(--rl)", padding:"12px 14px", background: d ? color.bg : "var(--bg)", opacity: y2Unlocked ? 1 : 0.55 }}>
+            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:6, gap:8 }}>
+              <div style={{ fontWeight:500, fontSize:"calc(13px * var(--fs-scale))", display:"flex", alignItems:"center", gap:6 }}>
+                <i className={`ti ${d ? "ti-circle-check" : "ti-circle"}`} aria-hidden="true" style={{ fontSize:"calc(13px * var(--fs-scale))", color: d ? color.text : "var(--fg3)" }}></i>
+                {q.heading.split(" — ")[0]}
+              </div>
+              <Checkbox done={d} onClick={() => y2Unlocked && toggleY2(lang, i)} color={color} ariaLabel={q.heading} disabled={!y2Unlocked} />
             </div>
             <div style={{ fontSize:"calc(12px * var(--fs-scale))", color:"var(--fg2)", lineHeight:1.6 }}>{q.body}</div>
           </div>
         );
       })}
 
-      <div style={{ marginTop:20, fontSize:"calc(15px * var(--fs-scale))", fontWeight:500, marginBottom:8, opacity: Object.keys(l.y2Done).filter(k=>l.y2Done[k]).length >= 4 ? 1 : 0.55 }}>
-        Year 3 — Advanced {Object.keys(l.y2Done).filter(k=>l.y2Done[k]).length < 4 && <span style={{ fontSize:"calc(11px * var(--fs-scale))", color:"var(--fg3)", fontWeight:400 }}>· unlocks after Year 2</span>}
+      <div style={{ marginTop:20, fontSize:"calc(15px * var(--fs-scale))", fontWeight:500, marginBottom:8, opacity: y3Unlocked ? 1 : 0.55, display:"flex", alignItems:"center", gap:7 }}>
+        <i className="ti ti-trophy" aria-hidden="true" style={{ fontSize:"calc(17px * var(--fs-scale))", color:color.text }}></i>
+        Year 3 — Advanced
+        {!y3Unlocked && <span style={{ fontSize:"calc(11px * var(--fs-scale))", color:"var(--fg3)", fontWeight:400, display:"inline-flex", alignItems:"center", gap:4 }}>
+          <i className="ti ti-lock" aria-hidden="true" style={{ fontSize:"calc(11px * var(--fs-scale))" }}></i>unlocks after Year 2
+        </span>}
       </div>
       {((ROADMAP[lang].find(p => p.id === "p4") || {}).blocks || []).map((q, i) => {
         const d = !!l.y3Done[i];
-        const unlocked = Object.keys(l.y2Done).filter(k=>l.y2Done[k]).length >= 4;
         return (
-          <div key={i} style={{ marginBottom:8, border:"0.5px solid var(--bd)", borderRadius:"var(--rl)", padding:"12px 14px", background: d ? color.bg : "var(--bg)", opacity: unlocked ? 1 : 0.55 }}>
-            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:6 }}>
-              <div style={{ fontWeight:500, fontSize:"calc(13px * var(--fs-scale))" }}>{q.heading.split(" — ")[0]}</div>
-              <Checkbox done={d} onClick={() => unlocked && toggleY3(lang, i)} color={color} ariaLabel={q.heading} disabled={!unlocked} />
+          <div key={i} style={{ marginBottom:8, border:"0.5px solid var(--bd)", borderRadius:"var(--rl)", padding:"12px 14px", background: d ? color.bg : "var(--bg)", opacity: y3Unlocked ? 1 : 0.55 }}>
+            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:6, gap:8 }}>
+              <div style={{ fontWeight:500, fontSize:"calc(13px * var(--fs-scale))", display:"flex", alignItems:"center", gap:6 }}>
+                <i className={`ti ${d ? "ti-circle-check" : "ti-circle"}`} aria-hidden="true" style={{ fontSize:"calc(13px * var(--fs-scale))", color: d ? color.text : "var(--fg3)" }}></i>
+                {q.heading.split(" — ")[0]}
+              </div>
+              <Checkbox done={d} onClick={() => y3Unlocked && toggleY3(lang, i)} color={color} ariaLabel={q.heading} disabled={!y3Unlocked} />
             </div>
             <div style={{ fontSize:"calc(12px * var(--fs-scale))", color:"var(--fg2)", lineHeight:1.6 }}>{q.body}</div>
           </div>
@@ -1461,6 +1642,7 @@ function ResourcesScreen({ lang, color }) {
   const [q, setQ] = useState("");
   const [freeOnly, setFreeOnly] = useState(false);
   const groups = RESOURCES[lang] || [];
+  const meta = META.find(m => m.id === lang);
 
   const filtered = useMemo(() => {
     const needle = q.trim().toLowerCase();
@@ -1479,31 +1661,51 @@ function ResourcesScreen({ lang, color }) {
 
   return (
     <div>
+      <ScreenTitle icon="ti-books" color={color} title="Resources"
+        sub={meta ? `${total} hand-picked ${meta.label} resources` : undefined} />
+
       <div style={{ fontSize:"calc(13px * var(--fs-scale))", color:"var(--fg2)", marginBottom:14, lineHeight:1.6 }}>
-        {total} external resources for {META.find(m => m.id === lang).label}, grouped by what you're trying to do. Nothing here is built by this app — these are the sites and tools serious learners actually use, including community-vetted free materials from Reddit.
+        Grouped by what you're trying to do. Nothing here is built by this app — these are the sites and tools serious learners actually use, including community-vetted free materials from Reddit.
       </div>
 
       <div style={{ display:"flex", gap:8, marginBottom:14, alignItems:"center", flexWrap:"wrap" }}>
-        <input type="text" placeholder="Search resources…" value={q} onChange={e => setQ(e.target.value)} style={{ flex:"1 1 180px", minWidth:0 }} aria-label="Search resources" />
-        <button onClick={() => setFreeOnly(f => !f)} className={`chip ${freeOnly ? "on" : ""}`} aria-pressed={freeOnly}>Free only</button>
+        <div style={{ flex:"1 1 180px", minWidth:0, position:"relative", display:"flex", alignItems:"center" }}>
+          <i className="ti ti-search" aria-hidden="true" style={{ position:"absolute", left:10, fontSize:"calc(15px * var(--fs-scale))", color:"var(--fg3)", pointerEvents:"none" }}></i>
+          <input type="text" placeholder="Search resources…" value={q} onChange={e => setQ(e.target.value)} style={{ width:"100%", paddingLeft:32 }} aria-label="Search resources" />
+        </div>
+        <button onClick={() => setFreeOnly(f => !f)} className={`chip ${freeOnly ? "on" : ""}`} aria-pressed={freeOnly} style={{ display:"inline-flex", alignItems:"center", gap:5 }}>
+          <i className={`ti ${freeOnly ? "ti-circle-check" : "ti-gift"}`} aria-hidden="true" style={{ fontSize:"calc(13px * var(--fs-scale))" }}></i>Free only
+        </button>
       </div>
 
-      {(q || freeOnly) && <div style={{ fontSize:"calc(11px * var(--fs-scale))", color:"var(--fg3)", marginBottom:10 }}>{shown} of {total} shown</div>}
+      {(q || freeOnly) && <div style={{ fontSize:"calc(11px * var(--fs-scale))", color:"var(--fg3)", marginBottom:10, display:"flex", alignItems:"center", gap:5 }}>
+        <i className="ti ti-filter" aria-hidden="true" style={{ fontSize:"calc(12px * var(--fs-scale))" }}></i>{shown} of {total} shown
+      </div>}
 
       {filtered.length === 0 && (
-        <div className="card" style={{ fontSize:"calc(13px * var(--fs-scale))", color:"var(--fg2)" }}>No matches. Try clearing the search or turning off the free filter.</div>
+        <div className="card" style={{ fontSize:"calc(13px * var(--fs-scale))", color:"var(--fg2)", display:"flex", alignItems:"center", gap:8 }}>
+          <i className="ti ti-mood-empty" aria-hidden="true" style={{ fontSize:"calc(18px * var(--fs-scale))", color:"var(--fg3)" }}></i>
+          No matches. Try clearing the search or turning off the free filter.
+        </div>
       )}
 
       {filtered.map(group => (
         <div key={group.category}>
-          <div className="res-cat-title">{group.category}</div>
+          <div className="res-cat-title">
+            <i className={`ti ${RES_CAT_ICON[group.category] || "ti-point"}`} aria-hidden="true" style={{ color:color.text }}></i>
+            {group.category}
+          </div>
           <div className="grid-cards">
             {group.items.map(it => (
               <a key={it.url + it.name} href={it.url} target="_blank" rel="noopener noreferrer" className="res-item">
                 <div style={{ display:"flex", alignItems:"center", gap:6, marginBottom:4, flexWrap:"wrap" }}>
+                  <i className={`ti ${guessIcon(it.url, RES_CAT_ICON[group.category] || "ti-point")}`} aria-hidden="true" style={{ fontSize:"calc(13px * var(--fs-scale))", color:color.text, opacity:0.85 }}></i>
                   <span style={{ fontWeight:500, fontSize:"calc(13px * var(--fs-scale))", color:color.text }}>{it.name}</span>
                   <i className="ti ti-external-link" aria-hidden="true" style={{ fontSize:"calc(11px * var(--fs-scale))", color:color.text, opacity:0.7 }}></i>
-                  <span className="pill" style={{ background: it.free ? "#E1F5EE" : "#FAECE7", color: it.free ? "#0F6E56" : "#993C1D" }}>{it.free ? "Free" : "Paid"}</span>
+                  <span className="pill" style={{ background: it.free ? "#E1F5EE" : "#FAECE7", color: it.free ? "#0F6E56" : "#993C1D", display:"inline-flex", alignItems:"center", gap:3 }}>
+                    <i className={`ti ${it.free ? "ti-gift" : "ti-coin"}`} aria-hidden="true" style={{ fontSize:"calc(10px * var(--fs-scale))" }}></i>
+                    {it.free ? "Free" : "Paid"}
+                  </span>
                 </div>
                 <div style={{ fontSize:"calc(12px * var(--fs-scale))", color:"var(--fg2)", lineHeight:1.55 }}>{it.desc}</div>
               </a>
@@ -1512,11 +1714,15 @@ function ResourcesScreen({ lang, color }) {
         </div>
       ))}
 
-      <div className="res-cat-title" style={{ marginTop:28 }}>Works across all three languages</div>
+      <div className="res-cat-title" style={{ marginTop:28 }}>
+        <i className="ti ti-world" aria-hidden="true" style={{ color:color.text }}></i>
+        Works across all three languages
+      </div>
       <div className="grid-cards">
         {SHARED_RESOURCES.map(it => (
           <a key={it.url + it.name} href={it.url} target="_blank" rel="noopener noreferrer" className="res-item">
             <div style={{ display:"flex", alignItems:"center", gap:6, marginBottom:4 }}>
+              <i className={`ti ${it.icon || "ti-tool"}`} aria-hidden="true" style={{ fontSize:"calc(14px * var(--fs-scale))", color:color.text }}></i>
               <span style={{ fontWeight:500, fontSize:"calc(13px * var(--fs-scale))" }}>{it.name}</span>
               <i className="ti ti-external-link" aria-hidden="true" style={{ fontSize:"calc(11px * var(--fs-scale))", color:"var(--fg2)", opacity:0.7 }}></i>
             </div>
@@ -1534,18 +1740,28 @@ function ResourcesScreen({ lang, color }) {
 function RoadmapScreen({ lang, color }) {
   const phases = ROADMAP[lang] || [];
   const [openId, setOpenId] = useState(phases.length ? phases[0].id : null);
+  const meta = META.find(m => m.id === lang);
 
   return (
     <div>
+      <ScreenTitle icon="ti-map" color={color} title="Roadmap"
+        sub={meta ? `${meta.label} · phase-by-phase plan` : undefined} />
+
       <div className="card" style={{ marginBottom:12, background:color.bg, borderColor:color.border }}>
-        <div style={{ fontSize:"calc(14px * var(--fs-scale))", fontWeight:500, color:color.text, marginBottom:6 }}>How to use this plan</div>
+        <div style={{ fontSize:"calc(14px * var(--fs-scale))", fontWeight:600, color:color.text, marginBottom:6, display:"flex", alignItems:"center", gap:7 }}>
+          <i className="ti ti-info-circle" aria-hidden="true" style={{ fontSize:"calc(16px * var(--fs-scale))" }}></i>
+          How to use this plan
+        </div>
         <div style={{ fontSize:"calc(13px * var(--fs-scale))", color:color.text, lineHeight:1.65 }}>
           This is a phase-based plan, not a link dump. Each phase has a goal, a set of activities, and the specific resources that serve those activities — so you always know why you're opening a particular site. It assumes 45–75 minutes a day, 5–6 days a week.
         </div>
       </div>
 
       <div className="card" style={{ marginBottom:20 }}>
-        <div style={{ fontSize:"calc(12px * var(--fs-scale))", fontWeight:500, marginBottom:6 }}>The entry ramp differs by language</div>
+        <div style={{ fontSize:"calc(12px * var(--fs-scale))", fontWeight:600, marginBottom:6, display:"flex", alignItems:"center", gap:7 }}>
+          <i className="ti ti-route" aria-hidden="true" style={{ fontSize:"calc(15px * var(--fs-scale))", color:color.text }}></i>
+          The entry ramp differs by language
+        </div>
         <div style={{ fontSize:"calc(13px * var(--fs-scale))", color:"var(--fg2)", lineHeight:1.65 }}>
           <strong>Korean</strong> has the easiest on-ramp (Hangul in two weeks) but the steepest intermediate grammar. <strong>Japanese</strong> has the gentlest grammar curve but the longest character-acquisition runway. <strong>Chinese</strong> has the simplest grammar but the hardest pronunciation floor — tones are non-negotiable from day one. The phases are the same; the emphasis inside each phase shifts.
         </div>
@@ -1554,36 +1770,47 @@ function RoadmapScreen({ lang, color }) {
         </div>
       </div>
 
-      <div style={{ fontSize:"calc(15px * var(--fs-scale))", fontWeight:500, marginBottom:12 }}>
-        {META.find(m => m.id === lang).label} roadmap
+      <div style={{ fontSize:"calc(15px * var(--fs-scale))", fontWeight:600, marginBottom:12, display:"flex", alignItems:"center", gap:7 }}>
+        <i className="ti ti-map-2" aria-hidden="true" style={{ fontSize:"calc(17px * var(--fs-scale))", color:color.text }}></i>
+        {meta ? meta.label : ""} roadmap
       </div>
 
       {phases.map((p) => {
         const isOpen = openId === p.id;
+        const icon = PHASE_ICON[p.id] || "ti-flag";
         return (
           <div key={p.id} style={{ marginBottom:10, border:"0.5px solid var(--bd)", borderRadius:"var(--rl)", overflow:"hidden", background:"var(--bg)" }}>
             <button onClick={() => setOpenId(isOpen ? null : p.id)} aria-expanded={isOpen} style={{ width:"100%", textAlign:"left", padding:"12px 14px", background: isOpen ? color.bg : "var(--bg)", border:"none", cursor:"pointer", display:"flex", justifyContent:"space-between", alignItems:"center", gap:8 }}>
-              <div style={{ minWidth:0 }}>
-                <div style={{ fontSize:"calc(10px * var(--fs-scale))", textTransform:"uppercase", letterSpacing:0.5, color:color.text, fontWeight:600 }}>{p.phase}</div>
-                <div style={{ fontSize:"calc(14px * var(--fs-scale))", fontWeight:500 }}>{p.title}</div>
-                <div style={{ fontSize:"calc(12px * var(--fs-scale))", color:"var(--fg2)" }}>{p.period}</div>
+              <div style={{ display:"flex", alignItems:"center", gap:10, minWidth:0 }}>
+                <Tile icon={icon} color={color} size={34} radius={10} filled={isOpen} />
+                <div style={{ minWidth:0 }}>
+                  <div style={{ fontSize:"calc(10px * var(--fs-scale))", textTransform:"uppercase", letterSpacing:0.5, color:color.text, fontWeight:600 }}>{p.phase}</div>
+                  <div style={{ fontSize:"calc(14px * var(--fs-scale))", fontWeight:500 }}>{p.title}</div>
+                  <div style={{ fontSize:"calc(12px * var(--fs-scale))", color:"var(--fg2)", display:"flex", alignItems:"center", gap:4 }}>
+                    <i className="ti ti-clock" aria-hidden="true" style={{ fontSize:"calc(12px * var(--fs-scale))" }}></i>{p.period}
+                  </div>
+                </div>
               </div>
               <i className={`ti ${isOpen ? "ti-chevron-up" : "ti-chevron-down"}`} aria-hidden="true" style={{ fontSize:"calc(14px * var(--fs-scale))", color:color.text, flexShrink:0 }}></i>
             </button>
             {isOpen && (
               <div style={{ padding:"0 14px 14px", borderTop:"0.5px solid var(--bd)" }}>
-                <div style={{ fontSize:"calc(12.5px * var(--fs-scale))", color:color.text, marginTop:12, marginBottom:14, lineHeight:1.6 }}>
-                  <strong>Goal — </strong>{p.goal}
+                <div style={{ fontSize:"calc(12.5px * var(--fs-scale))", color:color.text, marginTop:12, marginBottom:14, lineHeight:1.6, display:"flex", gap:7, alignItems:"flex-start" }}>
+                  <i className="ti ti-target" aria-hidden="true" style={{ fontSize:"calc(15px * var(--fs-scale))", marginTop:2, flexShrink:0 }}></i>
+                  <span><strong>Goal — </strong>{p.goal}</span>
                 </div>
                 {p.blocks.map((b, j) => (
                   <div key={j} style={{ marginBottom: j === p.blocks.length - 1 ? 0 : 16 }}>
-                    <div style={{ fontSize:"calc(13px * var(--fs-scale))", fontWeight:500, marginBottom:4 }}>{b.heading}</div>
+                    <div style={{ fontSize:"calc(13px * var(--fs-scale))", fontWeight:600, marginBottom:4, display:"flex", alignItems:"center", gap:6 }}>
+                      <i className="ti ti-point-filled" aria-hidden="true" style={{ fontSize:"calc(13px * var(--fs-scale))", color:color.border }}></i>
+                      {b.heading}
+                    </div>
                     <div style={{ fontSize:"calc(13px * var(--fs-scale))", color:"var(--fg2)", lineHeight:1.65, marginBottom: (b.links && b.links.length) ? 8 : 0 }}>{b.body}</div>
                     {b.links && b.links.length > 0 && (
                       <div style={{ display:"flex", flexWrap:"wrap", gap:6 }}>
                         {b.links.map((l, k) => (
                           <a key={k} href={l.url} target="_blank" rel="noopener noreferrer" className="res-chip">
-                            {l.label}<i className="ti ti-external-link" aria-hidden="true"></i>
+                            <i className="ti ti-link" aria-hidden="true"></i>{l.label}<i className="ti ti-external-link" aria-hidden="true"></i>
                           </a>
                         ))}
                       </div>
@@ -1597,56 +1824,77 @@ function RoadmapScreen({ lang, color }) {
       })}
 
       {/* Cross-language overlap */}
-      <div style={{ marginTop:32, fontSize:"calc(15px * var(--fs-scale))", fontWeight:500, marginBottom:6 }}>The cross-language overlap</div>
+      <div style={{ marginTop:32, fontSize:"calc(15px * var(--fs-scale))", fontWeight:600, marginBottom:6, display:"flex", alignItems:"center", gap:7 }}>
+        <i className="ti ti-arrows-shuffle" aria-hidden="true" style={{ fontSize:"calc(17px * var(--fs-scale))", color:color.text }}></i>
+        The cross-language overlap
+      </div>
       <div style={{ fontSize:"calc(13px * var(--fs-scale))", color:"var(--fg2)", marginBottom:12, lineHeight:1.6 }}>
         Learning all three together is only worth it if you exploit the overlap. This is the actual payoff.
       </div>
       {BRIDGE.map((b, i) => (
         <div key={i} className="card" style={{ marginBottom:8, padding:"12px 14px" }}>
-          <div style={{ fontWeight:500, fontSize:"calc(13.5px * var(--fs-scale))", marginBottom:6 }}>{b.t}</div>
-          <div style={{ fontSize:"calc(12.5px * var(--fs-scale))", color:"var(--fg2)", lineHeight:1.65 }}>{b.d}</div>
-          <div style={{ display:"flex", gap:4, marginTop:8, flexWrap:"wrap" }}>
-            {b.tags.map(t => <span key={t} className="pill" style={{ background:C[t].bg, color:C[t].text }}>{t}</span>)}
+          <div style={{ display:"flex", gap:10, alignItems:"flex-start" }}>
+            <Tile icon={b.icon || "ti-language"} color={color} size={30} radius={9} />
+            <div style={{ minWidth:0, flex:1 }}>
+              <div style={{ fontWeight:500, fontSize:"calc(13.5px * var(--fs-scale))", marginBottom:6 }}>{b.t}</div>
+              <div style={{ fontSize:"calc(12.5px * var(--fs-scale))", color:"var(--fg2)", lineHeight:1.65 }}>{b.d}</div>
+              <div style={{ display:"flex", gap:4, marginTop:8, flexWrap:"wrap" }}>
+                {b.tags.map(t => <span key={t} className="pill" style={{ background:C[t].bg, color:C[t].text }}>{t}</span>)}
+              </div>
+            </div>
           </div>
         </div>
       ))}
 
       {/* Exam prep */}
-      <div style={{ marginTop:32, fontSize:"calc(15px * var(--fs-scale))", fontWeight:500, marginBottom:6 }}>Exam preparation structure</div>
+      <div style={{ marginTop:32, fontSize:"calc(15px * var(--fs-scale))", fontWeight:600, marginBottom:6, display:"flex", alignItems:"center", gap:7 }}>
+        <i className="ti ti-certificate" aria-hidden="true" style={{ fontSize:"calc(17px * var(--fs-scale))", color:color.text }}></i>
+        Exam preparation structure
+      </div>
       <div style={{ fontSize:"calc(13px * var(--fs-scale))", color:"var(--fg2)", marginBottom:12, lineHeight:1.6 }}>
         TOPIK, JLPT, and HSK are all format-specific exams. Preparing for them is a different activity from general language study, and the two shouldn't be conflated. A standard prep cycle looks like this for all three:
       </div>
       {EXAM_PREP_STEPS.map((s, i) => (
-        <div key={i} style={{ border:"0.5px solid var(--bd)", borderRadius:"var(--r)", padding:"10px 12px", background:"var(--bg)", marginBottom:6 }}>
-          <div style={{ fontSize:"calc(13px * var(--fs-scale))", fontWeight:500, marginBottom:4 }}>{s.step}</div>
-          <div style={{ fontSize:"calc(12.5px * var(--fs-scale))", color:"var(--fg2)", lineHeight:1.6 }}>{s.body}</div>
+        <div key={i} style={{ border:"0.5px solid var(--bd)", borderRadius:"var(--r)", padding:"10px 12px", background:"var(--bg)", marginBottom:6, display:"flex", gap:10, alignItems:"flex-start" }}>
+          <Tile icon={s.icon} color={color} size={30} radius={9} />
+          <div style={{ minWidth:0 }}>
+            <div style={{ fontSize:"calc(13px * var(--fs-scale))", fontWeight:500, marginBottom:4 }}>{s.step}</div>
+            <div style={{ fontSize:"calc(12.5px * var(--fs-scale))", color:"var(--fg2)", lineHeight:1.6 }}>{s.body}</div>
+          </div>
         </div>
       ))}
-      <div style={{ fontSize:"calc(12px * var(--fs-scale))", color:"var(--fg2)", marginTop:12, marginBottom:6, lineHeight:1.6 }}>Past papers are free from the official sites:</div>
+      <div style={{ fontSize:"calc(12px * var(--fs-scale))", color:"var(--fg2)", marginTop:12, marginBottom:6, lineHeight:1.6, display:"flex", alignItems:"center", gap:6 }}>
+        <i className="ti ti-file-download" aria-hidden="true" style={{ fontSize:"calc(14px * var(--fs-scale))", color:color.text }}></i>
+        Past papers are free from the official sites:
+      </div>
       <div style={{ display:"flex", flexWrap:"wrap", gap:6 }}>
         {EXAM_LINKS.map((l, i) => (
           <a key={i} href={l.url} target="_blank" rel="noopener noreferrer" className="res-chip">
-            {l.label}<i className="ti ti-external-link" aria-hidden="true"></i>
+            <i className="ti ti-link" aria-hidden="true"></i>{l.label}<i className="ti ti-external-link" aria-hidden="true"></i>
           </a>
         ))}
       </div>
 
       {/* Weekly rhythm */}
-      <div style={{ marginTop:32, fontSize:"calc(15px * var(--fs-scale))", fontWeight:500, marginBottom:6 }}>A weekly rhythm that works</div>
+      <div style={{ marginTop:32, fontSize:"calc(15px * var(--fs-scale))", fontWeight:600, marginBottom:6, display:"flex", alignItems:"center", gap:7 }}>
+        <i className="ti ti-calendar-week" aria-hidden="true" style={{ fontSize:"calc(17px * var(--fs-scale))", color:color.text }}></i>
+        A weekly rhythm that works
+      </div>
       <div style={{ fontSize:"calc(13px * var(--fs-scale))", color:"var(--fg2)", marginBottom:12, lineHeight:1.6 }}>
         The day-by-day schedule in the Today tab is a reasonable template, but the underlying principle matters more than the specific allocation:
       </div>
       {WEEKLY_RHYTHM.map((w, i) => (
         <div key={i} style={{ display:"flex", gap:10, padding:"8px 0", borderBottom: i === WEEKLY_RHYTHM.length - 1 ? "none" : "0.5px solid var(--bd)" }}>
-          <span style={{ minWidth:5, height:5, borderRadius:"50%", background:color.border, marginTop:8, flexShrink:0 }}></span>
-          <div>
+          <Tile icon={w.icon} color={color} size={28} radius={8} />
+          <div style={{ minWidth:0 }}>
             <div style={{ fontSize:"calc(13px * var(--fs-scale))", fontWeight:500 }}>{w.label}</div>
             <div style={{ fontSize:"calc(12.5px * var(--fs-scale))", color:"var(--fg2)", lineHeight:1.6 }}>{w.body}</div>
           </div>
         </div>
       ))}
-      <div style={{ fontSize:"calc(12px * var(--fs-scale))", marginTop:12, lineHeight:1.6, padding:"10px 12px", background:color.bg, borderRadius:"var(--r)", color:color.text }}>
-        The review day is the one people skip. It's also the one that determines whether you retain anything from the other six days.
+      <div style={{ fontSize:"calc(12px * var(--fs-scale))", marginTop:12, lineHeight:1.6, padding:"10px 12px", background:color.bg, borderRadius:"var(--r)", color:color.text, display:"flex", gap:8, alignItems:"flex-start" }}>
+        <i className="ti ti-alert-triangle" aria-hidden="true" style={{ fontSize:"calc(15px * var(--fs-scale))", marginTop:1, flexShrink:0 }}></i>
+        <span>The review day is the one people skip. It's also the one that determines whether you retain anything from the other six days.</span>
       </div>
     </div>
   );
@@ -1657,13 +1905,21 @@ function RoadmapScreen({ lang, color }) {
    ============================================================ */
 function CultureScreen({ lang, color }) {
   const data = yearData[lang];
+  const meta = META.find(m => m.id === lang);
   return (
     <div>
+      <ScreenTitle icon="ti-world" color={color} title="Culture"
+        sub={meta ? `${meta.label} · social context that shapes the language` : undefined} />
       {data.culture.map((c, i) => (
         <div key={i} className="card" style={{ marginBottom:10, padding:"12px 14px" }}>
-          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:8 }}>
-            <span style={{ fontWeight:500, fontSize:"calc(14px * var(--fs-scale))" }}>{c.topic}</span>
-            <span className="pill" style={{ background:color.bg, color:color.text }}>{c.period}</span>
+          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:8, gap:8 }}>
+            <span style={{ fontWeight:500, fontSize:"calc(14px * var(--fs-scale))", display:"flex", alignItems:"center", gap:8 }}>
+              <Tile icon={c.icon || "ti-world"} color={color} size={28} radius={8} />
+              {c.topic}
+            </span>
+            <span className="pill" style={{ background:color.bg, color:color.text, display:"inline-flex", alignItems:"center", gap:3, whiteSpace:"nowrap" }}>
+              <i className="ti ti-clock" aria-hidden="true" style={{ fontSize:"calc(10px * var(--fs-scale))" }}></i>{c.period}
+            </span>
           </div>
           <div style={{ fontSize:"calc(13px * var(--fs-scale))", color:"var(--fg2)", lineHeight:1.6 }}>{c.detail}</div>
         </div>
@@ -1678,21 +1934,34 @@ function CultureScreen({ lang, color }) {
 function FixItScreen({ color }) {
   const [openI, setOpenI] = useState(null);
   return (
-    <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
-      {FIXIT.map((t, i) => (
-        <div key={i} style={{ border:"0.5px solid var(--bd)", borderRadius:"var(--r)", overflow:"hidden" }}>
-          <button onClick={() => setOpenI(openI===i ? null : i)} aria-expanded={openI===i} style={{ width:"100%", display:"flex", justifyContent:"space-between", padding:"12px 14px", background:"var(--bg)", border:"none", cursor:"pointer", textAlign:"left", gap:8 }}>
-            <span style={{ fontSize:"calc(13px * var(--fs-scale))", fontWeight:500 }}>"{t.s}"</span>
-            <i className={`ti ${openI===i ? "ti-chevron-up" : "ti-chevron-down"}`} aria-hidden="true" style={{ fontSize:"calc(14px * var(--fs-scale))", color:"var(--fg2)", flexShrink:0 }}></i>
-          </button>
-          {openI === i && (
-            <div style={{ padding:"0 14px 12px", borderTop:"0.5px solid var(--bd)" }}>
-              <div style={{ marginTop:10, fontSize:"calc(13px * var(--fs-scale))", color:"var(--fg2)", marginBottom:8 }}><strong>Diagnosis:</strong> {t.d}</div>
-              <div style={{ fontSize:"calc(13px * var(--fs-scale))", background:color.bg, padding:"10px 12px", borderRadius:"var(--r)", color:"var(--fg2)" }}><strong style={{ color:color.text }}>Fix:</strong> {t.f}</div>
-            </div>
-          )}
-        </div>
-      ))}
+    <div>
+      <ScreenTitle icon="ti-stethoscope" color={color} title="Fix it"
+        sub="Common plateaus — and the diagnosis behind them" />
+      <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
+        {FIXIT.map((t, i) => (
+          <div key={i} style={{ border:"0.5px solid var(--bd)", borderRadius:"var(--r)", overflow:"hidden" }}>
+            <button onClick={() => setOpenI(openI===i ? null : i)} aria-expanded={openI===i} style={{ width:"100%", display:"flex", justifyContent:"space-between", alignItems:"center", padding:"12px 14px", background:"var(--bg)", border:"none", cursor:"pointer", textAlign:"left", gap:8 }}>
+              <span style={{ display:"flex", alignItems:"center", gap:9, minWidth:0 }}>
+                <Tile icon={t.icon || "ti-alert-circle"} color={color} size={28} radius={8} />
+                <span style={{ fontSize:"calc(13px * var(--fs-scale))", fontWeight:500 }}>"{t.s}"</span>
+              </span>
+              <i className={`ti ${openI===i ? "ti-chevron-up" : "ti-chevron-down"}`} aria-hidden="true" style={{ fontSize:"calc(14px * var(--fs-scale))", color:"var(--fg2)", flexShrink:0 }}></i>
+            </button>
+            {openI === i && (
+              <div style={{ padding:"0 14px 12px", borderTop:"0.5px solid var(--bd)" }}>
+                <div style={{ marginTop:10, fontSize:"calc(13px * var(--fs-scale))", color:"var(--fg2)", marginBottom:8, display:"flex", gap:7, alignItems:"flex-start" }}>
+                  <i className="ti ti-zoom-in" aria-hidden="true" style={{ fontSize:"calc(15px * var(--fs-scale))", color:color.text, marginTop:2, flexShrink:0 }}></i>
+                  <span><strong>Diagnosis:</strong> {t.d}</span>
+                </div>
+                <div style={{ fontSize:"calc(13px * var(--fs-scale))", background:color.bg, padding:"10px 12px", borderRadius:"var(--r)", color:"var(--fg2)", display:"flex", gap:7, alignItems:"flex-start" }}>
+                  <i className="ti ti-tool" aria-hidden="true" style={{ fontSize:"calc(15px * var(--fs-scale))", color:color.text, marginTop:2, flexShrink:0 }}></i>
+                  <span><strong style={{ color:color.text }}>Fix:</strong> {t.f}</span>
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
@@ -1720,7 +1989,10 @@ class ErrorBoundary extends React.Component {
     if (this.state.err) {
       return (
         <div style={{ padding:24, fontFamily:"system-ui, sans-serif", maxWidth:520, margin:"0 auto" }}>
-          <h2 style={{ fontSize:"calc(16px * var(--fs-scale))", marginBottom:8 }}>Something went wrong.</h2>
+          <h2 style={{ fontSize:"calc(16px * var(--fs-scale))", marginBottom:8, display:"flex", alignItems:"center", gap:8 }}>
+            <i className="ti ti-alert-triangle" aria-hidden="true" style={{ color:"#D85A30" }}></i>
+            Something went wrong.
+          </h2>
           <p style={{ fontSize:"calc(13px * var(--fs-scale))", color:"#666", lineHeight:1.6, marginBottom:16 }}>
             Your saved progress is still in this browser. If the app keeps failing to load, export your data from Settings before clearing site data.
           </p>
@@ -1784,7 +2056,10 @@ function App() {
         <button className="topbar-btn" onClick={() => setDrawerOpen(true)} aria-label="Open menu" aria-expanded={drawerOpen} aria-controls="mobile-drawer">
           <i className="ti ti-menu-2" aria-hidden="true"></i>
         </button>
-        <span className="topbar-title">Language Companion</span>
+        <span className="topbar-title">
+          <i className="ti ti-language" aria-hidden="true" style={{ color:color.border }}></i>
+          Language Companion
+        </span>
         <div className="topbar-actions">
           <ThemeToggle theme={theme} setTheme={setTheme} size={20} />
           <button className="topbar-btn" onClick={() => setSettingsOpen(true)} aria-label="Open settings">
@@ -1795,10 +2070,13 @@ function App() {
 
       {/* Desktop-only persistent sidebar */}
       <nav className="side" aria-label="Main navigation">
-        <div style={{ fontSize:"calc(13px * var(--fs-scale))", fontWeight:500, padding:"0 12px 16px" }}>Language Companion</div>
+        <div style={{ fontSize:"calc(13px * var(--fs-scale))", fontWeight:600, padding:"0 12px 16px", display:"flex", alignItems:"center", gap:7 }}>
+          <i className="ti ti-language" aria-hidden="true" style={{ fontSize:"calc(16px * var(--fs-scale))", color:color.border }}></i>
+          Language Companion
+        </div>
         {SECTIONS.map(s => (
           <button key={s.id} className={`nav s ${view===s.id ? "on" : ""}`} onClick={() => setView(s.id)}>
-            <i className={`ti ${s.icon}`} aria-hidden="true" style={{ fontSize:"calc(17px * var(--fs-scale))" }}></i>{s.label}
+            <i className={`ti ${s.icon}`} aria-hidden="true" style={{ fontSize:"calc(17px * var(--fs-scale))", color: view===s.id ? color.border : "inherit" }}></i>{s.label}
           </button>
         ))}
         <button className="nav s" onClick={() => setSettingsOpen(true)} style={{ marginTop:"auto" }}>
@@ -1806,18 +2084,21 @@ function App() {
         </button>
       </nav>
 
-      {/* Mobile-only collapsible sidebar (drawer) + backdrop, replaces the old bottom tab bar */}
+      {/* Mobile-only collapsible sidebar (drawer) + backdrop */}
       <div className={`backdrop ${drawerOpen ? "show" : ""}`} onClick={() => setDrawerOpen(false)} aria-hidden="true"></div>
       <nav id="mobile-drawer" className={`drawer ${drawerOpen ? "open" : ""}`} aria-label="Main navigation" aria-hidden={!drawerOpen}>
         <div className="drawer-head">
-          <span>Language Companion</span>
+          <span>
+            <i className="ti ti-language" aria-hidden="true" style={{ color:color.border }}></i>
+            Language Companion
+          </span>
           <button className="topbar-btn" onClick={() => setDrawerOpen(false)} aria-label="Close menu">
             <i className="ti ti-x" aria-hidden="true"></i>
           </button>
         </div>
         {SECTIONS.map(s => (
           <button key={s.id} className={`nav s ${view===s.id ? "on" : ""}`} onClick={() => goTo(s.id)}>
-            <i className={`ti ${s.icon}`} aria-hidden="true" style={{ fontSize:"calc(17px * var(--fs-scale))" }}></i>{s.label}
+            <i className={`ti ${s.icon}`} aria-hidden="true" style={{ fontSize:"calc(17px * var(--fs-scale))", color: view===s.id ? color.border : "inherit" }}></i>{s.label}
           </button>
         ))}
         <button className="nav s" onClick={() => { setSettingsOpen(true); setDrawerOpen(false); }} style={{ marginTop:"auto" }}>
@@ -1830,7 +2111,7 @@ function App() {
           <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:16, flexWrap:"wrap", gap:8 }}>
             <div style={{ display:"flex", gap:8 }}>
               {META.map(m => (
-                <button key={m.id} onClick={() => setLang(m.id)} aria-pressed={lang===m.id} style={{ display:"flex", alignItems:"center", gap:6, padding:"5px 10px 5px 5px", borderRadius:20, border:`1.5px solid ${lang===m.id ? m.color.border : "var(--bd)"}`, background: lang===m.id ? m.color.bg : "var(--bg)", cursor:"pointer" }}>
+                <button key={m.id} onClick={() => setLang(m.id)} aria-pressed={lang===m.id} title={m.tagline} style={{ display:"flex", alignItems:"center", gap:6, padding:"5px 10px 5px 5px", borderRadius:20, border:`1.5px solid ${lang===m.id ? m.color.border : "var(--bd)"}`, background: lang===m.id ? m.color.bg : "var(--bg)", cursor:"pointer" }}>
                   <LangBadge meta={m} size={22} />
                   <span style={{ fontSize:"calc(12px * var(--fs-scale))", fontWeight: lang===m.id ? 500 : 400, color: lang===m.id ? m.color.text : "var(--fg2)" }}>{m.label}</span>
                 </button>
